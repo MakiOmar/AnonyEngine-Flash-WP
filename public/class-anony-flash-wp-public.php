@@ -73,7 +73,7 @@ class Anony_Flash_Wp_Public {
 		 * class.
 		 */
 
-		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/anony-flash-wp-public.css', array(), $this->version, 'all' );
+		// wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/anony-flash-wp-public.css', array(), $this->version, 'all' );
 
 	}
 
@@ -96,7 +96,7 @@ class Anony_Flash_Wp_Public {
 		 * class.
 		 */
 
-		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/anony-flash-wp-public.js', array( 'jquery' ), $this->version, false );
+		//wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/anony-flash-wp-public.js', array( 'jquery' ), $this->version, false );
 
 	}
 
@@ -115,6 +115,10 @@ class Anony_Flash_Wp_Public {
 	    $content = str_replace( 'elementor-column-wrap', 'elementor-column-wrap lazyelementorbackgroundimages', $content );
 		
 		$content = str_replace( 'elementor-widget-wrap', 'elementor-widget-wrap lazyelementorbackgroundimages', $content );
+		
+		$content = str_replace( 'elementor-widget-container', 'elementor-widget-container lazyelementorbackgroundimages', $content );
+		
+		$content = str_replace( 'elementor-background-overlay', 'elementor-background-overlay lazyelementorbackgroundimages', $content );
 		
 		return $content;  
 
@@ -138,6 +142,18 @@ class Anony_Flash_Wp_Public {
 		<?php
 		echo ob_get_clean();
 	}
+	
+	public function lazy_elementor_background_images_js_no_jquery(){?>
+		<script>
+			window.onload = function() {
+			  var elems = document.querySelectorAll(".lazyelementorbackgroundimages");
+
+				[].forEach.call(elems, function(el) {
+					el.classList.remove("lazyelementorbackgroundimages");
+				});
+			};
+		</script>
+	<?php }
 
 	/**
 	 * Add js (jQuery and Waypoint are dependencies) to remove the lazyelementorbackgroundimages class as the item approaches the viewport.
@@ -163,7 +179,7 @@ class Anony_Flash_Wp_Public {
 				return;
 			} 
 			$('.lazyelementorbackgroundimages').each( function () {
-
+				
 				var $section = $( this );
 				new Waypoint({
 					element: $section.get( 0 ),
@@ -342,13 +358,9 @@ class Anony_Flash_Wp_Public {
 
         if ( wp_is_mobile() ){
         	$mobile_dequeued_styles = [
-				'elementor-icons-shared-0',
-				'elementor-icons-fa-brands',
-				'elementor-icons-fa-solid',
-				'elementor-icons-fa-regular',
-				'elementor-icons',
-				
-	        ];
+				'woocommerce-packing-slips',
+				'woocommerce-pdf-invoices'
+			];
 
 	        $dequeued_styles = array_merge($dequeued_styles, $mobile_dequeued_styles);
         }
@@ -382,7 +394,7 @@ class Anony_Flash_Wp_Public {
     }
 
     public function defer_scripts( $tag, $handle, $src ){
-    	if (is_admin() || false === strpos($src, '.js') || false === strpos($tag, 'defer') ) { 
+    	if (is_admin() || false === strpos($src, '.js') || false !== strpos($tag, 'defer') ) { 
     		return $tag; //don't break WP Admin
         }
     
@@ -403,7 +415,39 @@ class Anony_Flash_Wp_Public {
 
         return str_replace(' src', ' defer src', $tag);
     }
+    public function common_injected_scripts( $tag ){
 
+    	if(is_admin()) return $tag;
+
+		if(preg_match("/rel='stylesheet'/im",$tag)){
+			
+			if( 
+				false  !== strpos( $tag, 'wpml-legacy-horizontal-list' ) ||
+				false  !== strpos( $tag, 'flexible_shipping_notices' ) ||
+				false  !== strpos( $tag, 'jet-cw' ) ||
+				false  !== strpos( $tag, 'jet-cw-frontend' ) ||
+				false  !== strpos( $tag, 'jet-popup-frontend' ) ||
+				false  !== strpos( $tag, 'photoswipe' ) ||
+				false  !== strpos( $tag, 'photoswipe-default-skin' )
+				
+				
+			  
+			  ) {
+				preg_match("/id='(.*?)'/im",$tag, $id);
+				$style_id = $id[1];
+
+				preg_match("/href='(.*?)'/im",$tag, $href);
+				$style_href = $href[1];
+
+				add_action('wp_print_footer_scripts', function() use($style_id, $style_href){?>
+					<input type="hidden" class="create-style-tag" id="create-<?php echo $style_id ?>" value="<?php echo $style_href ?>"/>
+				<?php  });
+				return '';
+			}
+			
+			return $tag;
+		}
+    }
     public function mobile_injected_scripts( $tag ){
 
     	if(is_admin()) return $tag;
@@ -413,7 +457,6 @@ class Anony_Flash_Wp_Public {
 			if( 
 				false  !== strpos( $tag, 'font-awesome-all' ) ||
 			  	false  !== strpos( $tag, 'fontawesome' ) ||
-				false  !== strpos( $tag, 'jet-elements' ) ||
 				false  !== strpos( $tag, 'jet-elements-skin' ) ||			
 				false  !== strpos( $tag, 'jet-menu-public-styles' ) ||
 				false  !== strpos( $tag, 'font-awesome' ) ||
@@ -422,6 +465,10 @@ class Anony_Flash_Wp_Public {
 				false  !== strpos( $tag, 'e-animations' ) ||
 				false  !== strpos( $tag, 'elementor-icons-shared-0' ) ||
 				false  !== strpos( $tag, 'elementor-icons-fa-solid' ) ||
+				false  !== strpos( $tag, 'elementor-icons-fa-brands' ) ||
+				false  !== strpos( $tag, 'elementor-icons-fa-regular' ) ||
+				false  !== strpos( $tag, 'elementor-icons' ) ||
+				
 				false  !== strpos( $tag, 'jet-menu-general' ) ||
 				false  !== strpos( $tag, 'font-awesome-v4-shims' ) || 
 				false  !== strpos( $tag, 'wp-block-library-theme-inline' ) ||

@@ -175,7 +175,9 @@ class Anony_Flash_Wp {
 
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
 
-		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'lazy_elementor_background_images_js', 999 );
+		// $this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'lazy_elementor_background_images_js', 999 );
+		
+		$this->loader->add_action( 'wp_head', $plugin_public, 'lazy_elementor_background_images_js_no_jquery', 999 );
 
 		$this->loader->add_action( 'wp_print_styles', $plugin_public, 'dequeued_styles', 999 );
 
@@ -205,6 +207,8 @@ class Anony_Flash_Wp {
 
 		// Defer js scripts
 		$this->loader->add_filter('script_loader_tag', $plugin_public, 'defer_scripts', 99, 3);
+		
+		$this->loader->add_filter('style_loader_tag', $plugin_public, 'common_injected_scripts', 99, 3);
 
 		if( wp_is_mobile() ){
 			$this->loader->add_filter('style_loader_tag', $plugin_public, 'mobile_injected_scripts', 99, 3);
