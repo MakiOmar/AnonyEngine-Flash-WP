@@ -110,15 +110,16 @@ class Anony_Flash_Wp_Public {
 	 */
 	public function elementor_add_lazyload_class($content) {
 
-		$content = str_replace( 'elementor-section', 'elementor-section lazyelementorbackgroundimages', $content );
+		$content = str_replace( 'elementor-section ', 'elementor-section lazyelementorbackgroundimages ', $content );
     
-	    $content = str_replace( 'elementor-column-wrap', 'elementor-column-wrap lazyelementorbackgroundimages', $content );
+	    $content = str_replace( 'elementor-column-wrap ', 'elementor-column-wrap lazyelementorbackgroundimages ', $content );
 		
-		$content = str_replace( 'elementor-widget-wrap', 'elementor-widget-wrap lazyelementorbackgroundimages', $content );
+		$content = str_replace( 'elementor-widget-wrap ', 'elementor-widget-wrap lazyelementorbackgroundimages ', $content );
 		
-		$content = str_replace( 'elementor-widget-container', 'elementor-widget-container lazyelementorbackgroundimages', $content );
+		$content = str_replace( 'elementor-widget-container ', 'elementor-widget-container lazyelementorbackgroundimages ', $content );
 		
-		$content = str_replace( 'elementor-background-overlay', 'elementor-background-overlay lazyelementorbackgroundimages', $content );
+		$content = str_replace( 'elementor-background-overlay ', 'elementor-background-overlay lazyelementorbackgroundimages ', $content );
+
 		
 		return $content;  
 
@@ -143,8 +144,10 @@ class Anony_Flash_Wp_Public {
 		echo ob_get_clean();
 	}
 	
-	public function lazy_elementor_background_images_js_no_jquery(){?>
-		<script>
+	public function lazy_elementor_background_images_js_no_jquery(){
+
+		ob_start();?>
+		
 			window.onload = function() {
 			  var elems = document.querySelectorAll(".lazyelementorbackgroundimages");
 
@@ -152,8 +155,12 @@ class Anony_Flash_Wp_Public {
 					el.classList.remove("lazyelementorbackgroundimages");
 				});
 			};
-		</script>
-	<?php }
+		<?php
+		$skrip = ob_get_clean();
+
+		$lazy_elementor_background_images_js_added = wp_add_inline_script( 'backbone', $skrip );
+		
+	}
 
 	/**
 	 * Add js (jQuery and Waypoint are dependencies) to remove the lazyelementorbackgroundimages class as the item approaches the viewport.
@@ -314,7 +321,7 @@ class Anony_Flash_Wp_Public {
     }
 
     public function add_missing_image_Dimensions( $content ) {
-		return $content;
+
 		$pattern = '/<img [^>]*?src="(\w+?:\/\/[^"]+?)"[^>]*?>/iu';
 		
 		preg_match_all( $pattern, $content, $imgs );

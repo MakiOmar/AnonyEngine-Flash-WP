@@ -175,9 +175,9 @@ class Anony_Flash_Wp {
 
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
 
-		// $this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'lazy_elementor_background_images_js', 999 );
+		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'lazy_elementor_background_images_js', 999 );
 		
-		$this->loader->add_action( 'wp_head', $plugin_public, 'lazy_elementor_background_images_js_no_jquery', 999 );
+		//$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'lazy_elementor_background_images_js_no_jquery', 999 );
 
 		$this->loader->add_action( 'wp_print_styles', $plugin_public, 'dequeued_styles', 999 );
 
