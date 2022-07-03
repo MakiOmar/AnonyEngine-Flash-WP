@@ -112,13 +112,15 @@ class Anony_Flash_Wp_Public {
 
 		$content = str_replace( 'elementor-section ', 'elementor-section lazyelementorbackgroundimages ', $content );
     
-	    $content = str_replace( 'elementor-column-wrap ', 'elementor-column-wrap lazyelementorbackgroundimages ', $content );
+	    $content = str_replace( 'elementor-column-wrap', 'elementor-column-wrap lazyelementorbackgroundimages', $content );
 		
-		$content = str_replace( 'elementor-widget-wrap ', 'elementor-widget-wrap lazyelementorbackgroundimages ', $content );
+		$content = str_replace( 'elementor-widget-wrap', 'elementor-widget-wrap lazyelementorbackgroundimages', $content );
 		
-		$content = str_replace( 'elementor-widget-container ', 'elementor-widget-container lazyelementorbackgroundimages ', $content );
+		$content = str_replace( 'elementor-widget-container', 'elementor-widget-container lazyelementorbackgroundimages', $content );
 		
-		$content = str_replace( 'elementor-background-overlay ', 'elementor-background-overlay lazyelementorbackgroundimages ', $content );
+		$content = str_replace( 'elementor-background-overlay', 'elementor-background-overlay lazyelementorbackgroundimages', $content );
+		
+		$content = str_replace( 'anony-lazyload-bg', 'anony-lazyload-bg lazyelementorbackgroundimages', $content );
 
 		
 		return $content;  
@@ -145,7 +147,7 @@ class Anony_Flash_Wp_Public {
 	}
 	
 	public function lazy_elementor_background_images_js_no_jquery(){
-
+		global $lazy_elementor_background_images_js_added;
 		ob_start();?>
 		
 			window.onload = function() {
