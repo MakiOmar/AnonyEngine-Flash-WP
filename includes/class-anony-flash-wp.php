@@ -170,14 +170,21 @@ class Anony_Flash_Wp {
 
 		$plugin_public = new Anony_Flash_Wp_Public( $this->get_plugin_name(), $this->get_version() );
 
+
+		
+		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'lazy_elementor_background_images_js', 999 );
+
+		$this->loader->add_action( 'wp_head', $plugin_public, 'lazy_elementor_background_images_css' );
+		
+		$this->loader->add_filter( 'the_content', $plugin_public, 'elementor_add_lazyload_class' );
+
 		// Actions.
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles' );
 
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
 
-		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'lazy_elementor_background_images_js', 999 );
 		
-		//$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'lazy_elementor_background_images_js_no_jquery', 999 );
+
 
 		$this->loader->add_action( 'wp_print_styles', $plugin_public, 'dequeued_styles', 999 );
 
@@ -185,16 +192,9 @@ class Anony_Flash_Wp {
 
 		$this->loader->add_action( 'wp_print_footer_scripts', $plugin_public, 'inject_scripts', 999 );
 
-		$this->loader->add_action( 'wp_head', $plugin_public, 'lazy_elementor_background_images_css' );
-
 		$this->loader->add_action( 'wp_default_scripts', $plugin_public, 'deregister_jquery_migrate' );
 
-		$this->loader->add_action( 'template_redirect', $plugin_public, 'disable_wp_embeds' );
-
-		$this->loader->add_action( 'template_redirect', $plugin_public, 'disable_wp_emojis' );
-
-		// Filters.
-		$this->loader->add_filter( 'the_content', $plugin_public, 'elementor_add_lazyload_class' );
+		
 
 		// Add missing image dimensions
 		$this->loader->add_filter( 'the_content', $plugin_public, 'add_missing_image_Dimensions' );
@@ -204,11 +204,50 @@ class Anony_Flash_Wp {
 
 		//Remove add query strings to styles
 		$this->loader->add_filter('style_loader_src', $plugin_public, 'remove_query_strings', 99, 2);
-
-		// Defer js scripts
-		$this->loader->add_filter('script_loader_tag', $plugin_public, 'defer_scripts', 99, 3);
 		
 		$this->loader->add_filter('style_loader_tag', $plugin_public, 'common_injected_scripts', 99, 3);
+
+
+		$this->loader->add_action( 'get_header', $plugin_public, 'wp_html_compression_finish' );
+
+		//controls add query strings to scripts
+		$this->loader->add_filter('script_loader_src', $plugin_public, 'anony_control_query_strings', 15, 2);
+
+		//controls add query strings to styles
+		$this->loader->add_filter('style_loader_src', $plugin_public, 'anony_control_query_strings', 15, 2);
+
+		//styles full defer
+		$this->loader->add_filter( 'style_loader_tag', $plugin_public, 'defer_stylesheets' );
+
+		//Scripts defer
+		$this->loader->add_filter( 'script_loader_tag', $plugin_public, 'defer_scripts', 99, 3 
+		);
+
+		//Use custom avatar instead of Gravatar.com
+		$this->loader->add_filter( 'get_avatar', $plugin_public, 'disable_gravatar', 200  );
+
+		$this->loader->add_action( 'template_redirect', $plugin_public, 'disable_wp_embeds', 9999 );
+		$this->loader->add_action( 'template_redirect', $plugin_public, 'disable_wp_emojis', 9999 );
+		$this->loader->add_action( 'wp_print_styles', $plugin_public, 'disable_gutenburg_scripts', 99 );
+
+		$this->loader->add_action( 'wp_default_scripts', $plugin_public, 'disable_jquery_migrate' );
+		$this->loader->add_action( 'wp_head', $plugin_public, 'preload_fonts' );
+		$this->loader->add_action( 'wp_head', $plugin_public, 'preload_images' );
+		$this->loader->add_action( 'wp_head', $plugin_public, 'dns_prefetch' );
+		$this->loader->add_action( 'wp_head', $plugin_public, 'inline_defer_js', 10 );
+		$this->loader->add_action( 'wp_head', $plugin_public, 'defer_gtgm', 30 );
+		$this->loader->add_action( 'wp_head', $plugin_public, 'defer_facebook_pixel', 30 );
+		$this->loader->add_action( 'wp_head', $plugin_public, 'defer_inline_external_scripts', 30 );
+
+		$this->loader->add_action( 'wp_print_styles', $plugin_public, 'load_scripts_on_wc_templates_only' );
+
+		$this->loader->add_filter('woocommerce_get_image_size_thumbnail', $plugin_public, 'product_custom_mobile_thumb_size' );
+
+		$this->loader->add_filter( 'wp_calculate_image_srcset_meta', $plugin_public, 'disable_product_mobile_srcset' );
+
+		$this->loader->add_action( 'wp_print_styles', $plugin_public, 'load_styles_on_cf7_pages_only', 99 );
+
+		$this->loader->add_action( 'wp_print_scripts', $plugin_public, 'load_scripts_on_cf7_pages_only', 99 );
 
 		if( wp_is_mobile() ){
 			$this->loader->add_filter('style_loader_tag', $plugin_public, 'mobile_injected_scripts', 99, 3);
