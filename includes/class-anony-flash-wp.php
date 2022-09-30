@@ -175,6 +175,8 @@ class Anony_Flash_Wp {
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'lazy_elementor_background_images_js', 999 );
 
 		$this->loader->add_action( 'wp_head', $plugin_public, 'lazy_elementor_background_images_css' );
+
+		$this->loader->add_action( 'wp_head', $plugin_public, 'load_used_css' );
 		
 		$this->loader->add_filter( 'the_content', $plugin_public, 'elementor_add_lazyload_class' );
 
@@ -183,18 +185,11 @@ class Anony_Flash_Wp {
 
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
 
-		
-
-
 		$this->loader->add_action( 'wp_print_styles', $plugin_public, 'dequeued_styles', 999 );
 
 		$this->loader->add_action( 'wp_print_scripts', $plugin_public, 'dequeue_scripts', 999 );
 
-		$this->loader->add_action( 'wp_print_footer_scripts', $plugin_public, 'inject_scripts', 999 );
-
 		$this->loader->add_action( 'wp_default_scripts', $plugin_public, 'deregister_jquery_migrate' );
-
-		
 
 		// Add missing image dimensions
 		$this->loader->add_filter( 'the_content', $plugin_public, 'add_missing_image_Dimensions' );
@@ -205,14 +200,16 @@ class Anony_Flash_Wp {
 		//Remove add query strings to styles
 		$this->loader->add_filter('style_loader_src', $plugin_public, 'remove_query_strings', 99, 2);
 		
-		$this->loader->add_filter('style_loader_tag', $plugin_public, 'common_injected_scripts', 99, 3);
+		// $this->loader->add_filter('style_loader_tag', $plugin_public, 'common_injected_scripts', 99 );
+		// $this->loader->add_action( 'wp_print_footer_scripts', $plugin_public, 'inject_scripts', 999 );
 
+		$this->loader->add_filter('style_loader_tag', $plugin_public, 'remove_all_stylesheets', 99);
 
 		$this->loader->add_action( 'get_header', $plugin_public, 'wp_html_compression_finish' );
 
 		//controls add query strings to scripts
 		$this->loader->add_filter('script_loader_src', $plugin_public, 'anony_control_query_strings', 15, 2);
-
+		
 		//controls add query strings to styles
 		$this->loader->add_filter('style_loader_src', $plugin_public, 'anony_control_query_strings', 15, 2);
 

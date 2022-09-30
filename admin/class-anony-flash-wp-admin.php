@@ -54,6 +54,8 @@ class Anony_Flash_Wp_Admin {
 
 		add_action( 'init', array( $this ,'plugin_options' ) );
 
+		// Array of metaboxes to register
+		add_filter( 'anony_metaboxes', array( $this ,'optimize_per_post' ) );
 	}
 
 	/**
@@ -102,7 +104,7 @@ class Anony_Flash_Wp_Admin {
 
 	}
 
-	function plugin_options()
+	public function plugin_options()
 	{
 		if(!class_exists('ANONY_Options_Model')) return;
 
@@ -451,4 +453,40 @@ class Anony_Flash_Wp_Admin {
 		$Anofl_Options_Page = new ANONY_Theme_Settings( $options_nav, $anoflsections, [], $anoflOptionsPage);
 	}
 
+	public function optimize_per_post ( $metaboxes ) {
+		$metaboxes[] =
+		array(
+			'id'            => 'optimize_per_post', // Meta box ID
+			'title'         => esc_html__( 'Optimize this page/post', 'anony-flash-wp' ),
+			'context'       => 'normal',
+			'priority'      => 'high', // high|low
+			'hook_priority' => '10', // Default 10
+			'post_type'     => apply_filters( 'optimize_per_post_types', array( 'post', 'page' ) ),
+			'fields'        =>
+					array(
+						array(
+							'id'       => 'enable_used_css',
+							'title'    => esc_html__( 'Enable used css', 'anony-flash-wp' ),
+							'type'     => 'switch',
+							'validate' => 'no_html',
+							'desc'     => esc_html__( 'Enabling this will disable all stylesheets of this page/post and will replace them with used css that you will add below', 'anony-flash-wp' ),
+							
+						),
+
+						array(
+							'id'       => 'used_css',
+							'title'    => esc_html__( 'Used css', 'anony-flash-wp' ),
+							'type'     => 'textarea',
+							'validate' => 'no_html',
+							'desc'     => __( 'Add css used in this page/post. CSS should be added without <code>style</code> tag.', 'anony-flash-wp' ),
+							'text-align' => 'left',
+							'rows'       => '10',
+							'columns'    => '60',
+							'direction'  => 'ltr',
+						),
+					),
+		);
+
+		return $metaboxes;
+	}
 }

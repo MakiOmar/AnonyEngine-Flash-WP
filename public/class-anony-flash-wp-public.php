@@ -957,6 +957,40 @@ class Anony_Flash_Wp_Public {
         }
     }
 
+    public function is_used_css_enabled () 
+    {
+    	global $post;
+    	if ( current_user_can( 'administrator' ) || is_admin() || false !== strpos( $_SERVER['REQUEST_URI'], 'elementor' ) || !$post || is_null( $post )) return false;
+
+    	$optimize_per_post = get_post_meta( $post->ID, 'optimize_per_post', true );
+
+    	$is_used_css_enabled = !empty( $optimize_per_post ) && !empty( $optimize_per_post[ 'enable_used_css' ] ) &&  '1' === $optimize_per_post[ 'enable_used_css' ]  ? true : false;
+
+    	return $is_used_css_enabled;
+    }
+    public function remove_all_stylesheets ( $tag )
+    {
+
+    	if( $this->is_used_css_enabled () )
+    	{
+    		return '';
+    	}
+
+    	return $tag;
+    }
+
+    public function load_used_css () {
+    	if( $this->is_used_css_enabled () )
+    	{
+    		global $post;
+    		$optimize_per_post = get_post_meta( $post->ID, 'optimize_per_post', true );
+    		?>
+    			<style id="anony-used-css-<?php esc_attr( $post->ID ) ?>">
+    				<?php echo $optimize_per_post[ 'used_css' ] ?>
+    			</style>
+    		<?php
+    	}
+    }
     public function common_injected_scripts( $tag ){
 
     	if(is_admin()) return $tag;
