@@ -985,9 +985,27 @@ class Anony_Flash_Wp_Public {
     		global $post;
     		$optimize_per_post = get_post_meta( $post->ID, 'optimize_per_post', true );
     		?>
-    			<style id="anony-used-css-<?php esc_attr( $post->ID ) ?>">
-    				<?php echo $optimize_per_post[ 'used_css' ] ?>
-    			</style>
+    			<?php 
+    			if ( !wp_is_mobile() && !empty( $optimize_per_post[ 'desktop_used_css' ] ) ) 
+    			{
+    				?>
+    				<style id="anony-desktop-used-css-<?php esc_attr( $post->ID ) ?>">
+	    				<?php echo $optimize_per_post[ 'desktop_used_css' ] ?>
+	    			</style>
+    				<?php 
+    			}
+
+    			if ( wp_is_mobile() && !empty( $optimize_per_post[ 'mobile_used_css' ] ) ) 
+    			{
+    				?>
+    				<style id="anony-mobile-used-css-<?php esc_attr( $post->ID ) ?>">
+	    				<?php echo $optimize_per_post[ 'mobile_used_css' ] ?>
+	    			</style>
+    				<?php 
+    			}
+
+    			?>
+    			
     		<?php
     	}
     }

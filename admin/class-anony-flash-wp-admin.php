@@ -474,11 +474,25 @@ class Anony_Flash_Wp_Admin {
 						),
 
 						array(
-							'id'       => 'used_css',
-							'title'    => esc_html__( 'Used css', 'anony-flash-wp' ),
+							'id'       => 'desktop_used_css',
+							'title'    => esc_html__( 'Desktop\'s Used css', 'anony-flash-wp' ),
 							'type'     => 'textarea',
 							'validate' => 'no_html',
 							'desc'     => __( 'Add css used in this page/post. CSS should be added without <code>style</code> tag.', 'anony-flash-wp' ),
+							'note'     => esc_html__( 'Works only on desktop\'s version', 'anony-flash-wp' ),
+							'text-align' => 'left',
+							'rows'       => '10',
+							'columns'    => '60',
+							'direction'  => 'ltr',
+						),
+
+						array(
+							'id'       => 'mobile_used_css',
+							'title'    => esc_html__( 'Mobile\'s Used css', 'anony-flash-wp' ),
+							'type'     => 'textarea',
+							'validate' => 'no_html',
+							'desc'     => __( 'Add css used in this page/post. CSS should be added without <code>style</code> tag.', 'anony-flash-wp' ),
+							'note'     => esc_html__( 'Works only on mobile\'s version', 'anony-flash-wp' ),
 							'text-align' => 'left',
 							'rows'       => '10',
 							'columns'    => '60',
