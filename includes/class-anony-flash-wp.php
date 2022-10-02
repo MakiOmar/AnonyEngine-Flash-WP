@@ -175,8 +175,6 @@ class Anony_Flash_Wp {
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'lazy_elementor_background_images_js', 999 );
 
 		$this->loader->add_action( 'wp_head', $plugin_public, 'lazy_elementor_background_images_css' );
-
-		$this->loader->add_action( 'wp_head', $plugin_public, 'load_used_css' );
 		
 		$this->loader->add_filter( 'the_content', $plugin_public, 'elementor_add_lazyload_class' );
 
@@ -202,6 +200,16 @@ class Anony_Flash_Wp {
 		
 		// $this->loader->add_filter('style_loader_tag', $plugin_public, 'common_injected_scripts', 99 );
 		// $this->loader->add_action( 'wp_print_footer_scripts', $plugin_public, 'inject_scripts', 999 );
+
+		//---------------------Used CSS----------------------------------------------------.
+		$this->loader->add_action( 'wp_head', $plugin_public, 'used_css_placeholder' );
+
+		// wp hook just before the template is loaded.
+		$this->loader->add_action('template_redirect', $plugin_public, 'start_html_buffer', 0);
+
+		// wp hook after wp_footer().
+    	$this->loader->add_action('wp_footer', $plugin_public, 'end_html_buffer', PHP_INT_MAX);
+    	//---------------------End used CSS----------------------------------------------------.
 
 		$this->loader->add_filter('style_loader_tag', $plugin_public, 'remove_all_stylesheets', 99);
 

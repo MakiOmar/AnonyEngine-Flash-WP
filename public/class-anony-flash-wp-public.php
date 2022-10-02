@@ -979,36 +979,62 @@ class Anony_Flash_Wp_Public {
     	return $tag;
     }
 
-    public function load_used_css () {
+    public function used_css_placeholder() {
     	if( $this->is_used_css_enabled () )
+    	{
+	    	echo '{ussedcss}';
+	    }
+    }
+
+    /**
+     * Remove inline <style> blocks.
+     * Start HTML buffer
+     */ 
+	public function start_html_buffer() {
+		if( $this->is_used_css_enabled () )
+    	{
+		    // buffer output html.
+		    ob_start();
+		}
+	}
+
+	/**
+     * End HTML buffer
+     */
+	public function end_html_buffer() {
+		if( $this->is_used_css_enabled () )
     	{
     		global $post;
     		$optimize_per_post = get_post_meta( $post->ID, 'optimize_per_post', true );
-    		?>
-    			<?php 
-    			if ( !wp_is_mobile() && !empty( $optimize_per_post[ 'desktop_used_css' ] ) ) 
-    			{
-    				?>
-    				<style id="anony-desktop-used-css-<?php esc_attr( $post->ID ) ?>">
-	    				<?php echo $optimize_per_post[ 'desktop_used_css' ] ?>
-	    			</style>
-    				<?php 
-    			}
 
-    			if ( wp_is_mobile() && !empty( $optimize_per_post[ 'mobile_used_css' ] ) ) 
-    			{
-    				?>
-    				<style id="anony-mobile-used-css-<?php esc_attr( $post->ID ) ?>">
-	    				<?php echo $optimize_per_post[ 'mobile_used_css' ] ?>
-	    			</style>
-    				<?php 
-    			}
+    		$style = '';
 
-    			?>
-    			
-    		<?php
-    	}
-    }
+    		if ( !wp_is_mobile() && !empty( $optimize_per_post[ 'desktop_used_css' ] ) ) 
+    		{
+    			$style .= '<style id="anony-desktop-used-css-'.esc_attr( $post->ID ).'">
+	    				'.$optimize_per_post[ 'desktop_used_css' ] .'
+	    			</style>';
+
+    		}
+
+    		if ( wp_is_mobile() && !empty( $optimize_per_post[ 'mobile_used_css' ] ) ) 
+    		{
+    			$style .= '<style id="anony-mobile-used-css-'.esc_attr( $post->ID ).'">
+	    				'.$optimize_per_post[ 'mobile_used_css' ] .'
+	    			</style>';
+    		}
+
+		    // get buffered HTML.
+		    $wp_html = ob_get_clean();
+
+		    // remove <style> blocks using regular expression.
+		    $wp_html = preg_replace("/<style[^>]*>[^<]*<\/style>/m",'', $wp_html);
+
+		    $wp_html = str_replace( '{ussedcss}', $style , $wp_html );
+		    echo $wp_html;
+		}
+	}
+
     public function common_injected_scripts( $tag ){
 
     	if(is_admin()) return $tag;
