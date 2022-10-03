@@ -31,6 +31,33 @@ if ( ! defined( 'WPINC' ) ) {
 }
 
 /**
+ * Activation hook
+ */ 
+function anony_flash_wp_active()
+{
+    if (!defined("ANOENGINE")) 
+    {
+        deactivate_plugins( plugin_basename( __FILE__ ) );
+        wp_die( 'Flash wp plugin requires AnonyEngine plugin to be installed/activated. Please install/activate AnonyEngine plugin first.' );
+    }
+}
+
+register_activation_hook( __FILE__, 'anony_flash_wp_active' );
+
+
+/**
+ * Display a notification if one of required plugins is not activated/installed
+ */
+add_action( 'admin_notices', function() {
+    if (!defined('ANOENGINE')) {
+        ?>
+        <div class="notice notice-error is-dismissible">
+            <p><?php esc_html_e( 'Flash wp plugin requires AnonyEngine plugin to be installed/activated. Please install/activate AnonyEngine plugin first.' ); ?></p>
+        </div>
+    <?php }
+});
+
+/**
  * Currently plugin version.
  * Start at version 1.0.0 and use SemVer - https://semver.org
  * Rename this for your plugin and update it as you release new versions.
