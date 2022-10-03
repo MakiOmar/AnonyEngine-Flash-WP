@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Define the internationalization functionality
  *
@@ -24,7 +23,7 @@
  * @subpackage Anony_Flash_Wp/includes
  * @author     Makiomar <maki3omar@gmail.com>
  */
-class Anony_Flash_Wp_i18n {
+class Anony_Flash_Wp_I18n {
 
 
 	/**

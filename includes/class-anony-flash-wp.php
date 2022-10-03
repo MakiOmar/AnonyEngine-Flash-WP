@@ -1,5 +1,4 @@
 <?php
-
 /**
  * The file that defines the core plugin class
  *
@@ -87,7 +86,7 @@ class Anony_Flash_Wp {
 	 * Include the following files that make up the plugin:
 	 *
 	 * - Anony_Flash_Wp_Loader. Orchestrates the hooks of the plugin.
-	 * - Anony_Flash_Wp_i18n. Defines internationalization functionality.
+	 * - Anony_Flash_Wp_I18n. Defines internationalization functionality.
 	 * - Anony_Flash_Wp_Admin. Defines all hooks for the admin area.
 	 * - Anony_Flash_Wp_Public. Defines all hooks for the public side of the site.
 	 *
@@ -129,7 +128,7 @@ class Anony_Flash_Wp {
 	/**
 	 * Define the locale for this plugin for internationalization.
 	 *
-	 * Uses the Anony_Flash_Wp_i18n class in order to set the domain and to register the hook
+	 * Uses the Anony_Flash_Wp_I18n class in order to set the domain and to register the hook
 	 * with WordPress.
 	 *
 	 * @since    1.0.0
@@ -137,7 +136,7 @@ class Anony_Flash_Wp {
 	 */
 	private function set_locale() {
 
-		$plugin_i18n = new Anony_Flash_Wp_i18n();
+		$plugin_i18n = new Anony_Flash_Wp_I18n();
 
 		$this->loader->add_action( 'plugins_loaded', $plugin_i18n, 'load_plugin_textdomain' );
 
@@ -170,15 +169,13 @@ class Anony_Flash_Wp {
 
 		$plugin_public = new Anony_Flash_Wp_Public( $this->get_plugin_name(), $this->get_version() );
 
-
-		
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'lazy_elementor_background_images_js', 999 );
 
 		$this->loader->add_action( 'wp_head', $plugin_public, 'lazy_elementor_background_images_css' );
-		
+
 		$this->loader->add_filter( 'the_content', $plugin_public, 'elementor_add_lazyload_class' );
 
-		// Actions.
+		// Actions..
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles' );
 
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
@@ -187,41 +184,48 @@ class Anony_Flash_Wp {
 
 		$this->loader->add_action( 'wp_print_scripts', $plugin_public, 'dequeue_scripts', 999 );
 
-		// Add missing image dimensions
+		// Add missing image dimensions.
 		$this->loader->add_filter( 'the_content', $plugin_public, 'add_missing_image_Dimensions' );
-		
+
+		// phpcs:disable
 		// $this->loader->add_filter('style_loader_tag', $plugin_public, 'common_injected_scripts', 99 );
 		// $this->loader->add_action( 'wp_print_footer_scripts', $plugin_public, 'inject_scripts', 999 );
+		// phpcs:enable
 
-		//---------------------Used CSS----------------------------------------------------.
+		// ---------------------Used CSS----------------------------------------------------..
 		$this->loader->add_action( 'wp_head', $plugin_public, 'used_css_placeholder' );
 
-		// wp hook just before the template is loaded.
-		$this->loader->add_action('template_redirect', $plugin_public, 'start_html_buffer', 0);
+		// wp hook just before the template is loaded..
+		$this->loader->add_action( 'template_redirect', $plugin_public, 'start_html_buffer', 0 );
 
-		// wp hook after wp_footer().
-    	$this->loader->add_action('wp_footer', $plugin_public, 'end_html_buffer', PHP_INT_MAX);
-    	//---------------------End used CSS----------------------------------------------------.
+		// wp hook after wp_footer()..
+		$this->loader->add_action( 'wp_footer', $plugin_public, 'end_html_buffer', PHP_INT_MAX );
+		// ---------------------End used CSS----------------------------------------------------..
 
-		$this->loader->add_filter('style_loader_tag', $plugin_public, 'remove_all_stylesheets', 99);
+		$this->loader->add_filter( 'style_loader_tag', $plugin_public, 'remove_all_stylesheets', 99 );
 
 		$this->loader->add_action( 'get_header', $plugin_public, 'wp_html_compression_finish' );
 
-		//controls add query strings to scripts
-		$this->loader->add_filter('script_loader_src', $plugin_public, 'anony_control_query_strings', 15, 2);
-		
-		//controls add query strings to styles
-		$this->loader->add_filter('style_loader_src', $plugin_public, 'anony_control_query_strings', 15, 2);
+		// controls add query strings to scripts.
+		$this->loader->add_filter( 'script_loader_src', $plugin_public, 'anony_control_query_strings', 15, 2 );
 
-		//styles full defer
+		// controls add query strings to styles.
+		$this->loader->add_filter( 'style_loader_src', $plugin_public, 'anony_control_query_strings', 15, 2 );
+
+		// styles full defer.
 		$this->loader->add_filter( 'style_loader_tag', $plugin_public, 'defer_stylesheets' );
 
-		//Scripts defer
-		$this->loader->add_filter( 'script_loader_tag', $plugin_public, 'defer_scripts', 99, 3 
+		// Scripts defer.
+		$this->loader->add_filter(
+			'script_loader_tag',
+			$plugin_public,
+			'defer_scripts',
+			99,
+			3
 		);
 
-		//Use custom avatar instead of Gravatar.com
-		$this->loader->add_filter( 'get_avatar', $plugin_public, 'disable_gravatar', 200  );
+		// Use custom avatar instead of Gravatar.com.
+		$this->loader->add_filter( 'get_avatar', $plugin_public, 'disable_gravatar', 200 );
 
 		$this->loader->add_action( 'template_redirect', $plugin_public, 'disable_wp_embeds', 9999 );
 		$this->loader->add_action( 'template_redirect', $plugin_public, 'disable_wp_emojis', 9999 );
@@ -238,7 +242,7 @@ class Anony_Flash_Wp {
 
 		$this->loader->add_action( 'wp_print_styles', $plugin_public, 'load_scripts_on_wc_templates_only' );
 
-		$this->loader->add_filter('woocommerce_get_image_size_thumbnail', $plugin_public, 'product_custom_mobile_thumb_size' );
+		$this->loader->add_filter( 'woocommerce_get_image_size_thumbnail', $plugin_public, 'product_custom_mobile_thumb_size' );
 
 		$this->loader->add_filter( 'wp_calculate_image_srcset_meta', $plugin_public, 'disable_product_mobile_srcset' );
 
@@ -246,10 +250,9 @@ class Anony_Flash_Wp {
 
 		$this->loader->add_action( 'wp_print_scripts', $plugin_public, 'load_scripts_on_cf7_pages_only', 99 );
 
-		if( wp_is_mobile() ){
-			$this->loader->add_filter('style_loader_tag', $plugin_public, 'mobile_injected_scripts', 99, 3);
+		if ( wp_is_mobile() ) {
+			$this->loader->add_filter( 'style_loader_tag', $plugin_public, 'mobile_injected_scripts', 99, 3 );
 		}
-		
 
 	}
 
