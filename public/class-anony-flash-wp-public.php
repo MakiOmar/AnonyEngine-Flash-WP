@@ -867,31 +867,7 @@ class Anony_Flash_Wp_Public {
 
 	   											 
 		$lazy_elementor_background_images_js_added = wp_add_inline_script( $dependancy, $skrip );
-	}
-
-	/**
-	 * This will prevent the jQuery Migrate script from being loaded on the front end while keeping the jQuery script itself intact. It's still being loaded in the admin to not break anything there.
-	 *
-	 * @since    1.0.0
-	 */
-	public function deregister_jquery_migrate ( $scripts ) {
-        if (! is_admin() && ! empty($scripts->registered['jquery']) ) {
-            $scripts->registered['jquery']->deps = array_diff(
-                $scripts->registered['jquery']->deps,
-                [ 'jquery-migrate' ]
-            );
-        }
-    } 
-
-	public function remove_query_strings($src, $handle){
-        if(is_admin()) { 
-        	return $src;
-        }
-
-		$src = remove_query_arg('ver', $src);
-        return $src;
-        
-    }
+	} 
 
     public function add_missing_image_Dimensions( $content ) {
     	$anofl_options = ANONY_Options_Model::get_instance( 'Anofl_Options' );
