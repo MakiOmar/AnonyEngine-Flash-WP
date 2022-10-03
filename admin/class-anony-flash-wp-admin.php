@@ -1,5 +1,4 @@
 <?php
-
 /**
  * The admin-specific functionality of the plugin.
  *
@@ -44,18 +43,18 @@ class Anony_Flash_Wp_Admin {
 	 * Initialize the class and set its properties.
 	 *
 	 * @since    1.0.0
-	 * @param      string    $plugin_name       The name of this plugin.
-	 * @param      string    $version    The version of this plugin.
+	 * @param      string $plugin_name       The name of this plugin.
+	 * @param      string $version    The version of this plugin.
 	 */
 	public function __construct( $plugin_name, $version ) {
 
 		$this->plugin_name = $plugin_name;
-		$this->version = $version;
+		$this->version     = $version;
 
-		add_action( 'init', array( $this ,'plugin_options' ) );
+		add_action( 'init', array( $this, 'plugin_options' ) );
 
-		// Array of metaboxes to register
-		add_filter( 'anony_metaboxes', array( $this ,'optimize_per_post' ) );
+		// Array of metaboxes to register.
+		add_filter( 'anony_metaboxes', array( $this, 'optimize_per_post' ) );
 	}
 
 	/**
@@ -104,57 +103,62 @@ class Anony_Flash_Wp_Admin {
 
 	}
 
-	public function plugin_options()
-	{
-		if(!class_exists('ANONY_Options_Model')) return;
+	/**
+	 * Create plugin's options' page
+	 */
+	public function plugin_options() {
+		if ( ! class_exists( 'ANONY_Options_Model' ) ) {
+			return;
+		}
 
-		if(get_option('Anofl_Options')) $anoflOptions = ANONY_Options_Model::get_instance('Anofl_Options');
+		if ( get_option( 'Anofl_Options' ) ) {
+			$anofl_options = ANONY_Options_Model::get_instance( 'Anofl_Options' );
+		}
 
-		// Navigation elements
+		// Navigation elements.
 		$options_nav = array(
-			// General --------------------------------------------
-			'general' => array(
-				'title' => esc_html__('General', 'anony-flash-wp'),
+			// General --------------------------------------------.
+			'general'        => array(
+				'title' => esc_html__( 'General', 'anony-flash-wp' ),
 			),
 
-			// Scripts --------------------------------------------
-			'scripts' => array(
-				'title'    => esc_html__('Scripts/Styles', 'anony-flash-wp'),
+			// Scripts --------------------------------------------.
+			'scripts'        => array(
+				'title' => esc_html__( 'Scripts/Styles', 'anony-flash-wp' ),
 			),
-			// Preloading --------------------------------------------
-			'preloads' => array(
-				'title'    => esc_html__('Preloading', 'anony-flash-wp'),
+			// Preloading --------------------------------------------.
+			'preloads'       => array(
+				'title' => esc_html__( 'Preloading', 'anony-flash-wp' ),
 			),
-			// Images --------------------------------------------
-			'media' => array(
-				'title'    => esc_html__('Media', 'anony-flash-wp'),
+			// Images --------------------------------------------.
+			'media'          => array(
+				'title' => esc_html__( 'Media', 'anony-flash-wp' ),
 			),
 
-			// Custom Head/Footer scripts --------------------------------------------
-			'custom-scripts'        => array(
+			// Custom Head/Footer scripts --------------------------------------------.
+			'custom-scripts' => array(
 				'title'    => esc_html__( 'Custom scripts', 'anony-flash-wp' ),
 				'sections' => array( 'custom-scripts', 'external-services' ),
 			),
 
-
 		);
 
-		if( class_exists( 'woocommerce' ) ){
-			$options_nav[ 'woocommerce' ] = array(
-				'title' => esc_html__('Woocommerce', 'anony-flash-wp'),
+		if ( class_exists( 'woocommerce' ) ) {
+			$options_nav['woocommerce'] = array(
+				'title' => esc_html__( 'Woocommerce', 'anony-flash-wp' ),
 			);
 		}
 
-		$anoflsections['custom-scripts'] = array(
+		$anofl_sections['custom-scripts'] = array(
 			'title'  => esc_html__( 'Custom scripts', 'anony-flash-wp' ),
 			'icon'   => 'x',
 			'fields' => array(
 				array(
-					'id'       => 'head_scripts',
-					'title'    => esc_html__( 'Head scripts', 'anony-flash-wp' ),
-					'type'     => 'textarea',
-					'validate' => 'html',
-					'desc'     => esc_html__( 'Scripts added to this option will applied to the entire site', 'anony-flash-wp' ),
+					'id'         => 'head_scripts',
+					'title'      => esc_html__( 'Head scripts', 'anony-flash-wp' ),
+					'type'       => 'textarea',
+					'validate'   => 'html',
+					'desc'       => esc_html__( 'Scripts added to this option will applied to the entire site', 'anony-flash-wp' ),
 					'text-align' => 'left',
 					'rows'       => '10',
 					'columns'    => '60',
@@ -162,11 +166,11 @@ class Anony_Flash_Wp_Admin {
 				),
 
 				array(
-					'id'       => 'footer_scripts',
-					'title'    => esc_html__( 'Footer scripts', 'anony-flash-wp' ),
-					'type'     => 'textarea',
-					'validate' => 'html',
-					'desc'     => esc_html__( 'Scripts added to this option will applied to the entire site', 'anony-flash-wp' ),
+					'id'         => 'footer_scripts',
+					'title'      => esc_html__( 'Footer scripts', 'anony-flash-wp' ),
+					'type'       => 'textarea',
+					'validate'   => 'html',
+					'desc'       => esc_html__( 'Scripts added to this option will applied to the entire site', 'anony-flash-wp' ),
 					'text-align' => 'left',
 					'rows'       => '10',
 					'columns'    => '60',
@@ -175,34 +179,35 @@ class Anony_Flash_Wp_Admin {
 			),
 		);
 
-		$anoflsections['external-services'] = array(
+		$anofl_sections['external-services'] = array(
 			'title'  => esc_html__( 'External services', 'anony-flash-wp' ),
 			'icon'   => 'x',
 			'fields' => array(
 				array(
-					'id'       => 'gtgm_id',
-					'title'    => esc_html__( 'Google tag manager\'s ID', 'anony-flash-wp' ),
-					'type'     => 'text',
+					'id'        => 'gtgm_id',
+					'title'     => esc_html__( 'Google tag manager\'s ID', 'anony-flash-wp' ),
+					'type'      => 'text',
 					'validat e' => 'no_html',
-					'desc'     => esc_html__( 'This option will load Google tag manager without affecting page loading speed', 'anony-flash-wp' ),
-					'direction'  => 'ltr',
+					'desc'      => esc_html__( 'This option will load Google tag manager without affecting page loading speed', 'anony-flash-wp' ),
+					'direction' => 'ltr',
 				),
 
 				array(
-					'id'       => 'facebook_pixel_id',
-					'title'    => esc_html__( 'Facebook\'s pixel\'s id', 'anony-flash-wp' ),
-					'type'     => 'text',
-					'validate' => 'no_html',
-					'desc'     => esc_html__( 'This option will load Facebook\'s pixel without affecting page loading speed', 'anony-flash-wp' ),
-					'direction'  => 'ltr',
+					'id'        => 'facebook_pixel_id',
+					'title'     => esc_html__( 'Facebook\'s pixel\'s id', 'anony-flash-wp' ),
+					'type'      => 'text',
+					'validate'  => 'no_html',
+					'desc'      => esc_html__( 'This option will load Facebook\'s pixel without affecting page loading speed', 'anony-flash-wp' ),
+					'direction' => 'ltr',
 				),
 
 				array(
-					'id'       => 'external_scripts',
-					'title'    => esc_html__( 'External scripts', 'anony-flash-wp' ),
-					'type'     => 'textarea',
-					'validate' => 'html',
-					'desc'     => sprintf(__( 'Scripts should be added without the <code>%s</code> tag', 'anony-flash-wp' ) , esc_html('<script>')),
+					'id'         => 'external_scripts',
+					'title'      => esc_html__( 'External scripts', 'anony-flash-wp' ),
+					'type'       => 'textarea',
+					'validate'   => 'html',
+					// translators: An escaped script tag.
+					'desc'       => sprintf( __( 'Scripts should be added without the <code>%s</code> tag', 'anony-flash-wp' ), esc_html( '<script>' ) ),
 					'text-align' => 'left',
 					'rows'       => '10',
 					'columns'    => '60',
@@ -211,117 +216,115 @@ class Anony_Flash_Wp_Admin {
 			),
 		);
 
-		$anoflsections['general']= array(
-				'title' => esc_html__('General', 'anony-flash-wp'),
-				'icon' => 'x',
-				'fields' => array(
-								array(
-									'id'       => 'compress_html',
-									'title'    => esc_html__( 'Compress HTML', 'anony-flash-wp' ),
-									'type'     => 'switch',
-									'validate' => 'no_html',
-									'desc'     => esc_html__( 'Please activate only if you think that GZIP is not enabled on your server.', 'anony-flash-wp' ) . ' <a href="https://www.giftofspeed.com/gzip-test/">' . esc_html__( 'Check gzip compression', 'anony-flash-wp' ) . '</a>',
-								),
+		$anofl_sections['general'] = array(
+			'title'  => esc_html__( 'General', 'anony-flash-wp' ),
+			'icon'   => 'x',
+			'fields' => array(
+				array(
+					'id'       => 'compress_html',
+					'title'    => esc_html__( 'Compress HTML', 'anony-flash-wp' ),
+					'type'     => 'switch',
+					'validate' => 'no_html',
+					'desc'     => esc_html__( 'Please activate only if you think that GZIP is not enabled on your server.', 'anony-flash-wp' ) . ' <a href="https://www.giftofspeed.com/gzip-test/">' . esc_html__( 'Check gzip compression', 'anony-flash-wp' ) . '</a>',
+				),
 
-								
+				array(
+					'id'       => 'disable_gravatar',
+					'title'    => esc_html__( 'Disable gravatar.com', 'anony-flash-wp' ),
+					'type'     => 'switch',
+					'validate' => 'no_html',
+					'desc'     => esc_html__( 'Stops getting gravatar from gravatar.com', 'anony-flash-wp' ),
+				),
 
-								array(
-									'id'       => 'disable_gravatar',
-									'title'    => esc_html__( 'Disable gravatar.com', 'anony-flash-wp' ),
-									'type'     => 'switch',
-									'validate' => 'no_html',
-									'desc'     => esc_html__( 'Stops getting gravatar from gravatar.com', 'anony-flash-wp' ),
-								),
+				array(
+					'id'       => 'disable_embeds',
+					'title'    => esc_html__( 'Disable WP embeds', 'anony-flash-wp' ),
+					'type'     => 'switch',
+					'validate' => 'no_html',
+					'desc'     => esc_html__( 'Disables WP embeds completely', 'anony-flash-wp' ),
+				),
 
-								array(
-									'id'       => 'disable_embeds',
-									'title'    => esc_html__( 'Disable WP embeds', 'anony-flash-wp' ),
-									'type'     => 'switch',
-									'validate' => 'no_html',
-									'desc'     => esc_html__( 'Disables WP embeds completely', 'anony-flash-wp' ),
-								),
+				array(
+					'id'       => 'enable_singular_embeds',
+					'title'    => esc_html__( 'Enable WP embeds on singular', 'anony-flash-wp' ),
+					'type'     => 'switch',
+					'validate' => 'no_html',
+					'desc'     => esc_html__( 'Enables WP embeds on singular pages (e.g. post/page). Will override (disable WP embeds) option', 'anony-flash-wp' ),
+				),
 
-								array(
-									'id'       => 'enable_singular_embeds',
-									'title'    => esc_html__( 'Enable WP embeds on singular', 'anony-flash-wp' ),
-									'type'     => 'switch',
-									'validate' => 'no_html',
-									'desc'     => esc_html__( 'Enables WP embeds on singular pages (e.g. post/page). Will override (disable WP embeds) option', 'anony-flash-wp' ),
-								),
+				array(
+					'id'       => 'disable_emojis',
+					'title'    => esc_html__( 'Disable WP emojis', 'anony-flash-wp' ),
+					'type'     => 'switch',
+					'validate' => 'no_html',
+					'desc'     => esc_html__( 'Disables WP emojis completely', 'anony-flash-wp' ),
+				),
+				array(
+					'id'       => 'enable_singular_emojis',
+					'title'    => esc_html__( 'Enable WP emojis on singular', 'anony-flash-wp' ),
+					'type'     => 'switch',
+					'validate' => 'no_html',
+					'desc'     => esc_html__( 'Enables WP emojis on singular pages (e.g. post/page). Will override (disable WP emojis) option', 'anony-flash-wp' ),
+				),
 
-								array(
-									'id'       => 'disable_emojis',
-									'title'    => esc_html__( 'Disable WP emojis', 'anony-flash-wp' ),
-									'type'     => 'switch',
-									'validate' => 'no_html',
-									'desc'     => esc_html__( 'Disables WP emojis completely', 'anony-flash-wp' ),
-								),
-								array(
-									'id'       => 'enable_singular_emojis',
-									'title'    => esc_html__( 'Enable WP emojis on singular', 'anony-flash-wp' ),
-									'type'     => 'switch',
-									'validate' => 'no_html',
-									'desc'     => esc_html__( 'Enables WP emojis on singular pages (e.g. post/page). Will override (disable WP emojis) option', 'anony-flash-wp' ),
-								),
-
-							)
+			),
 		);
-		
-		$anoflsections['scripts']= array(
-				'title' => esc_html__('Scripts/Style', 'anony-flash-wp'),
-				'icon' => 'x',
-				'fields' => array(
-								array(
-									'id'       => 'query_string',
-									'title'    => esc_html__( 'Remove query string', 'anony-flash-wp' ),
-									'type'     => 'switch',
-									'validate' => 'no_html',
-									'desc'     => esc_html__( 'Removes query string from styles/scripts and help speed up your website', 'anony-flash-wp' ),
-								),
-								array(
-									'id'       => 'keep_query_string',
-									'title'    => esc_html__( 'Keep query string', 'anony-flash-wp' ),
-									'type'     => 'text',
-									'validate' => 'no_html',
-									'desc'     => esc_html__( 'Add comma separated handles of scripts/styles you want to keep query string', 'anony-flash-wp' ),
-								),
 
-								array(
-									'id'       => 'defer_stylesheets',
-									'title'    => esc_html__( 'Defer stylesheets loading', 'anony-flash-wp' ),
-									'type'     => 'switch',
-									'validate' => 'no_html',
-									'desc'     => esc_html__( 'Improves First content paint, and get higher score on page speed insights. Be careful when using with minification plugins, it may cause style issues', 'anony-flash-wp' ),
-								),
+		$anofl_sections['scripts'] = array(
+			'title'  => esc_html__( 'Scripts/Style', 'anony-flash-wp' ),
+			'icon'   => 'x',
+			'fields' => array(
+				array(
+					'id'       => 'query_string',
+					'title'    => esc_html__( 'Remove query string', 'anony-flash-wp' ),
+					'type'     => 'switch',
+					'validate' => 'no_html',
+					'desc'     => esc_html__( 'Removes query string from styles/scripts and help speed up your website', 'anony-flash-wp' ),
+				),
+				array(
+					'id'       => 'keep_query_string',
+					'title'    => esc_html__( 'Keep query string', 'anony-flash-wp' ),
+					'type'     => 'text',
+					'validate' => 'no_html',
+					'desc'     => esc_html__( 'Add comma separated handles of scripts/styles you want to keep query string', 'anony-flash-wp' ),
+				),
 
-								array(
-									'id'       => 'defer_scripts',
-									'title'    => esc_html__( 'Defer scripts loading', 'anony-flash-wp' ),
-									'type'     => 'switch',
-									'validate' => 'no_html',
-									'desc'     => esc_html__( 'Improves First content paint, and get higher score on page speed insights.', 'anony-flash-wp' ),
-								),
-								array(
-									'id'       => 'disable_gutenburg_scripts',
-									'title'    => esc_html__( 'Disable Gutenburg editor scripts', 'anony-flash-wp' ),
-									'type'     => 'switch',
-									'validate' => 'no_html',
-									'desc'     => esc_html__( 'If your using classic editor, enable this to remove unwanted Gutenburg\'s editor scripts', 'anony-flash-wp' ),
-								),
+				array(
+					'id'       => 'defer_stylesheets',
+					'title'    => esc_html__( 'Defer stylesheets loading', 'anony-flash-wp' ),
+					'type'     => 'switch',
+					'validate' => 'no_html',
+					'desc'     => esc_html__( 'Improves First content paint, and get higher score on page speed insights. Be careful when using with minification plugins, it may cause style issues', 'anony-flash-wp' ),
+				),
 
-								array(
-									'id'       => 'disable_jq_migrate',
-									'title'    => esc_html__( 'Disable jquery migrate', 'anony-flash-wp' ),
-									'type'     => 'switch',
-									'validate' => 'no_html',
-									'desc'     => esc_html__( 'This will prevent the jQuery Migrate script from being loaded on the front end while keeping the jQuery script itself intact. It\'s still being loaded in the admin to not break anything there.)', 'anony-flash-wp' ),
-								),
-				)
-			);
+				array(
+					'id'       => 'defer_scripts',
+					'title'    => esc_html__( 'Defer scripts loading', 'anony-flash-wp' ),
+					'type'     => 'switch',
+					'validate' => 'no_html',
+					'desc'     => esc_html__( 'Improves First content paint, and get higher score on page speed insights.', 'anony-flash-wp' ),
+				),
+				array(
+					'id'       => 'disable_gutenburg_scripts',
+					'title'    => esc_html__( 'Disable Gutenburg editor scripts', 'anony-flash-wp' ),
+					'type'     => 'switch',
+					'validate' => 'no_html',
+					'desc'     => esc_html__( 'If your using classic editor, enable this to remove unwanted Gutenburg\'s editor scripts', 'anony-flash-wp' ),
+				),
 
-		// If contact form 7 is acive
-		if ( defined( 'WPCF7_PLUGIN' ) ){
-			$anoflsections['scripts']['fields'][] = array(
+				array(
+					'id'       => 'disable_jq_migrate',
+					'title'    => esc_html__( 'Disable jquery migrate', 'anony-flash-wp' ),
+					'type'     => 'switch',
+					'validate' => 'no_html',
+					'desc'     => esc_html__( 'This will prevent the jQuery Migrate script from being loaded on the front end while keeping the jQuery script itself intact. It\'s still being loaded in the admin to not break anything there.)', 'anony-flash-wp' ),
+				),
+			),
+		);
+
+		// If contact form 7 is acive.
+		if ( defined( 'WPCF7_PLUGIN' ) ) {
+			$anofl_sections['scripts']['fields'][] = array(
 				'id'       => 'cf7_scripts',
 				'title'    => esc_html__( 'Contact form 7 scripts/styles', 'anony-flash-wp' ),
 				'type'     => 'select2',
@@ -332,86 +335,86 @@ class Anony_Flash_Wp_Admin {
 			);
 
 		}
-		$anoflsections['preloads']= array(
-				'title' => esc_html__('Preloads', 'anony-flash-wp'),
-				'icon' => 'x',
-				'fields' => array(
-								array(
-									'id'         => 'preload_fonts',
-									'title'      => esc_html__( 'Preload fonts', 'anony-flash-wp' ),
-									'type'       => 'textarea',
-									'columns'    => '70',
-									'rows'       => '8',
-									'validate'   => 'no_html',
-									'text-align' => 'left',
-									'desc'       => esc_html__( 'Help to improve CLS. Please add a URL perline.', 'anony-flash-wp' ),
-								),
+		$anofl_sections['preloads'] = array(
+			'title'  => esc_html__( 'Preloads', 'anony-flash-wp' ),
+			'icon'   => 'x',
+			'fields' => array(
+				array(
+					'id'         => 'preload_fonts',
+					'title'      => esc_html__( 'Preload fonts', 'anony-flash-wp' ),
+					'type'       => 'textarea',
+					'columns'    => '70',
+					'rows'       => '8',
+					'validate'   => 'no_html',
+					'text-align' => 'left',
+					'desc'       => esc_html__( 'Help to improve CLS. Please add a URL perline.', 'anony-flash-wp' ),
+				),
 
-								array(
-									'id'         => 'preload_images',
-									'title'      => esc_html__( 'Preload images', 'anony-flash-wp' ),
-									'type'       => 'textarea',
-									'columns'    => '70',
-									'rows'       => '8',
-									'validate'   => 'no_html',
-									'text-align' => 'left',
-									'desc'       => esc_html__( 'Help to improve largest content paint.Please add a URL perline.', 'anony-flash-wp' ),
-								),
+				array(
+					'id'         => 'preload_images',
+					'title'      => esc_html__( 'Preload images', 'anony-flash-wp' ),
+					'type'       => 'textarea',
+					'columns'    => '70',
+					'rows'       => '8',
+					'validate'   => 'no_html',
+					'text-align' => 'left',
+					'desc'       => esc_html__( 'Help to improve largest content paint.Please add a URL perline.', 'anony-flash-wp' ),
+				),
 
-								array(
-									'id'         => 'dns_prefetch',
-									'title'      => esc_html__( 'Prefetch DNS Requests', 'anony-flash-wp' ),
-									'type'       => 'textarea',
-									'columns'    => '70',
-									'rows'       => '8',
-									'validate'   => 'no_html',
-									'text-align' => 'left',
-									'desc'       => __( 'DNS prefetching can make external files load faster, especially on mobile networks. Please add a URL per line without <code>http:</code>', 'anony-flash-wp' ),
-								),
-				)
-			);
+				array(
+					'id'         => 'dns_prefetch',
+					'title'      => esc_html__( 'Prefetch DNS Requests', 'anony-flash-wp' ),
+					'type'       => 'textarea',
+					'columns'    => '70',
+					'rows'       => '8',
+					'validate'   => 'no_html',
+					'text-align' => 'left',
+					'desc'       => __( 'DNS prefetching can make external files load faster, especially on mobile networks. Please add a URL per line without <code>http:</code>', 'anony-flash-wp' ),
+				),
+			),
+		);
 
-		$anoflsections['media']= array(
-				'title' => esc_html__('Media', 'anony-flash-wp'),
-				'icon' => 'x',
-				'fields' => array(
-								array(
-									'id'       => 'add_missing_image_dimensions',
-									'title'    => esc_html__( 'Add missing image dimensions', 'anony-flash-wp' ),
-									'type'     => 'switch',
-									'validate' => 'no_html',
-								),
-				)
-			);
+		$anofl_sections['media'] = array(
+			'title'  => esc_html__( 'Media', 'anony-flash-wp' ),
+			'icon'   => 'x',
+			'fields' => array(
+				array(
+					'id'       => 'add_missing_image_dimensions',
+					'title'    => esc_html__( 'Add missing image dimensions', 'anony-flash-wp' ),
+					'type'     => 'switch',
+					'validate' => 'no_html',
+				),
+			),
+		);
 
 		if ( ANONY_Wp_Plugin_Help::is_active( 'elementor/elementor.php' ) ) {
-			$anoflsections['media']['fields'][] = array(
-													'id'       => 'lazyload_elementor_backgrounds',
-													'title'    => esc_html__( 'lazyload elementor\'s backgrounds', 'anony-flash-wp' ),
-													'type'     => 'switch',
-													'validate' => 'no_html',
-												);
-			$anoflsections['media']['fields'][] = array(
-													'id'       => 'lazyloading_elementor_bg_method',
-													'title'    => esc_html__( 'lazyloading elementor\'s backgrounds\s method', 'anony-flash-wp' ),
-													'type'     => 'radio',
-													'validate' => 'no_html',
-													'options' => array(
-														
-															'with_jquery' => array(
-																'title' => esc_html__( 'Using jquery/waypoint', 'anony-flash-wp' ),
-															),
+			$anofl_sections['media']['fields'][] = array(
+				'id'       => 'lazyload_elementor_backgrounds',
+				'title'    => esc_html__( 'lazyload elementor\'s backgrounds', 'anony-flash-wp' ),
+				'type'     => 'switch',
+				'validate' => 'no_html',
+			);
+			$anofl_sections['media']['fields'][] = array(
+				'id'       => 'lazyloading_elementor_bg_method',
+				'title'    => esc_html__( 'lazyloading elementor\'s backgrounds\s method', 'anony-flash-wp' ),
+				'type'     => 'radio',
+				'validate' => 'no_html',
+				'options'  => array(
 
-															'without_jquery' => array(
-																'title' => esc_html__( 'Without jquery', 'anony-flash-wp' ),
-															) 
+					'with_jquery'    => array(
+						'title' => esc_html__( 'Using jquery/waypoint', 'anony-flash-wp' ),
+					),
 
-													),
-													'default' => 'with_jquery'
-												);
+					'without_jquery' => array(
+						'title' => esc_html__( 'Without jquery', 'anony-flash-wp' ),
+					),
+
+				),
+				'default'  => 'with_jquery',
+			);
 		}
-		if( class_exists( 'woocommerce' ) ){
-			$anoflsections['woocommerce'] = array(
+		if ( class_exists( 'woocommerce' ) ) {
+			$anofl_sections['woocommerce'] = array(
 				'title'  => esc_html__( 'Woocommerce', 'anony-flash-wp' ),
 				'icon'   => 'x',
 				'fields' => array(
@@ -434,33 +437,36 @@ class Anony_Flash_Wp_Admin {
 						'title'    => esc_html__( 'Product thumnbnail size on mobile', 'anony-flash-wp' ),
 						'type'     => 'number',
 						'validate' => 'no_html',
-					)
-				)
+					),
+				),
 			);
 		}
 
-		$anoflOptionsPage['opt_name'] = 'Anofl_Options';		
-		$anoflOptionsPage['menu_title'] = esc_html__('Flash WP', 'anony-flash-wp');
-		$anoflOptionsPage['page_title'] = esc_html__('Flash WP', 'anony-flash-wp');
-		$anoflOptionsPage['menu_slug'] = 'Anofl_Options';
-		$anoflOptionsPage['page_cap'] = 'manage_options';
-		$anoflOptionsPage['icon_url'] = 'dashicons-performance';
-		$anoflOptionsPage['page_position'] = 100;
-		$anoflOptionsPage['page_type'] = 'menu';
+		$anofl_options_page['opt_name']      = 'Anofl_Options';
+		$anofl_options_page['menu_title']    = esc_html__( 'Flash WP', 'anony-flash-wp' );
+		$anofl_options_page['page_title']    = esc_html__( 'Flash WP', 'anony-flash-wp' );
+		$anofl_options_page['menu_slug']     = 'Anofl_Options';
+		$anofl_options_page['page_cap']      = 'manage_options';
+		$anofl_options_page['icon_url']      = 'dashicons-performance';
+		$anofl_options_page['page_position'] = 100;
+		$anofl_options_page['page_type']     = 'menu';
 
-
-
-		$Anofl_Options_Page = new ANONY_Theme_Settings( $options_nav, $anoflsections, [], $anoflOptionsPage);
+		new ANONY_Theme_Settings( $options_nav, $anofl_sections, array(), $anofl_options_page );
 	}
-
-	public function optimize_per_post ( $metaboxes ) {
+	/**
+	 * Create optimization's metabox. By default for page and post post types.
+	 *
+	 * @param array $metaboxes An array of metaboxes.
+	 * @return array An array of metaboxes.
+	 */
+	public function optimize_per_post( $metaboxes ) {
 		$metaboxes[] =
 		array(
-			'id'            => 'optimize_per_post', // Meta box ID
+			'id'            => 'optimize_per_post', // Meta box ID.
 			'title'         => esc_html__( 'Optimize this page/post', 'anony-flash-wp' ),
 			'context'       => 'normal',
-			'priority'      => 'high', // high|low
-			'hook_priority' => '10', // Default 10
+			'priority'      => 'high', // high|low.
+			'hook_priority' => '10', // Default 10.
 			'post_type'     => apply_filters( 'optimize_per_post_types', array( 'post', 'page' ) ),
 			'fields'        =>
 					array(
@@ -470,16 +476,16 @@ class Anony_Flash_Wp_Admin {
 							'type'     => 'switch',
 							'validate' => 'no_html',
 							'desc'     => esc_html__( 'Enabling this will disable all stylesheets of this page/post and will replace them with used css that you will add below', 'anony-flash-wp' ),
-							
+
 						),
 
 						array(
-							'id'       => 'desktop_used_css',
-							'title'    => esc_html__( 'Desktop\'s Used css', 'anony-flash-wp' ),
-							'type'     => 'textarea',
-							'validate' => 'no_html',
-							'desc'     => __( 'Add css used in this page/post. CSS should be added without <code>style</code> tag.', 'anony-flash-wp' ),
-							'note'     => esc_html__( 'Works only on desktop\'s version', 'anony-flash-wp' ),
+							'id'         => 'desktop_used_css',
+							'title'      => esc_html__( 'Desktop\'s Used css', 'anony-flash-wp' ),
+							'type'       => 'textarea',
+							'validate'   => 'no_html',
+							'desc'       => __( 'Add css used in this page/post. CSS should be added without <code>style</code> tag.', 'anony-flash-wp' ),
+							'note'       => esc_html__( 'Works only on desktop\'s version', 'anony-flash-wp' ),
 							'text-align' => 'left',
 							'rows'       => '10',
 							'columns'    => '60',
@@ -487,12 +493,12 @@ class Anony_Flash_Wp_Admin {
 						),
 
 						array(
-							'id'       => 'mobile_used_css',
-							'title'    => esc_html__( 'Mobile\'s Used css', 'anony-flash-wp' ),
-							'type'     => 'textarea',
-							'validate' => 'no_html',
-							'desc'     => __( 'Add css used in this page/post. CSS should be added without <code>style</code> tag.', 'anony-flash-wp' ),
-							'note'     => esc_html__( 'Works only on mobile\'s version', 'anony-flash-wp' ),
+							'id'         => 'mobile_used_css',
+							'title'      => esc_html__( 'Mobile\'s Used css', 'anony-flash-wp' ),
+							'type'       => 'textarea',
+							'validate'   => 'no_html',
+							'desc'       => __( 'Add css used in this page/post. CSS should be added without <code>style</code> tag.', 'anony-flash-wp' ),
+							'note'       => esc_html__( 'Works only on mobile\'s version', 'anony-flash-wp' ),
 							'text-align' => 'left',
 							'rows'       => '10',
 							'columns'    => '60',
