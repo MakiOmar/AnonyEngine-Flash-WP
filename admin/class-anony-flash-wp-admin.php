@@ -493,6 +493,15 @@ class Anony_Flash_Wp_Admin {
 						),
 
 						array(
+							'id'       => 'separate_mobile_used_css',
+							'title'    => esc_html__( 'Separate mobile used css', 'anony-flash-wp' ),
+							'type'     => 'switch',
+							'validate' => 'no_html',
+							'desc'     => esc_html__( 'Enable this if you need to load separate used css for mobile', 'anony-flash-wp' ),
+
+						),
+
+						array(
 							'id'         => 'mobile_used_css',
 							'title'      => esc_html__( 'Mobile\'s Used css', 'anony-flash-wp' ),
 							'type'       => 'textarea',

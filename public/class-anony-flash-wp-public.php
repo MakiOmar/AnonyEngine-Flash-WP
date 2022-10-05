@@ -976,10 +976,12 @@ class Anony_Flash_Wp_Public {
 
 			}
 
-			if ( wp_is_mobile() && ! empty( $optimize_per_post['mobile_used_css'] ) ) {
-				$style .= '<style id="anony-mobile-used-css-' . esc_attr( $post->ID ) . '">
-				' . $optimize_per_post['mobile_used_css'] . '
-				</style>';
+			if ( wp_is_mobile()  ) {
+				if ( ( empty( $optimize_per_post['separate_mobile_used_css'] ) || '1' !== $optimize_per_post['separate_mobile_used_css'] ) && ! empty( $optimize_per_post['desktop_used_css'] ) ) {
+					$style .= '<style id="anony-all-used-css-' . esc_attr( $post->ID ) . '">' . $optimize_per_post['desktop_used_css'] . '</style>';
+				}elseif ( '1' === $optimize_per_post['separate_mobile_used_css'] && ! empty( $optimize_per_post['mobile_used_css'] ) ) {
+					$style .= '<style id="anony-mobile-used-css-' . esc_attr( $post->ID ) . '">' . $optimize_per_post['mobile_used_css'] . '</style>';
+				}
 			}
 
 			// get buffered HTML.
