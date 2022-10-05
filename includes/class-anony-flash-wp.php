@@ -188,7 +188,7 @@ class Anony_Flash_Wp {
 		$this->loader->add_filter( 'the_content', $plugin_public, 'add_missing_image_Dimensions' );
 
 		// phpcs:disable
-		// $this->loader->add_filter('style_loader_tag', $plugin_public, 'common_injected_scripts', 99 );
+		// $this->loader->add_filter('style_loader_tag', $plugin_public, 'common_injected_styles', 99 );
 		// $this->loader->add_action( 'wp_print_footer_scripts', $plugin_public, 'inject_scripts', 999 );
 		// phpcs:enable
 

@@ -1,4 +1,10 @@
-(function( $ ) {
+/**
+ * Public js
+ *
+ * @package Flash WP.
+ */
+
+(function ( $ ) {
 	'use strict';
 
 	/**
