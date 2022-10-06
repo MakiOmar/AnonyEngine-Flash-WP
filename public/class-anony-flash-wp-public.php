@@ -398,20 +398,36 @@ class Anony_Flash_Wp_Public {
 
 		$anofl_options = ANONY_Options_Model::get_instance( 'Anofl_Options' );
 
+		$arr = [];
 		if ( ! empty( $anofl_options->preload_images ) ) {
-			$arr = ANONY_STRING_HELP::line_by_line_textarea( $anofl_options->preload_images );
+			$arr = array_merge( $arr, ANONY_STRING_HELP::line_by_line_textarea( $anofl_options->preload_images ) );
+		}
 
-			if ( ! is_array( $arr ) ) {
-				return;
+		global $post;
+
+		if ( $post && !is_null( $post ) ) {
+			if ( !wp_is_mobile() ) {
+				$key = 'preload_desktop_images';
+			}else{
+				$key = 'preload_mobile_images';
 			}
 
-			foreach ( $arr as $line ) {
-				?>
-						 
-						<link rel="preload" as="image" href="<?php echo $line; ?>"/>
+			$optimize_per_post = get_post_meta( $post->ID, 'optimize_per_post', true );
 
-				<?php
+			if ( !empty( $optimize_per_post ) && !empty( $optimize_per_post[ $key ] )) {
+				$arr = array_merge( $arr, ANONY_STRING_HELP::line_by_line_textarea( $optimize_per_post[ $key ] ) );
 			}
+		}
+
+		if ( ! is_array( $arr ) || empty( $arr ) ) {
+			return;
+		}
+		foreach ( $arr as $line ) {
+			?>
+					 
+					<link rel="preload" as="image" href="<?php echo $line; ?>"/>
+
+			<?php
 		}
 	}
 

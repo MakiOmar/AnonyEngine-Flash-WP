@@ -513,6 +513,30 @@ class Anony_Flash_Wp_Admin {
 							'columns'    => '60',
 							'direction'  => 'ltr',
 						),
+
+						array(
+							'id'         => 'preload_desktop_images',
+							'title'      => esc_html__( 'Images to preload on desktop', 'anony-flash-wp' ),
+							'type'       => 'textarea',
+							'validate'   => 'no_html',
+							'text-align' => 'left',
+							'rows'       => '10',
+							'columns'    => '60',
+							'direction'  => 'ltr',
+							'desc'       => esc_html__( 'Help to improve largest content paint.Please add a URL perline.', 'anony-flash-wp' ),
+						),
+
+						array(
+							'id'         => 'preload_mobile_images',
+							'title'      => esc_html__( 'Images to preload on mobile', 'anony-flash-wp' ),
+							'type'       => 'textarea',
+							'validate'   => 'no_html',
+							'text-align' => 'left',
+							'rows'       => '10',
+							'columns'    => '60',
+							'direction'  => 'ltr',
+							'desc'       => esc_html__( 'Help to improve largest content paint.Please add a URL perline.', 'anony-flash-wp' ),
+						),
 					),
 		);
 
