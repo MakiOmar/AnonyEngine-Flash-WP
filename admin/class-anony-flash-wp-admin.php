@@ -149,6 +149,60 @@ class Anony_Flash_Wp_Admin {
 			);
 		}
 
+				$anofl_sections['general'] = array(
+			'title'  => esc_html__( 'General', 'anony-flash-wp' ),
+			'icon'   => 'x',
+			'fields' => array(
+				array(
+					'id'       => 'compress_html',
+					'title'    => esc_html__( 'Compress HTML', 'anony-flash-wp' ),
+					'type'     => 'switch',
+					'validate' => 'no_html',
+					'desc'     => esc_html__( 'Please activate only if you think that GZIP is not enabled on your server.', 'anony-flash-wp' ) . ' <a href="https://www.giftofspeed.com/gzip-test/">' . esc_html__( 'Check gzip compression', 'anony-flash-wp' ) . '</a>',
+				),
+
+				array(
+					'id'       => 'disable_gravatar',
+					'title'    => esc_html__( 'Disable gravatar.com', 'anony-flash-wp' ),
+					'type'     => 'switch',
+					'validate' => 'no_html',
+					'desc'     => esc_html__( 'Stops getting gravatar from gravatar.com', 'anony-flash-wp' ),
+				),
+
+				array(
+					'id'       => 'disable_embeds',
+					'title'    => esc_html__( 'Disable WP embeds', 'anony-flash-wp' ),
+					'type'     => 'switch',
+					'validate' => 'no_html',
+					'desc'     => esc_html__( 'Disables WP embeds completely', 'anony-flash-wp' ),
+				),
+
+				array(
+					'id'       => 'enable_singular_embeds',
+					'title'    => esc_html__( 'Enable WP embeds on singular', 'anony-flash-wp' ),
+					'type'     => 'switch',
+					'validate' => 'no_html',
+					'desc'     => esc_html__( 'Enables WP embeds on singular pages (e.g. post/page). Will override (disable WP embeds) option', 'anony-flash-wp' ),
+				),
+
+				array(
+					'id'       => 'disable_emojis',
+					'title'    => esc_html__( 'Disable WP emojis', 'anony-flash-wp' ),
+					'type'     => 'switch',
+					'validate' => 'no_html',
+					'desc'     => esc_html__( 'Disables WP emojis completely', 'anony-flash-wp' ),
+				),
+				array(
+					'id'       => 'enable_singular_emojis',
+					'title'    => esc_html__( 'Enable WP emojis on singular', 'anony-flash-wp' ),
+					'type'     => 'switch',
+					'validate' => 'no_html',
+					'desc'     => esc_html__( 'Enables WP emojis on singular pages (e.g. post/page). Will override (disable WP emojis) option', 'anony-flash-wp' ),
+				),
+
+			),
+		);
+
 		$anofl_sections['custom-scripts'] = array(
 			'title'  => esc_html__( 'Custom scripts', 'anony-flash-wp' ),
 			'icon'   => 'x',
@@ -213,60 +267,6 @@ class Anony_Flash_Wp_Admin {
 					'columns'    => '60',
 					'direction'  => 'ltr',
 				),
-			),
-		);
-
-		$anofl_sections['general'] = array(
-			'title'  => esc_html__( 'General', 'anony-flash-wp' ),
-			'icon'   => 'x',
-			'fields' => array(
-				array(
-					'id'       => 'compress_html',
-					'title'    => esc_html__( 'Compress HTML', 'anony-flash-wp' ),
-					'type'     => 'switch',
-					'validate' => 'no_html',
-					'desc'     => esc_html__( 'Please activate only if you think that GZIP is not enabled on your server.', 'anony-flash-wp' ) . ' <a href="https://www.giftofspeed.com/gzip-test/">' . esc_html__( 'Check gzip compression', 'anony-flash-wp' ) . '</a>',
-				),
-
-				array(
-					'id'       => 'disable_gravatar',
-					'title'    => esc_html__( 'Disable gravatar.com', 'anony-flash-wp' ),
-					'type'     => 'switch',
-					'validate' => 'no_html',
-					'desc'     => esc_html__( 'Stops getting gravatar from gravatar.com', 'anony-flash-wp' ),
-				),
-
-				array(
-					'id'       => 'disable_embeds',
-					'title'    => esc_html__( 'Disable WP embeds', 'anony-flash-wp' ),
-					'type'     => 'switch',
-					'validate' => 'no_html',
-					'desc'     => esc_html__( 'Disables WP embeds completely', 'anony-flash-wp' ),
-				),
-
-				array(
-					'id'       => 'enable_singular_embeds',
-					'title'    => esc_html__( 'Enable WP embeds on singular', 'anony-flash-wp' ),
-					'type'     => 'switch',
-					'validate' => 'no_html',
-					'desc'     => esc_html__( 'Enables WP embeds on singular pages (e.g. post/page). Will override (disable WP embeds) option', 'anony-flash-wp' ),
-				),
-
-				array(
-					'id'       => 'disable_emojis',
-					'title'    => esc_html__( 'Disable WP emojis', 'anony-flash-wp' ),
-					'type'     => 'switch',
-					'validate' => 'no_html',
-					'desc'     => esc_html__( 'Disables WP emojis completely', 'anony-flash-wp' ),
-				),
-				array(
-					'id'       => 'enable_singular_emojis',
-					'title'    => esc_html__( 'Enable WP emojis on singular', 'anony-flash-wp' ),
-					'type'     => 'switch',
-					'validate' => 'no_html',
-					'desc'     => esc_html__( 'Enables WP emojis on singular pages (e.g. post/page). Will override (disable WP emojis) option', 'anony-flash-wp' ),
-				),
-
 			),
 		);
 
