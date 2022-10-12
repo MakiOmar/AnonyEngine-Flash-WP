@@ -1073,53 +1073,6 @@ class Anony_Flash_Wp_Public {
 			return $tag;
 		}
 	}
-	public function mobile_injected_scripts( $tag ) {
-
-		if ( is_admin() ) {
-			return $tag;
-		}
-
-		if ( preg_match( "/rel='stylesheet'/im", $tag ) ) {
-
-			if ( false !== strpos( $tag, 'font-awesome-all' )
-				|| false !== strpos( $tag, 'fontawesome' )
-				|| false !== strpos( $tag, 'jet-elements-skin' )
-				|| false !== strpos( $tag, 'jet-menu-public-styles' )
-				|| false !== strpos( $tag, 'font-awesome' )
-				|| false !== strpos( $tag, 'elementor-icons' )
-				|| false !== strpos( $tag, 'elementor-pro' )
-				|| false !== strpos( $tag, 'e-animations' )
-				|| false !== strpos( $tag, 'elementor-icons-shared-0' )
-				|| false !== strpos( $tag, 'elementor-icons-fa-solid' )
-				|| false !== strpos( $tag, 'elementor-icons-fa-brands' )
-				|| false !== strpos( $tag, 'elementor-icons-fa-regular' )
-				|| false !== strpos( $tag, 'elementor-icons' )
-				|| false !== strpos( $tag, 'jet-menu-general' )
-				|| false !== strpos( $tag, 'font-awesome-v4-shims' )
-				|| false !== strpos( $tag, 'wp-block-library-theme-inline' )
-				|| false !== strpos( $tag, 'global-styles-inline' )
-				|| false !== strpos( $tag, 'jet-engine-frontend' )
-			) {
-				preg_match( "/id='(.*?)'/im", $tag, $id );
-				$style_id = $id[1];
-
-				preg_match( "/href='(.*?)'/im", $tag, $href );
-				$style_href = $href[1];
-
-				add_action(
-					'wp_print_footer_scripts',
-					function () use ( $style_id, $style_href ) {
-						?>
-							<input type="hidden" class="create-style-tag" id="create-<?php echo esc_html( $style_id ); ?>" value="<?php echo esc_html( $style_href ); ?>"/>
-						<?php
-					}
-				);
-				return '';
-			}
-
-			return $tag;
-		}
-	}
 	/**
 	 * Injects stylesheets using css.
 	 */
