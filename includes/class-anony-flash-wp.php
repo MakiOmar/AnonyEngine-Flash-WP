@@ -239,6 +239,8 @@ class Anony_Flash_Wp {
 		$this->loader->add_action( 'wp_head', $plugin_public, 'defer_gtgm', 30 );
 		$this->loader->add_action( 'wp_head', $plugin_public, 'defer_facebook_pixel', 30 );
 		$this->loader->add_action( 'wp_head', $plugin_public, 'defer_inline_external_scripts', 30 );
+		$this->loader->add_action( 'wp_head', $plugin_public, 'anony_add_head_scripts' );
+		$this->loader->add_action( 'wp_head', $plugin_public, 'anony_add_footer_scripts' );
 
 		$this->loader->add_action( 'wp_print_styles', $plugin_public, 'load_scripts_on_wc_templates_only' );
 
