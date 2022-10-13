@@ -992,11 +992,43 @@ class Anony_Flash_Wp_Public {
 	 * Remove inline <style> blocks.
 	 * Start HTML buffer
 	 */
-	public function start_html_buffer() {
+	public function start_html_buffer() 
+	{
 		if ( $this->is_used_css_enabled() ) {
 			// buffer output html..
-			ob_start();
+			ob_start( array( $this, 'start_html_buffer_cb' ), 0,  );
 		}
+	}
+
+	public function start_html_buffer_cb( $html )
+	{
+		global $post;
+		$optimize_per_post = get_post_meta( $post->ID, 'optimize_per_post', true );
+
+		$style = '';
+
+		if ( ! wp_is_mobile() && ! empty( $optimize_per_post['desktop_used_css'] ) ) {
+			$style .= '<style type="text/css" id="anony-desktop-used-css-' . esc_attr( $post->ID ) . '">
+			' . $optimize_per_post['desktop_used_css'] . '
+			</style>';
+
+		}
+
+		if ( wp_is_mobile() ) {
+			if ( ( empty( $optimize_per_post['separate_mobile_used_css'] ) || '1' !== $optimize_per_post['separate_mobile_used_css'] ) && ! empty( $optimize_per_post['desktop_used_css'] ) ) {
+				$style .= '<style type="text/css" id="anony-all-used-css-' . esc_attr( $post->ID ) . '">' . $optimize_per_post['desktop_used_css'] . '</style>';
+			} elseif ( '1' === $optimize_per_post['separate_mobile_used_css'] && ! empty( $optimize_per_post['mobile_used_css'] ) ) {
+				$style .= '<style type="text/css" id="anony-mobile-used-css-' . esc_attr( $post->ID ) . '">' . $optimize_per_post['mobile_used_css'] . '</style>';
+			}
+		}
+
+		// remove <style> blocks using regular expression..
+		// $html = preg_replace( '/<style[^>]*>[^<]*<\/style>/m', '', $html );
+
+		$html = str_replace( '{ussedcss}', $style, $html );
+		// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped
+		return $html;
+		// phpcs:enable.
 	}
 
 	/**
@@ -1004,36 +1036,8 @@ class Anony_Flash_Wp_Public {
 	 */
 	public function end_html_buffer() {
 		if ( $this->is_used_css_enabled() ) {
-			global $post;
-			$optimize_per_post = get_post_meta( $post->ID, 'optimize_per_post', true );
-
-			$style = '';
-
-			if ( ! wp_is_mobile() && ! empty( $optimize_per_post['desktop_used_css'] ) ) {
-				$style .= '<style id="anony-desktop-used-css-' . esc_attr( $post->ID ) . '">
-				' . $optimize_per_post['desktop_used_css'] . '
-				</style>';
-
-			}
-
-			if ( wp_is_mobile() ) {
-				if ( ( empty( $optimize_per_post['separate_mobile_used_css'] ) || '1' !== $optimize_per_post['separate_mobile_used_css'] ) && ! empty( $optimize_per_post['desktop_used_css'] ) ) {
-					$style .= '<style id="anony-all-used-css-' . esc_attr( $post->ID ) . '">' . $optimize_per_post['desktop_used_css'] . '</style>';
-				} elseif ( '1' === $optimize_per_post['separate_mobile_used_css'] && ! empty( $optimize_per_post['mobile_used_css'] ) ) {
-					$style .= '<style id="anony-mobile-used-css-' . esc_attr( $post->ID ) . '">' . $optimize_per_post['mobile_used_css'] . '</style>';
-				}
-			}
-
-			// get buffered HTML..
-			$wp_html = ob_get_clean();
-
-			// remove <style> blocks using regular expression..
-			$wp_html = preg_replace( '/<style[^>]*>[^<]*<\/style>/m', '', $wp_html );
-
-			$wp_html = str_replace( '{ussedcss}', $style, $wp_html );
-			// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped
-			echo $wp_html;
-			// phpcs:enable.
+			// get buffered HTML.
+			echo ob_get_clean();
 		}
 	}
 
