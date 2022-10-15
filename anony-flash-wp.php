@@ -29,7 +29,6 @@
 if ( ! defined( 'WPINC' ) ) {
 	die;
 }
-require('update-notifier.php');
 /**
  * Activation hook
  */ 
