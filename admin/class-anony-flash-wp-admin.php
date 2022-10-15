@@ -58,7 +58,7 @@ class Anony_Flash_Wp_Admin {
 
 		if (is_admin()) { // note the use of is_admin() to double check that this is happening in the admin
 		    $config = array(
-		        'slug' => plugin_basename(__FILE__), // this is the slug of your plugin
+		        'slug' => PLUGIN_SLUG, // this is the slug of your plugin
 		        'proper_folder_name' => 'anony-flash-wp', // this is the name of the folder your plugin lives in
 		        'api_url' => 'https://api.github.com/repos/MakiOmar/AnonyEngine-Flash-WP', // the GitHub API url of your GitHub repo
 		        'raw_url' => 'https://raw.github.com/MakiOmar/AnonyEngine-Flash-WP/master', // the GitHub raw url of your GitHub repo
