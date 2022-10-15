@@ -9,7 +9,7 @@
  * that starts the plugin.
  *
  * @link              https://github.com/MakiOmar
- * @since             1.0.0
+ * @since             1.0.01
  * @package           Anony_Flash_Wp
  *
  * @wordpress-plugin
