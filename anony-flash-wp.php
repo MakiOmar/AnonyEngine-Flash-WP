@@ -9,14 +9,14 @@
  * that starts the plugin.
  *
  * @link              https://github.com/MakiOmar
- * @since             1.0.01
+ * @since             1.0.0
  * @package           Anony_Flash_Wp
  *
  * @wordpress-plugin
  * Plugin Name:       AnonyEngine Flash WP
  * Plugin URI:        http://makiomar.com
  * Description:       For WordPress higher speed.
- * Version:           1.0.0
+ * Version:           1.0.01
  * Author:            Makiomar
  * Author URI:        https://github.com/MakiOmar
  * License:           GPL-2.0+
