@@ -4,6 +4,5 @@ vendor/
 */_notes/
 /_notes/*
 */_notes/*
-*.xml
 */*.xml
 assets/css/_notes/dwsync.xml
