@@ -30,10 +30,33 @@ if ( ! defined( 'WPINC' ) ) {
 	die;
 }
 
-define( 'PLUGIN_SLUG', plugin_basename(__FILE__) );
 
-include_once('updater.php');
+/**
+ * Holds plugin's slug
+ *
+ * @const
+ */
+define( 'ANOFL_PLUGIN_SLUG', plugin_basename(__FILE__) );
 
+
+/**
+ * Holds plugin's path
+ *
+ * @const
+ */
+define( 'ANOFL_DIR', wp_normalize_path( plugin_dir_path( __FILE__ ) ) );
+
+
+require ANOFL_DIR . '/plugin-update-checker/plugin-update-checker.php';
+
+$myUpdateChecker = Puc_v4_Factory::buildUpdateChecker(
+    'https://github.com/MakiOmar/AnonyEngine-Flash-WP/',
+    __FILE__,
+    ANOFL_PLUGIN_SLUG
+);
+
+//Set the branch that contains the stable release.
+$myUpdateChecker->setBranch('master');
 
 /**
  * Activation hook
