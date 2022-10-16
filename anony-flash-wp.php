@@ -32,8 +32,6 @@ if ( ! defined( 'WPINC' ) ) {
 
 define( 'PLUGIN_SLUG', plugin_basename(__FILE__) );
 
-include_once('updater.php');
-
 
 /**
  * Activation hook
