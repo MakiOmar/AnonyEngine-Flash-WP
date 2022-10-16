@@ -30,8 +30,21 @@ if ( ! defined( 'WPINC' ) ) {
 	die;
 }
 
+
+/**
+ * Holds plugin's slug
+ *
+ * @const
+ */
 define( 'ANOFL_PLUGIN_SLUG', plugin_basename(__FILE__) );
 
+
+/**
+ * Holds plugin's path
+ *
+ * @const
+ */
+define( 'ANOFL_DIR', wp_normalize_path( plugin_dir_path( __FILE__ ) ) );
 
 /**
  * Activation hook
