@@ -30,7 +30,7 @@ if ( ! defined( 'WPINC' ) ) {
 	die;
 }
 
-define( 'PLUGIN_SLUG', plugin_basename(__FILE__) );
+define( 'ANOFL_PLUGIN_SLUG', plugin_basename(__FILE__) );
 
 
 /**
