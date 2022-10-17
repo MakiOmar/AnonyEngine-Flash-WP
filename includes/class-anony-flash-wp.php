@@ -198,7 +198,7 @@ class Anony_Flash_Wp {
 		$this->loader->add_action( 'template_redirect', $plugin_public, 'start_html_buffer', 0 );
 
 		// wp hook after wp_footer()..
-		$this->loader->add_action( 'wp_footer', $plugin_public, 'end_html_buffer', PHP_INT_MAX );
+		// $this->loader->add_action( 'wp_footer', $plugin_public, 'end_html_buffer', PHP_INT_MAX );
 		// ---------------------End used CSS----------------------------------------------------..
 
 		$this->loader->add_filter( 'style_loader_tag', $plugin_public, 'remove_all_stylesheets', 99 );
