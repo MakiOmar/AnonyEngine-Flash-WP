@@ -208,7 +208,7 @@ class Anony_Flash_Wp_Public {
 			return $tag;
 		}
 
-		// if ( strpos( $src, 'wp-includes/js' ) ) return $tag; //Exclude all from w-includes.
+		if ( strpos( $src, 'wp-includes/js' ) ) return $tag; //Exclude all from w-includes.
 
 		// Try not defer all.
 		$not_deferred = array(
@@ -218,6 +218,7 @@ class Anony_Flash_Wp_Public {
 			'wp-hooks',
 			'wp-i18n',
 			'wp-tinymce-root',
+			'wc_price_slider'
 		);
 		if ( in_array( $handle, $not_deferred ) ) {
 			return $tag;
@@ -996,7 +997,7 @@ class Anony_Flash_Wp_Public {
 	{
 		if ( $this->is_used_css_enabled() ) {
 			// buffer output html..
-			ob_start( array( $this, 'start_html_buffer_cb' ), 0,  );
+			ob_start( array( $this, 'start_html_buffer_cb' ), 0  );
 		}
 	}
 
