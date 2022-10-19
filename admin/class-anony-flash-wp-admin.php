@@ -149,7 +149,14 @@ class Anony_Flash_Wp_Admin {
 			);
 		}
 
-				$anofl_sections['general'] = array(
+		if ( ANONY_Wp_Plugin_Help::is_active( 'elementor/elementor.php' ) ) {
+			$options_nav['elementor'] = array(
+				'title' => esc_html__( 'Elementor', 'anony-flash-wp' ),
+			);
+
+		}
+
+		$anofl_sections['general'] = array(
 			'title'  => esc_html__( 'General', 'anony-flash-wp' ),
 			'icon'   => 'x',
 			'fields' => array(
@@ -442,6 +449,22 @@ class Anony_Flash_Wp_Admin {
 			);
 		}
 
+		if ( ANONY_Wp_Plugin_Help::is_active( 'elementor/elementor.php' ) ) {
+
+			$anofl_sections['elementor'] = array(
+				'title'  => esc_html__( 'Elementor', 'anony-flash-wp' ),
+				'icon'   => 'x',
+				'fields' => array(
+					array(
+						'id'         => 'disable_elementor_google_fonts',
+						'title'      => esc_html__( 'Disable google fonts', 'anony-flash-wp' ),
+						'type'       => 'switch',
+						'validate'   => 'no_html',
+					),
+				)
+			);
+		}
+		
 		$anofl_options_page['opt_name']      = 'Anofl_Options';
 		$anofl_options_page['menu_title']    = esc_html__( 'Flash WP', 'anony-flash-wp' );
 		$anofl_options_page['page_title']    = esc_html__( 'Flash WP', 'anony-flash-wp' );

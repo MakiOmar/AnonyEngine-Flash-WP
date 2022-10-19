@@ -96,19 +96,31 @@ class Anony_Flash_Wp_Public {
 		 */
 	}
 
-	public function anony_add_head_scripts() {
-		$anony_options = ANONY_Options_Model::get_instance();
+	public function elementor_google_fonts( $print_google_fonts )
+	{
+		$anofl_options = ANONY_Options_Model::get_instance( 'Anofl_Options' );
 
-		if ( !empty( $anony_options->head_scripts ) ){
-			echo $anony_options->head_scripts;
+		if ( '1' === $anofl_options->disable_elementor_google_fonts) {
+			return false;
+		}
+
+		return $print_google_fonts;
+		
+	}
+
+	public function anony_add_head_scripts() {
+		$anofl_options = ANONY_Options_Model::get_instance( 'Anofl_Options' );
+
+		if ( !empty( $anofl_options->head_scripts ) ){
+			echo $anofl_options->head_scripts;
 		}
 	}
 
 	public function anony_add_footer_scripts() {
-		$anony_options = ANONY_Options_Model::get_instance();
+		$anofl_options = ANONY_Options_Model::get_instance( 'Anofl_Options' );
 
-		if ( !empty( $anony_options->footer_scripts ) ){
-			echo $anony_options->footer_scripts;
+		if ( !empty( $anofl_options->footer_scripts ) ){
+			echo $anofl_options->footer_scripts;
 		}
 	}
 	/**

@@ -187,6 +187,9 @@ class Anony_Flash_Wp {
 		// Add missing image dimensions.
 		$this->loader->add_filter( 'the_content', $plugin_public, 'add_missing_image_Dimensions' );
 
+		// Disable google fonts.
+		$this->loader->add_filter( 'elementor/frontend/print_google_fonts', $plugin_public, 'elementor_google_fonts', 99 );
+
 		// phpcs:disable
 		// $this->loader->add_action( 'wp_print_footer_scripts', $plugin_public, 'inject_scripts', 999 );
 		// phpcs:enable
