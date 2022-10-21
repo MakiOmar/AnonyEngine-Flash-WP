@@ -560,6 +560,15 @@ class Anony_Flash_Wp_Admin {
 							'direction'  => 'ltr',
 							'desc'       => esc_html__( 'Help to improve largest content paint.Please add a URL perline.', 'anony-flash-wp' ),
 						),
+
+						array(
+							'id'         => 'unloaded_js',
+							'title'      => esc_html__( 'Unload js files', 'anony-flash-wp' ),
+							'type'       => 'checkbox',
+							'validate'   => 'no_html',
+							'desc'       => esc_html__( 'Select files you need to unload on frontend of this page', 'anony-flash-wp' ),
+							'options'    => ANONY_Wp_Misc_Help::list_post_scripts()
+						)
 					),
 		);
 
