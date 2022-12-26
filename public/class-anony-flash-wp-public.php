@@ -812,24 +812,6 @@ class Anony_Flash_Wp_Public {
 		echo ob_get_clean();
 	}
 
-	public function lazy_elementor_background_images_js_no_jquery() {
-		global $lazy_elementor_background_images_js_added;
-		ob_start();
-		?>
-		 
-		window.onload = function() {
-			var elems = document.querySelectorAll(".lazyelementorbackgroundimages");
-
-			[].forEach.call(elems, function(el) {
-				el.classList.remove("lazyelementorbackgroundimages");
-			});
-		};
-		<?php
-		$skrip = ob_get_clean();
-
-		$lazy_elementor_background_images_js_added = wp_add_inline_script( 'backbone', $skrip );
-
-	}
 
 	/**
 	 * Add js to remove the lazyelementorbackgroundimages class as the item approaches the viewport. (jQuery and Waypoint are dependencies)
