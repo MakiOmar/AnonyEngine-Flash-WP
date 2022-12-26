@@ -402,6 +402,18 @@ class Anony_Flash_Wp_Admin {
 				'validate' => 'no_html',
 			);
 			$anofl_sections['media']['fields'][] = array(
+				'id'       => 'lazyload_this_classes',
+				'title'    => esc_html__( 'lazyload elements with the following classes', 'anony-flash-wp' ),
+				'type'     => 'textarea',
+				'validate' => 'no_html',
+				'default'  => 'elementor-section
+elementor-column-wrap
+elementor-widget-wrap
+elementor-widget-container
+elementor-background-overlay
+anony-lazyload-bg',
+			);
+			$anofl_sections['media']['fields'][] = array(
 				'id'       => 'lazyloading_elementor_bg_method',
 				'title'    => esc_html__( 'lazyloading elementor\'s backgrounds\s method', 'anony-flash-wp' ),
 				'type'     => 'radio',

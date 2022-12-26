@@ -764,19 +764,19 @@ class Anony_Flash_Wp_Public {
 			return $content;
 		}
 
-		$content = str_replace( 'elementor-section ', 'elementor-section lazyelementorbackgroundimages ', $content );
+		
 
-		$content = str_replace( 'elementor-column-wrap', 'elementor-column-wrap lazyelementorbackgroundimages', $content );
+		if ( class_exists( 'ANONY_STRING_HELP' ) ) {
 
-		$content = str_replace( 'elementor-widget-wrap', 'elementor-widget-wrap lazyelementorbackgroundimages', $content );
+			$lazyloaded_backgrounds = ANONY_STRING_HELP::line_by_line_textarea( $anofl_options->lazyload_this_classes );
 
-		$content = str_replace( 'elementor-widget-container', 'elementor-widget-container lazyelementorbackgroundimages', $content );
-
-		$content = str_replace( 'elementor-background-overlay', 'elementor-background-overlay lazyelementorbackgroundimages', $content );
-
-		$content = str_replace( 'e-gallery-image', 'e-gallery-image lazyelementorbackgroundimages', $content );
-
-		$content = str_replace( 'anony-lazyload-bg', 'anony-lazyload-bg lazyelementorbackgroundimages', $content );
+			if( !empty( $lazyloaded_backgrounds )  )
+			{
+				foreach ($lazyloaded_backgrounds as $selector) {
+					$content = str_replace( $selector. ' ', $selector . ' lazyelementorbackgroundimages ', $content );
+				}
+			}
+		}
 
 		return $content;
 
