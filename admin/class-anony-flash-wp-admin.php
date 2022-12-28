@@ -317,6 +317,17 @@ class Anony_Flash_Wp_Admin {
 					'note'       => esc_html__( 'Please add one handle per line', 'anony-flash-wp' ),
 				),
 				array(
+					'id'         => 'dequeued_styles',
+					'title'      => esc_html__( 'Dequeued styles', 'anony-flash-wp' ),
+					'type'       => 'textarea',
+					'validate'   => 'no_html',
+					'text-align' => 'left',
+					'rows'       => '10',
+					'columns'    => '60',
+					'direction'  => 'ltr',
+					'desc'       => esc_html__( 'Stop loading unneccessary styles', 'anony-flash-wp' ),
+				),
+				array(
 					'id'       => 'defer_scripts',
 					'title'    => esc_html__( 'Defer scripts loading', 'anony-flash-wp' ),
 					'type'     => 'switch',
@@ -596,6 +607,18 @@ anony-lazyload-bg',
 							'direction'  => 'ltr',
 							'desc'       => esc_html__( 'Help to improve eliminate render-blocking resources.', 'anony-flash-wp' ),
 							'note'       => esc_html__( 'Please add one handle per line', 'anony-flash-wp' ),
+						),
+
+						array(
+							'id'         => 'dequeued_styles',
+							'title'      => esc_html__( 'Dequeued styles', 'anony-flash-wp' ),
+							'type'       => 'textarea',
+							'validate'   => 'no_html',
+							'text-align' => 'left',
+							'rows'       => '10',
+							'columns'    => '60',
+							'direction'  => 'ltr',
+							'desc'       => esc_html__( 'Stop loading unneccessary styles', 'anony-flash-wp' ),
 						),
 
 						array(

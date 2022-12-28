@@ -916,34 +916,21 @@ class Anony_Flash_Wp_Public {
 		if ( current_user_can( 'administrator' ) || is_admin() || false !== strpos( $_SERVER['REQUEST_URI'], 'elementor' ) ) {
 			return;
 		}
-		$dequeued_styles = apply_filters(
-			'anony_dequeue_styles',
-			array(
-				'wpml-tm-admin-bar',
-				'wc-blocks-vendors-style',
-				'wc-blocks-style-rtl',
-				'wp-block-library',
-				'wp-block-library-theme',
-				'wc-block-style',
-				'wd-wp-gutenberg',
-				'google-fonts-1',
-				'allow-webp-image',
 
-			)
-		);
+		if ( class_exists( 'ANONY_STRING_HELP' ) ) {
+			$anofl_options = ANONY_Options_Model::get_instance( 'Anofl_Options' );
 
-		if ( wp_is_mobile() ) {
-			$mobile_dequeued_styles = array(
-				'woocommerce-packing-slips',
-				'woocommerce-pdf-invoices',
-			);
+			$dequeued_styles = ANONY_STRING_HELP::line_by_line_textarea( $anofl_options->dequeued_styles );
 
-			$dequeued_styles = array_merge( $dequeued_styles, $mobile_dequeued_styles );
-		}
+			if( !empty( $dequeued_styles )  )
+			{
+				foreach ($dequeued_styles as $handle) {
 
-		foreach ( $dequeued_styles as $style ) {
-			wp_dequeue_style( $style );
-			wp_deregister_style( $style );
+					wp_dequeue_style( $handle );
+					wp_deregister_style( $handle );
+					
+				}
+			}
 		}
 
 	}
