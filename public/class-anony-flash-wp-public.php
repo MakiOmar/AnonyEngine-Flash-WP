@@ -190,10 +190,25 @@ class Anony_Flash_Wp_Public {
 
 		$anofl_options = ANONY_Options_Model::get_instance( 'Anofl_Options' );
 
-		if ( '1' !== $anofl_options->defer_stylesheets || false !== strpos( $tag, 'anony-main' ) || false !== strpos( $tag, 'anony-theme-styles' ) || false !== strpos( $tag, 'anony-responsive' ) ) {
-			return $tag;
+		if ( '1' === $anofl_options->defer_stylesheets ) {
+
+			if ( class_exists( 'ANONY_STRING_HELP' ) ) {
+
+				$deferred_styles = ANONY_STRING_HELP::line_by_line_textarea( $anofl_options->deferred_styles );
+
+				if( !empty( $deferred_styles )  )
+				{
+					foreach ($deferred_styles as $handle) {
+
+						if ( false !== strpos( $tag, $handle ) ) {
+							$tag = preg_replace( "/media='\w+'/", "media='print' onload=\"this.media='all'\"", $tag );
+						}
+						
+					}
+				}
+			}
 		}
-		$tag = preg_replace( "/media='\w+'/", "media='print' onload=\"this.media='all'\"", $tag );
+		
 
 		return $tag;
 	}
