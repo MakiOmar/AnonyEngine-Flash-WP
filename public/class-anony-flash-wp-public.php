@@ -785,6 +785,8 @@ class Anony_Flash_Wp_Public {
 
 			$lazyloaded_backgrounds = ANONY_STRING_HELP::line_by_line_textarea( $anofl_options->lazyload_this_classes );
 
+			$lazyloaded_backgrounds = array_filter($lazyloaded_backgrounds);
+			
 			if( !empty( $lazyloaded_backgrounds )  )
 			{
 				foreach ($lazyloaded_backgrounds as $selector) {
@@ -941,17 +943,8 @@ class Anony_Flash_Wp_Public {
 		}
 		$dequeued_scripts = apply_filters(
 			'anony_dequeue_scripts',
-			array(
-				'allow-webp-image',
-				'jupiterx-child',
-				'jupiterx-utils',
-			)
+			array()
 		);
-
-		if ( wp_is_mobile() ) {
-			$dequeued_scripts[] = 'jet-vue';
-		}
-
 		foreach ( $dequeued_scripts as $script ) {
 			wp_dequeue_script( $script );
 			wp_deregister_script( $script );
