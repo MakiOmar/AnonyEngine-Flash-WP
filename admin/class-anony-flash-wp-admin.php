@@ -525,7 +525,7 @@ anony-lazyload-bg',
 			'context'       => 'normal',
 			'priority'      => 'high', // high|low.
 			'hook_priority' => '10', // Default 10.
-			'post_type'     => apply_filters( 'optimize_per_post_types', array( 'post', 'page' ) ),
+			'post_type'     => apply_filters( 'optimize_per_post_types', array( 'post', 'page', 'product' ) ),
 			'fields'        =>
 					array(
 						array(
