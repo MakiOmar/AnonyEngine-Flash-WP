@@ -218,13 +218,9 @@ class Anony_Flash_Wp {
 		$this->loader->add_filter( 'style_loader_tag', $plugin_public, 'defer_stylesheets' );
 
 		// Scripts defer.
-		$this->loader->add_filter(
-			'script_loader_tag',
-			$plugin_public,
-			'defer_scripts',
-			99,
-			3
-		);
+		$this->loader->add_filter( 'script_loader_tag', $plugin_public, 'defer_scripts', 99, 3 );
+		// Scripts remove.
+		$this->loader->add_filter( 'script_loader_tag', $plugin_public, 'remove_unused_scripts', 99, 3 );
 
 		// Use custom avatar instead of Gravatar.com.
 		$this->loader->add_filter( 'get_avatar', $plugin_public, 'disable_gravatar', 200 );

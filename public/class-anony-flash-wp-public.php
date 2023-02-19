@@ -212,7 +212,24 @@ class Anony_Flash_Wp_Public {
 
 		return $tag;
 	}
+	public function remove_unused_scripts( $tag, $handle, $src )
+	{
+		if( !is_singular() || !empty( $_GET['list_scripts'] ) ) return $tag;
+		
+		global $post;
+		$optimize_per_post = get_post_meta( $post->ID, 'optimize_per_post', true );
 
+		if ( ! empty( $optimize_per_post ) && ! empty( $optimize_per_post[ 'unloaded_js' ] ) ) {
+			foreach( $optimize_per_post[ 'unloaded_js' ] as $script )
+			{
+				if( false !== strpos( $tag,  $script) ){
+					return '';
+				}
+			}
+			
+		}
+		return $tag;
+	}
 	/**
 	 * Defer scripts
 	 *
