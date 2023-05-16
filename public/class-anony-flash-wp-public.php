@@ -969,6 +969,7 @@ class Anony_Flash_Wp_Public {
 	}
 
 	public function is_used_css_enabled() {
+		if( !is_singular() ) return;
 		global $post;
 		if ( current_user_can( 'administrator' ) || is_admin() || false !== strpos( $_SERVER['REQUEST_URI'], 'elementor' ) || ! $post || is_null( $post ) ) {
 			return false;
