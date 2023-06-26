@@ -16,7 +16,7 @@
  * Plugin Name:       AnonyEngine Flash WP
  * Plugin URI:        http://makiomar.com
  * Description:       For WordPress higher speed.
- * Version:           1.0.045
+ * Version:           1.0.044
  * Author:            Makiomar
  * Author URI:        https://github.com/MakiOmar
  * License:           GPL-2.0+
@@ -123,9 +123,6 @@ register_deactivation_hook( __FILE__, 'deactivate_anony_flash_wp' );
 require plugin_dir_path( __FILE__ ) . 'includes/class-anony-flash-wp.php';
 
 
-if ( ! defined( 'ANOENGINE' ) ) {
-	return;
-}
 
 /**
  * Begins execution of the plugin.
@@ -142,4 +139,7 @@ function run_anony_flash_wp() {
 	$plugin->run();
 
 }
-run_anony_flash_wp();
+
+add_action('anonyengine_loaded', function(){
+    run_anony_flash_wp();
+});
