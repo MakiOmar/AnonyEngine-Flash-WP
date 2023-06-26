@@ -31,6 +31,8 @@ if ( ! defined( 'WPINC' ) ) {
 }
 
 
+
+
 /**
  * Holds plugin's slug
  *
@@ -92,6 +94,7 @@ add_action( 'admin_notices', function() {
  */
 define( 'ANONY_FLASH_WP_VERSION', '1.0.0' );
 
+
 /**
  * The code that runs during plugin activation.
  * This action is documented in includes/class-anony-flash-wp-activator.php
@@ -118,6 +121,11 @@ register_deactivation_hook( __FILE__, 'deactivate_anony_flash_wp' );
  * admin-specific hooks, and public-facing site hooks.
  */
 require plugin_dir_path( __FILE__ ) . 'includes/class-anony-flash-wp.php';
+
+
+if ( ! defined( 'ANOENGINE' ) ) {
+	return;
+}
 
 /**
  * Begins execution of the plugin.
