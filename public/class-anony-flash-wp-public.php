@@ -990,6 +990,23 @@ class Anony_Flash_Wp_Public {
 		return $tag;
 	}
 
+	public function defer_all_page_styles($tag){
+		if( !is_singular() ) return $tag;
+		global $post;
+		if ( current_user_can( 'administrator' ) || is_admin() || false !== strpos( $_SERVER['REQUEST_URI'], 'elementor' ) || ! $post || is_null( $post ) ) {
+			return $tag;
+		}
+
+		$optimize_per_post = get_post_meta( $post->ID, 'optimize_per_post', true );
+
+		$defer_all_styles = ! empty( $optimize_per_post ) && ! empty( $optimize_per_post['defer_all_styles'] ) && '1' === $optimize_per_post['defer_all_styles'] ? true : false;
+
+		if( $defer_all_styles ){
+			$tag = preg_replace( "/media='\w+'/", "media='print' onload=\"this.media='all'\"", $tag );
+		}
+		return $tag;
+	}
+
 	public function used_css_placeholder() {
 		if ( $this->is_used_css_enabled() ) {
 			echo '{ussedcss}';
