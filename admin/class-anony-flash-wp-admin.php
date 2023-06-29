@@ -633,6 +633,15 @@ anony-lazyload-bg',
 						),
 						
 						array(
+							'id'         => 'defer_all_styles',
+							'title'      => esc_html__( 'Defer all styles', 'anony-flash-wp' ),
+							'type'       => 'switch',
+							'validate'   => 'no_html',
+							'desc'       => esc_html__( 'Help to improve eliminate render-blocking resources.', 'anony-flash-wp' ),
+							'note'       => esc_html__( 'Please note that this will override the Deferred styles option', 'anony-flash-wp' ),
+						),
+						
+						array(
 							'id'         => 'dequeued_styles',
 							'title'      => esc_html__( 'Dequeued styles', 'anony-flash-wp' ),
 							'type'       => 'textarea',
