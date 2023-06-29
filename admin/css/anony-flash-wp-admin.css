@@ -2,3 +2,17 @@
  * All of the CSS for your admin-specific functionality should be
  * included in this file.
  */
+
+ #optimize_per_post{
+    box-shadow: 1px -1px 5px 0px rgba(156,156,156,0.27);
+	-webkit-box-shadow: 1px -1px 5px 0px rgba(156,156,156,0.27);
+	-moz-box-shadow: 1px -1px 5px 0px rgba(156, 156, 156, 0.27);
+    border-radius: 10px;
+    max-width: 98%;
+    margin: auto;
+    margin-top: 20px;
+ }
+
+ #optimize_per_post .postbox-header{
+    border: none;
+ }
