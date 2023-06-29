@@ -529,6 +529,13 @@ anony-lazyload-bg',
 			'fields'        =>
 					array(
 						array(
+							'id'          => 'css',
+							'title'       => 'CSS',
+							//'tag'         => 'div',
+							'collapsible' => true,
+							'type'        => 'group_start',
+						),
+						array(
 							'id'       => 'enable_used_css',
 							'title'    => esc_html__( 'Enable used css', 'anony-flash-wp' ),
 							'type'     => 'switch',
@@ -571,7 +578,15 @@ anony-lazyload-bg',
 							'columns'    => '60',
 							'direction'  => 'ltr',
 						),
-
+						array(
+							'type'     => 'group_close',
+						),
+						array(
+							'id'          => 'images-preload',
+							'title'       => 'Images preload',
+							'collapsible' => true,
+							'type'        => 'group_start',
+						),
 						array(
 							'id'         => 'preload_desktop_images',
 							'title'      => esc_html__( 'Images to preload on desktop', 'anony-flash-wp' ),
@@ -595,7 +610,15 @@ anony-lazyload-bg',
 							'direction'  => 'ltr',
 							'desc'       => esc_html__( 'Help to improve largest content paint.Please add a URL perline.', 'anony-flash-wp' ),
 						),
-
+						array(
+							'type'     => 'group_close',
+						),
+						array(
+							'id'          => 'styles-files',
+							'title'       => 'Styles\'s files',
+							'collapsible' => true,
+							'type'        => 'group_start',
+						),
 						array(
 							'id'         => 'deferred_styles',
 							'title'      => esc_html__( 'Deferred styles', 'anony-flash-wp' ),
@@ -608,7 +631,7 @@ anony-lazyload-bg',
 							'desc'       => esc_html__( 'Help to improve eliminate render-blocking resources.', 'anony-flash-wp' ),
 							'note'       => esc_html__( 'Please add one handle per line', 'anony-flash-wp' ),
 						),
-
+						
 						array(
 							'id'         => 'dequeued_styles',
 							'title'      => esc_html__( 'Dequeued styles', 'anony-flash-wp' ),
@@ -620,6 +643,15 @@ anony-lazyload-bg',
 							'direction'  => 'ltr',
 							'desc'       => esc_html__( 'Stop loading unneccessary styles', 'anony-flash-wp' ),
 						),
+						array(
+							'type'     => 'group_close',
+						),
+						array(
+							'id'          => 'scripts-files',
+							'title'       => 'Scripts\'s files',
+							'collapsible' => true,
+							'type'        => 'group_start',
+						),
 
 						array(
 							'id'         => 'unloaded_js',
@@ -628,6 +660,9 @@ anony-lazyload-bg',
 							'validate'   => 'no_html',
 							'desc'       => esc_html__( 'Select files you need to unload on frontend of this page', 'anony-flash-wp' ),
 							'options'    => ANONY_Wp_Misc_Help::list_post_scripts()
+						),
+						array(
+							'type'     => 'group_close',
 						)
 					),
 		);
