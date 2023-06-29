@@ -642,6 +642,7 @@ anony-lazyload-bg',
 							'columns'    => '60',
 							'direction'  => 'ltr',
 							'desc'       => esc_html__( 'Stop loading unneccessary styles', 'anony-flash-wp' ),
+							'note'       => esc_html__( 'Please add one handle per line', 'anony-flash-wp' ),
 						),
 						array(
 							'type'     => 'group_close',
