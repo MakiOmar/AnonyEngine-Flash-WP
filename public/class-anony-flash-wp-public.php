@@ -969,7 +969,7 @@ class Anony_Flash_Wp_Public {
 	}
 
 	public function is_used_css_enabled() {
-		if( !is_singular() ) return;
+		if( !is_singular() ) return false;
 		global $post;
 		if ( current_user_can( 'administrator' ) || is_admin() || false !== strpos( $_SERVER['REQUEST_URI'], 'elementor' ) || ! $post || is_null( $post ) ) {
 			return false;
@@ -995,6 +995,21 @@ class Anony_Flash_Wp_Public {
 
 		return $tag;
 	}
+	protected function is_switch_meta_field_enabled( $field_name ){
+		if( !is_singular() ) return false;
+		global $post;
+		if ( current_user_can( 'administrator' ) || is_admin() || false !== strpos( $_SERVER['REQUEST_URI'], 'elementor' ) || ! $post || is_null( $post ) ) {
+			return false;
+		}
+
+		$optimize_per_post = get_post_meta( $post->ID, 'optimize_per_post', true );
+	
+		$enabled = ! empty( $optimize_per_post ) && ! empty( $optimize_per_post[$field_name] ) && '1' === $optimize_per_post[$field_name] ? true : false;
+
+		
+
+		return $enabled;
+	}
 
 	public function defer_all_page_styles($tag){
 		if( !is_singular() ) return $tag;
@@ -1014,28 +1029,41 @@ class Anony_Flash_Wp_Public {
 	}
 
 	public function used_css_placeholder() {
-		if ( $this->is_used_css_enabled() ) {
+		if ( $this->is_used_css_enabled() || $this->is_above_the_fold_styles_enabled() ) {
 			echo '{ussedcss}';
 		}
 	}
 
-	/**
-	 * Remove inline <style> blocks.
-	 * Start HTML buffer
-	 */
-	public function start_html_buffer() 
-	{
-		if ( $this->is_used_css_enabled() ) {
-			// buffer output html..
-			ob_start( array( $this, 'start_html_buffer_cb' ), 0  );
-		}
+	
+	public function is_above_the_fold_styles_enabled() {
+		
+		return $this->is_switch_meta_field_enabled( 'above_the_fold_styles' );
+
 	}
 
-	public function start_html_buffer_cb( $html )
-	{
-		global $post;
-		$optimize_per_post = get_post_meta( $post->ID, 'optimize_per_post', true );
+	public function above_the_fold_css( $post, $optimize_per_post ){
+		$style = '';
+		
+		if ( ! wp_is_mobile() && ! empty( $optimize_per_post['desktop_above_fold_css'] ) ) {
+			$style .= '<style type="text/css" id="anony-desktop-above-the-fold-css-' . esc_attr( $post->ID ) . '">
+			' . $optimize_per_post['desktop_above_fold_css'] . '
+			</style>';
 
+		}
+
+				
+		if ( wp_is_mobile() && ! empty( $optimize_per_post['mobile_above_fold_css'] ) ) {
+			$style .= '<style type="text/css" id="anony-mobile-above-the-fold-css-' . esc_attr( $post->ID ) . '">
+			' . $optimize_per_post['mobile_above_fold_css'] . '
+			</style>';
+
+		}
+
+		
+		return $style;
+	}
+
+	public function used_css( $post, $optimize_per_post ){
 		$style = '';
 
 		if ( ! wp_is_mobile() && ! empty( $optimize_per_post['desktop_used_css'] ) ) {
@@ -1051,6 +1079,37 @@ class Anony_Flash_Wp_Public {
 			} elseif ( '1' === $optimize_per_post['separate_mobile_used_css'] && ! empty( $optimize_per_post['mobile_used_css'] ) ) {
 				$style .= '<style type="text/css" id="anony-mobile-used-css-' . esc_attr( $post->ID ) . '">' . $optimize_per_post['mobile_used_css'] . '</style>';
 			}
+		}
+
+		return $style;
+	}
+
+	
+	/**
+	 * Remove inline <style> blocks.
+	 * Start HTML buffer
+	 */
+	public function start_html_buffer() 
+	{
+		
+		if ( $this->is_used_css_enabled() || $this->is_above_the_fold_styles_enabled() ) {
+			// buffer output html..
+			ob_start( array( $this, 'start_html_buffer_cb' ), 0  );
+		}
+	}
+
+	public function start_html_buffer_cb( $html )
+	{
+		global $post;
+		$optimize_per_post = get_post_meta( $post->ID, 'optimize_per_post', true );
+
+		if( $this->is_used_css_enabled() && !$this->is_above_the_fold_styles_enabled() ){
+			$style = $this->used_css( $post, $optimize_per_post );
+		}
+		
+		
+		if( $this->is_above_the_fold_styles_enabled() && !$this->is_used_css_enabled() ) {
+			$style = $this->above_the_fold_css($post, $optimize_per_post);
 		}
 
 		// remove <style> blocks using regular expression..
