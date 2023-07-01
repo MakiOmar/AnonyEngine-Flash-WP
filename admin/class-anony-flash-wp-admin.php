@@ -631,16 +631,6 @@ anony-lazyload-bg',
 							'desc'       => esc_html__( 'Help to improve eliminate render-blocking resources.', 'anony-flash-wp' ),
 							'note'       => esc_html__( 'Please add one handle per line', 'anony-flash-wp' ),
 						),
-						
-						array(
-							'id'         => 'defer_all_styles',
-							'title'      => esc_html__( 'Defer all styles', 'anony-flash-wp' ),
-							'type'       => 'switch',
-							'validate'   => 'no_html',
-							'desc'       => esc_html__( 'Help to improve eliminate render-blocking resources.', 'anony-flash-wp' ),
-							'note'       => esc_html__( 'Please note that this will override the Deferred styles option', 'anony-flash-wp' ),
-						),
-						
 						array(
 							'id'         => 'dequeued_styles',
 							'title'      => esc_html__( 'Dequeued styles', 'anony-flash-wp' ),
@@ -673,7 +663,56 @@ anony-lazyload-bg',
 						),
 						array(
 							'type'     => 'group_close',
-						)
+						),
+
+						array(
+							'id'          => 'load-css-asynchronously',
+							'title'       => 'Load CSS asynchronously',
+							'collapsible' => true,
+							'type'        => 'group_start',
+						),
+						array(
+							'id'         => 'above_the_fold_styles',
+							'title'      => esc_html__( 'Enable above the fold styles', 'anony-flash-wp' ),
+							'type'       => 'switch',
+							'validate'   => 'no_html',
+							'desc'       => esc_html__( 'Usefull for first content paint', 'anony-flash-wp' ),
+							'note'       => esc_html__( 'Shouldn\'t be used if you enabled the used css option.', 'anony-flash-wp' ),
+						),
+
+						array(
+							'id'         => 'desktop_above_fold_css',
+							'title'      => esc_html__( 'Desktop\'s above the fold css', 'anony-flash-wp' ),
+							'type'       => 'textarea',
+							'validate'   => 'no_html',
+							'text-align' => 'left',
+							'rows'       => '10',
+							'columns'    => '60',
+							'direction'  => 'ltr',
+							'desc'       => esc_html__( 'Please add your above the fold css for desktop', 'anony-flash-wp' ),
+						),
+						array(
+							'id'         => 'mobile_above_fold_css',
+							'title'      => esc_html__( 'Mobile\'s above the fold css', 'anony-flash-wp' ),
+							'type'       => 'textarea',
+							'validate'   => 'no_html',
+							'text-align' => 'left',
+							'rows'       => '10',
+							'columns'    => '60',
+							'direction'  => 'ltr',
+							'desc'       => esc_html__( 'Please add your above the fold css for mobile', 'anony-flash-wp' ),
+						),
+						array(
+							'id'         => 'defer_all_styles',
+							'title'      => esc_html__( 'Defer all styles', 'anony-flash-wp' ),
+							'type'       => 'switch',
+							'validate'   => 'no_html',
+							'desc'       => esc_html__( 'Help to improve eliminate render-blocking resources.', 'anony-flash-wp' ),
+							'note'       => esc_html__( 'Recommended to be enabled with above the fold styles.', 'anony-flash-wp' ),
+						),
+						array(
+							'type'     => 'group_close',
+						),
 					),
 		);
 
