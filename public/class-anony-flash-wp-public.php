@@ -979,7 +979,13 @@ class Anony_Flash_Wp_Public {
 
 		$is_used_css_enabled = ! empty( $optimize_per_post ) && ! empty( $optimize_per_post['enable_used_css'] ) && '1' === $optimize_per_post['enable_used_css'] ? true : false;
 
-		return $is_used_css_enabled;
+		$defer_all_styles = ! empty( $optimize_per_post ) && ! empty( $optimize_per_post['defer_all_styles'] ) && '1' === $optimize_per_post['defer_all_styles'] ? true : false;
+
+		if( $is_used_css_enabled && !$defer_all_styles){
+			return true;
+		}
+
+		return false;
 	}
 	public function remove_all_stylesheets( $tag ) {
 
