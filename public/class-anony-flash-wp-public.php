@@ -199,11 +199,7 @@ class Anony_Flash_Wp_Public {
 				if( !empty( $deferred_styles )  )
 				{
 					foreach ($deferred_styles as $handle) {
-
-						if ( false !== strpos( $tag, $handle ) ) {
-							$tag = preg_replace( "/media='\w+'/", "media='print' onload=\"this.media='all'\"", $tag );
-						}
-						
+						$tag = preg_replace( "/media='\w+'/", "media='print' onload=\"this.media='all'\"", $tag );
 					}
 				}
 			}
@@ -539,7 +535,32 @@ class Anony_Flash_Wp_Public {
 		</script>
 		<?php
 	}
+	public function load_stylesheets_upon_interact(){
+		//var_dump($this->is_above_the_fold_styles_enabled());
+		if( !$this->is_above_the_fold_styles_enabled() ){
+			return;
+		}
+		
+		?>
+		<script type="text/javascript">
+			jQuery(document).ready(function($){
+				function load_stylesheets_upon_interact(){
+					$('link[media="print"]').each(function() {
+						var media = $(this).attr('media');
+						media = media.replace('print', 'all');
+						$(this).attr('media', media);
+					});
+				}
+				document.body.addEventListener('mousemove', load_stylesheets_upon_interact);
+				document.body.addEventListener('scroll', load_stylesheets_upon_interact);
+				document.body.addEventListener('keydown', load_stylesheets_upon_interact);
+				document.body.addEventListener('click', load_stylesheets_upon_interact);
+				document.body.addEventListener('touchstart', load_stylesheets_upon_interact);
+			});
 
+		</script>
+	<?php
+	}
 	/**
 	 * Load Google tag manager deferred depending on defer.js
 	 */
@@ -1021,9 +1042,14 @@ class Anony_Flash_Wp_Public {
 		$optimize_per_post = get_post_meta( $post->ID, 'optimize_per_post', true );
 
 		$defer_all_styles = ! empty( $optimize_per_post ) && ! empty( $optimize_per_post['defer_all_styles'] ) && '1' === $optimize_per_post['defer_all_styles'] ? true : false;
-
 		if( $defer_all_styles ){
-			$tag = preg_replace( "/media='\w+'/", "media='print' onload=\"this.media='all'\"", $tag );
+			$method = 'interact';
+			if('onload' === $method ){
+				$tag = preg_replace( "/media='\w+'/", "media='print' onload=\"this.media='all'\"", $tag );
+			}else{
+				$tag = preg_replace( "/media='\w+'/", "media='print'", $tag );
+			}
+			
 		}
 		return $tag;
 	}

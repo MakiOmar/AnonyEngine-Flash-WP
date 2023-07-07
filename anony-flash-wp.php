@@ -139,6 +139,9 @@ function run_anony_flash_wp() {
 	$plugin->run();
 
 }
-if( defined('ANOENGINE') || class_exists('ANONY_Theme_Settings') ){
-	run_anony_flash_wp();
-}
+
+add_action( 'plugins_loaded', function(){
+	if( defined('ANOENGINE') || class_exists('ANONY_Theme_Settings') ){
+		run_anony_flash_wp();
+	}	
+} );
