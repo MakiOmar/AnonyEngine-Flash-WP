@@ -1142,6 +1142,8 @@ class Anony_Flash_Wp_Public {
 		// $html = preg_replace( '/<style[^>]*>[^<]*<\/style>/m', '', $html );
 
 		$html = str_replace( '{ussedcss}', $style, $html );
+
+		$html = apply_filters('anony_flash_wp_html_buffer', $html, $post);
 		// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped
 		return $html;
 		// phpcs:enable.
@@ -1151,7 +1153,7 @@ class Anony_Flash_Wp_Public {
 	 * End HTML buffer
 	 */
 	public function end_html_buffer() {
-		if ( $this->is_used_css_enabled() ) {
+		if ( $this->is_used_css_enabled() || $this->is_above_the_fold_styles_enabled() ) {
 			// get buffered HTML.
 			echo ob_get_clean();
 		}
