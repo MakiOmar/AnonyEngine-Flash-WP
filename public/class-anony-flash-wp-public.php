@@ -990,19 +990,20 @@ class Anony_Flash_Wp_Public {
 	}
 
 	public function is_used_css_enabled() {
-		if( !is_singular() ) return false;
+		
 		global $post;
 		if ( current_user_can( 'administrator' ) || is_admin() || false !== strpos( $_SERVER['REQUEST_URI'], 'elementor' ) || ! $post || is_null( $post ) ) {
 			return false;
 		}
 
+		
 		$optimize_per_post = get_post_meta( $post->ID, 'optimize_per_post', true );
 
 		$is_used_css_enabled = ! empty( $optimize_per_post ) && ! empty( $optimize_per_post['enable_used_css'] ) && '1' === $optimize_per_post['enable_used_css'] ? true : false;
 
-		$defer_all_styles = ! empty( $optimize_per_post ) && ! empty( $optimize_per_post['defer_all_styles'] ) && '1' === $optimize_per_post['defer_all_styles'] ? true : false;
+		//$defer_all_styles = ! empty( $optimize_per_post ) && ! empty( $optimize_per_post['defer_all_styles'] ) && '1' === $optimize_per_post['defer_all_styles'] ? true : false;
 
-		if( $is_used_css_enabled && !$defer_all_styles){
+		if( $is_used_css_enabled/* && !$defer_all_styles*/){
 			return true;
 		}
 
@@ -1054,13 +1055,6 @@ class Anony_Flash_Wp_Public {
 		return $tag;
 	}
 
-	public function used_css_placeholder() {
-		if ( $this->is_used_css_enabled() || $this->is_above_the_fold_styles_enabled() ) {
-			echo '{ussedcss}';
-		}
-	}
-
-	
 	public function is_above_the_fold_styles_enabled() {
 		
 		return $this->is_switch_meta_field_enabled( 'above_the_fold_styles' );
@@ -1117,35 +1111,46 @@ class Anony_Flash_Wp_Public {
 	 */
 	public function start_html_buffer() 
 	{
+
+		// buffer output html..
+		ob_start( array( $this, 'start_html_buffer_cb' ), 0  );
 		
-		if ( $this->is_used_css_enabled() || $this->is_above_the_fold_styles_enabled() ) {
-			// buffer output html..
-			ob_start( array( $this, 'start_html_buffer_cb' ), 0  );
-		}
 	}
 
 	public function start_html_buffer_cb( $html )
 	{
+	
+		// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped
+		return $html;
+		// phpcs:enable.
+	}
+
+	public function load_optimized_css()
+	{
 		global $post;
+
+		if( !$post || is_null( $post ) ) {
+			return '';
+		}
+
+		
 		$optimize_per_post = get_post_meta( $post->ID, 'optimize_per_post', true );
 
+		$style = '';
+		
 		if( $this->is_used_css_enabled() && !$this->is_above_the_fold_styles_enabled() ){
+			
 			$style = $this->used_css( $post, $optimize_per_post );
 		}
 		
 		
 		if( $this->is_above_the_fold_styles_enabled() && !$this->is_used_css_enabled() ) {
+			
 			$style = $this->above_the_fold_css($post, $optimize_per_post);
 		}
 
-		// remove <style> blocks using regular expression..
-		// $html = preg_replace( '/<style[^>]*>[^<]*<\/style>/m', '', $html );
-
-		$html = str_replace( '{ussedcss}', $style, $html );
-
-		$html = apply_filters('anony_flash_wp_html_buffer', $html, $post);
 		// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped
-		return $html;
+		return $style;
 		// phpcs:enable.
 	}
 
