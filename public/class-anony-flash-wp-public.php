@@ -1150,7 +1150,7 @@ class Anony_Flash_Wp_Public {
 		}
 
 		// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped
-		return $style;
+		echo $style;
 		// phpcs:enable.
 	}
 
