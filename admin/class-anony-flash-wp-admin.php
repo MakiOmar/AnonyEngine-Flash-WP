@@ -110,10 +110,20 @@ class Anony_Flash_Wp_Admin {
 		if ( ! class_exists( 'ANONY_Options_Model' ) ) {
 			return;
 		}
+		$public_post_types = ANONY_Post_Help::get_post_types_list();
+		$default_optimize_post_types = array();
 
 		if ( get_option( 'Anofl_Options' ) ) {
 			$anofl_options = ANONY_Options_Model::get_instance( 'Anofl_Options' );
+
+			$optimize_post_types = $anofl_options->optimize_post_types;
+
+			if( $optimize_post_types && is_array( $optimize_post_types ) ){
+				$default_optimize_post_types = array_unique(array_merge( $default_optimize_post_types, $optimize_post_types ));
+			}
+
 		}
+		
 
 		// Navigation elements.
 		$options_nav = array(
@@ -139,6 +149,13 @@ class Anony_Flash_Wp_Admin {
 			'custom-scripts' => array(
 				'title'    => esc_html__( 'Custom scripts', 'anony-flash-wp' ),
 				'sections' => array( 'custom-scripts', 'external-services' ),
+			),
+			
+			// post types optimizations --------------------------------------------.
+			'post_types' => array(
+				'title'     => esc_html__( 'Optimize per post type', 'anony-flash-wp' ),
+				'sections'  => array_merge(array( 'post_types' ), $default_optimize_post_types),
+				
 			),
 
 		);
@@ -499,6 +516,36 @@ anony-lazyload-bg',
 				)
 			);
 		}
+
+		$anofl_sections['post_types'] = array(
+			'title'  => esc_html__( 'Optimize post types', 'anony-flash-wp' ),
+			'icon'   => 'x',
+			'fields' => array(
+				array(
+					'id'         => 'optimize_post_types',
+					'title'      => esc_html__( 'Optimize selected post types', 'anony-flash-wp' ),
+					'type'       => 'checkbox',
+					'validate'   => 'no_html',
+					'options'    => $public_post_types,
+				),
+			)
+		);
+
+		foreach( $default_optimize_post_types as $default_optimize_post_type ){
+			$anofl_sections[$default_optimize_post_type] = array(
+				'title'  => $public_post_types[$default_optimize_post_type],
+				'icon'   => 'x',
+				'fields' => array(
+					array(
+						'id'         => 'optimize_post_types' . $default_optimize_post_type,
+						'title'      => 'Optimize ' . $default_optimize_post_type,
+						'type'       => 'text',
+						'validate'   => 'no_html',
+					),
+				)
+			);
+		}
+		
 		
 		$anofl_options_page['opt_name']      = 'Anofl_Options';
 		$anofl_options_page['menu_title']    = esc_html__( 'Flash WP', 'anony-flash-wp' );
