@@ -151,8 +151,10 @@ class Anony_Flash_Wp_Public {
 			<script>
 				window.onload = function() {
 					"use strict";
-					var loader = document.getElementById('anony-preloader');
-					if(loader !== null) loader.style.display = 'none';
+					setTimeout(function(){
+						var loader = document.getElementById('anony-preloader');
+						if(loader !== null) loader.style.display = 'none';
+					}, 3000);
 				};
 			</script>
 		<?php endif;
