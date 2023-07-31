@@ -224,7 +224,7 @@ class Anony_Flash_Wp {
 
 		// Delay js execution.
 		$this->loader->add_filter( 'script_loader_tag', $plugin_public, 'load_scripts_on_interaction', 99, 3 );
-		
+
 		// Scripts remove.
 		$this->loader->add_filter( 'script_loader_tag', $plugin_public, 'remove_unused_scripts', 99, 3 );
 
@@ -245,6 +245,7 @@ class Anony_Flash_Wp {
 		$this->loader->add_action( 'wp_head', $plugin_public, 'defer_inline_external_scripts', 30 );
 		$this->loader->add_action( 'wp_head', $plugin_public, 'anony_add_head_scripts' );
 		$this->loader->add_action( 'wp_head', $plugin_public, 'anony_add_footer_scripts' );
+		$this->loader->add_action( 'wp_body_open', $plugin_public, 'output_preloader' );
 
 		$this->loader->add_action( 'wp_print_styles', $plugin_public, 'load_scripts_on_wc_templates_only' );
 

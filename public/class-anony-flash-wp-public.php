@@ -123,6 +123,40 @@ class Anony_Flash_Wp_Public {
 			echo $anofl_options->footer_scripts;
 		}
 	}
+
+	public function output_preloader(){
+		$anofl_options = ANONY_Options_Model::get_instance( 'Anofl_Options' );
+
+		 if ($anofl_options->preloader == '1' ) : ?>
+		 	<style>
+				#anony-preloader p{
+					font-size: 18px;
+				}
+				#anony-preloader{
+					position: fixed;
+					display: flex;
+					align-items: center;
+					justify-content: center;
+					flex-direction: column;
+					width: 100%;
+					height: 100%;
+					background: #fff;
+					z-index: 9999999999;
+					background-color: rgb(249, 249, 249)
+				}
+			</style>
+			<div id="anony-preloader">
+				<p><?php echo esc_html__( 'Loading...', 'anony-flash-wp' ); ?></p>
+			</div>
+			<script>
+				window.onload = function() {
+					"use strict";
+					var loader = document.getElementById('anony-preloader');
+					if(loader !== null) loader.style.display = 'none';
+				};
+			</script>
+		<?php endif;
+	}
 	/**
 	 * Callback for ob_start
 	 *

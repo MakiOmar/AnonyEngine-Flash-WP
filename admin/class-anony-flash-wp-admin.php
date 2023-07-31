@@ -184,6 +184,13 @@ class Anony_Flash_Wp_Admin {
 					'validate' => 'no_html',
 					'desc'     => esc_html__( 'Please activate only if you think that GZIP is not enabled on your server.', 'anony-flash-wp' ) . ' <a href="https://www.giftofspeed.com/gzip-test/">' . esc_html__( 'Check gzip compression', 'anony-flash-wp' ) . '</a>',
 				),
+				array(
+					'id'       => 'preloader',
+					'title'    => esc_html__( 'Enable preloader', 'smartpage' ),
+					'type'     => 'switch',
+					'validate' => 'no_html',
+					'desc'     => esc_html__( 'Enabel or disable page preloader', 'smartpage' ),
+				),
 
 				array(
 					'id'       => 'disable_gravatar',
