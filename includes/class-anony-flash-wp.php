@@ -221,6 +221,10 @@ class Anony_Flash_Wp {
 
 		// Scripts defer.
 		$this->loader->add_filter( 'script_loader_tag', $plugin_public, 'defer_scripts', 99, 3 );
+
+		// Delay js execution.
+		$this->loader->add_filter( 'script_loader_tag', $plugin_public, 'load_scripts_on_interaction', 99, 3 );
+		
 		// Scripts remove.
 		$this->loader->add_filter( 'script_loader_tag', $plugin_public, 'remove_unused_scripts', 99, 3 );
 

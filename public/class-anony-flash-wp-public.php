@@ -226,6 +226,27 @@ class Anony_Flash_Wp_Public {
 		}
 		return $tag;
 	}
+
+	public function load_scripts_on_interaction( $tag, $handle, $src ){
+		
+		$anofl_options = ANONY_Options_Model::get_instance( 'Anofl_Options' );
+
+		if ( is_admin() || '1' !== $anofl_options->load_scripts_on_interaction ) {
+			return $tag; // don't break WP Admin.
+		}
+
+		if ( false === strpos( $src, '.js' ) ) {
+			return $tag;
+		}
+
+		if ( false !== strpos( $tag, 'anony-delay-scripts' ) ) {
+			return $tag;
+		}
+
+		$tag = str_replace('text/javascript', 'anony-delay-scripts' ,$tag);
+
+		return $tag;
+	}
 	/**
 	 * Defer scripts
 	 *
@@ -635,6 +656,15 @@ class Anony_Flash_Wp_Public {
 
 			<script>
 				Defer.all('script[type="anony-external-scripts"]', 5000);
+			</script>
+			<?php
+		}
+
+		if ( '1' === $anofl_options->load_scripts_on_interaction ) {
+
+			?>
+			<script>
+				Defer.all('script[type="anony-delay-scripts"]', 0, true);
 			</script>
 			<?php
 		}

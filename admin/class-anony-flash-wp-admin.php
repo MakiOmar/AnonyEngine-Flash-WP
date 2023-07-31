@@ -352,6 +352,13 @@ class Anony_Flash_Wp_Admin {
 					'desc'     => esc_html__( 'Improves First content paint, and get higher score on page speed insights.', 'anony-flash-wp' ),
 				),
 				array(
+					'id'       => 'load_scripts_on_interaction',
+					'title'    => esc_html__( 'Delay javascript execution', 'anony-flash-wp' ),
+					'type'     => 'switch',
+					'validate' => 'no_html',
+					'desc'     => esc_html__( 'This will delay javascript execution until user interacts', 'anony-flash-wp' ),
+				),
+				array(
 					'id'       => 'disable_gutenburg_scripts',
 					'title'    => esc_html__( 'Disable Gutenburg editor scripts', 'anony-flash-wp' ),
 					'type'     => 'switch',
