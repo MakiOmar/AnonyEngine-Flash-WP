@@ -267,7 +267,7 @@ class Anony_Flash_Wp_Public {
 		
 		$anofl_options = ANONY_Options_Model::get_instance( 'Anofl_Options' );
 
-		if ( is_admin() || '1' !== $anofl_options->load_scripts_on_interaction ) {
+		if ( is_admin() || '1' !== $anofl_options->load_scripts_on_interaction ||  false !== strpos( $_SERVER['REQUEST_URI'], 'elementor' ) ) {
 			return $tag; // don't break WP Admin.
 		}
 
