@@ -126,7 +126,7 @@ class Anony_Flash_Wp_Public {
 
 	public function output_preloader(){
 		$anofl_options = ANONY_Options_Model::get_instance( 'Anofl_Options' );
-
+		$preloader_timeout = $anofl_options->preloader_timeout;
 		 if ($anofl_options->preloader == '1' ) : ?>
 		 	<style>
 				#anony-preloader p{
@@ -154,7 +154,7 @@ class Anony_Flash_Wp_Public {
 					setTimeout(function(){
 						var loader = document.getElementById('anony-preloader');
 						if(loader !== null) loader.style.display = 'none';
-					}, 3000);
+					}, <?php echo $preloader_timeout ?>);
 				};
 			</script>
 		<?php endif;
@@ -277,6 +277,14 @@ class Anony_Flash_Wp_Public {
 
 		if ( false !== strpos( $tag, 'anony-delay-scripts' ) ) {
 			return $tag;
+		}
+
+		$exclusion_list = apply_filters( 'load_scripts_on_interaction_exclude', array('jquery-core-js') );
+		
+		foreach( $exclusion_list as $target ){
+			if ( false !== strpos( $tag, $target )) {
+				return $tag;
+			}
 		}
 
 		$tag = str_replace('text/javascript', 'anony-delay-scripts' ,$tag);

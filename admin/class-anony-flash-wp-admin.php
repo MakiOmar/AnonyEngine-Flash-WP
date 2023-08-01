@@ -186,10 +186,19 @@ class Anony_Flash_Wp_Admin {
 				),
 				array(
 					'id'       => 'preloader',
-					'title'    => esc_html__( 'Enable preloader', 'smartpage' ),
+					'title'    => esc_html__( 'Enable preloader', 'anony-flash-wp' ),
 					'type'     => 'switch',
 					'validate' => 'no_html',
-					'desc'     => esc_html__( 'Enabel or disable page preloader', 'smartpage' ),
+					'desc'     => esc_html__( 'Enabel or disable page preloader', 'anony-flash-wp' ),
+				),
+
+				array(
+					'id'       => 'preloader_timeout',
+					'title'    => esc_html__( 'Preloader timeout', 'anony-flash-wp' ),
+					'type'     => 'number',
+					'validate' => 'no_html',
+					'default'  => '3000',
+					'desc'     => esc_html__( 'Hide preloader after x miliseconds', 'anony-flash-wp' ),
 				),
 
 				array(
@@ -363,7 +372,7 @@ class Anony_Flash_Wp_Admin {
 					'title'    => esc_html__( 'Delay javascript execution', 'anony-flash-wp' ),
 					'type'     => 'switch',
 					'validate' => 'no_html',
-					'desc'     => esc_html__( 'This will delay javascript execution until user interacts', 'anony-flash-wp' ),
+					'desc'     => __( 'This will delay javascript execution until user interacts.<code>jQuery</code> will not be delayed', 'anony-flash-wp' ),
 				),
 				array(
 					'id'       => 'disable_gutenburg_scripts',
