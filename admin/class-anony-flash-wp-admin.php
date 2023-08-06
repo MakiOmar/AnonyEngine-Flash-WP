@@ -111,7 +111,16 @@ class Anony_Flash_Wp_Admin {
 			return;
 		}
 		$public_post_types = ANONY_Post_Help::get_post_types_list();
+
+		$args = array(
+			'public'   => true
+		); 
+		$output = 'names'; // or objects
+		$operator = 'and'; // 'and' or 'or'
+		$taxonomies = get_taxonomies( $args, $output, $operator ); 
+
 		$default_optimize_post_types = array();
+		$default_optimize_taxonomies = array();
 
 		if ( get_option( 'Anofl_Options' ) ) {
 			$anofl_options = ANONY_Options_Model::get_instance( 'Anofl_Options' );
@@ -121,6 +130,13 @@ class Anony_Flash_Wp_Admin {
 			if( $optimize_post_types && is_array( $optimize_post_types ) ){
 				$default_optimize_post_types = array_unique(array_merge( $default_optimize_post_types, $optimize_post_types ));
 			}
+
+			$optimize_taxonomies = $anofl_options->optimize_taxonomies;
+
+			if( $optimize_taxonomies && is_array( $optimize_taxonomies ) ){
+				$default_optimize_taxonomies = array_unique(array_merge( $default_optimize_taxonomies, $optimize_taxonomies ));
+			}
+
 
 		}
 		
@@ -152,9 +168,16 @@ class Anony_Flash_Wp_Admin {
 			),
 			
 			// post types optimizations --------------------------------------------.
-			'post_types' => array(
+			'post_types_optimization' => array(
 				'title'     => esc_html__( 'Optimize per post type', 'anony-flash-wp' ),
-				'sections'  => array_merge(array( 'post_types' ), $default_optimize_post_types),
+				'sections'  => array_merge(array( 'post_types_optimization' ), $default_optimize_post_types),
+				
+			),
+			
+			// Taxonomies optimizations --------------------------------------------.
+			'taxonomies_optimization' => array(
+				'title'     => esc_html__( 'Optimize per taxonomy', 'anony-flash-wp' ),
+				'sections'  => array_merge(array( 'taxonomies_optimization' ), $default_optimize_taxonomies),
 				
 			),
 
@@ -540,7 +563,7 @@ anony-lazyload-bg',
 			);
 		}
 
-		$anofl_sections['post_types'] = array(
+		$anofl_sections['post_types_optimization'] = array(
 			'title'  => esc_html__( 'Optimize post types', 'anony-flash-wp' ),
 			'icon'   => 'x',
 			'fields' => array(
@@ -561,6 +584,31 @@ anony-lazyload-bg',
 				'fields' => $this->optimization_fields( '_' . $default_optimize_post_type )
 			);
 		}
+
+
+		$anofl_sections['taxonomies_optimization'] = array(
+			'title'  => esc_html__( 'Optimize taxonomies', 'anony-flash-wp' ),
+			'icon'   => 'x',
+			'fields' => array(
+				array(
+					'id'         => 'optimize_taxonomies',
+					'title'      => esc_html__( 'Optimize selected taxonomies', 'anony-flash-wp' ),
+					'type'       => 'checkbox',
+					'validate'   => 'no_html',
+					'options'    => $taxonomies,
+				),
+			)
+		);
+
+		foreach( $default_optimize_taxonomies as $default_optimize_taxonomy ){
+			$anofl_sections[$default_optimize_taxonomy] = array(
+				'title'  => $default_optimize_taxonomy,
+				'icon'   => 'x',
+				'fields' => $this->optimization_fields( '_' . $default_optimize_taxonomy )
+			);
+		}
+
+		
 		
 		
 		$anofl_options_page['opt_name']      = 'Anofl_Options';
