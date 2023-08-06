@@ -558,14 +558,7 @@ anony-lazyload-bg',
 			$anofl_sections[$default_optimize_post_type] = array(
 				'title'  => $public_post_types[$default_optimize_post_type],
 				'icon'   => 'x',
-				'fields' => array(
-					array(
-						'id'         => 'optimize_post_types' . $default_optimize_post_type,
-						'title'      => 'Optimize ' . $default_optimize_post_type,
-						'type'       => 'text',
-						'validate'   => 'no_html',
-					),
-				)
+				'fields' => $this->optimization_fields( '_' . $default_optimize_post_type )
 			);
 		}
 		
