@@ -581,6 +581,195 @@ anony-lazyload-bg',
 
 		new ANONY_Theme_Settings( $options_nav, $anofl_sections, array(), $anofl_options_page );
 	}
+
+	public function optimization_fields( $suffix = ''){
+		return array(
+			array(
+				'id'          => 'css' . $suffix,
+				'title'       => 'CSS',
+				'collapsible' => true,
+				'type'        => 'group_start',
+			),
+			array(
+				'id'       => 'enable_used_css' . $suffix,
+				'title'    => esc_html__( 'Enable used css', 'anony-flash-wp' ),
+				'type'     => 'switch',
+				'validate' => 'no_html',
+				'desc'     => esc_html__( 'Enabling this will disable all stylesheets of this page/post and will replace them with used css that you will add below', 'anony-flash-wp' ),
+
+			),
+
+			array(
+				'id'         => 'desktop_used_css' . $suffix,
+				'title'      => esc_html__( 'Desktop\'s Used css', 'anony-flash-wp' ),
+				'type'       => 'textarea',
+				'validate'   => 'no_html',
+				'desc'       => __( 'Add css used in this page/post. CSS should be added without <code>style</code> tag.', 'anony-flash-wp' ),
+				'note'       => esc_html__( 'Works only on desktop\'s version', 'anony-flash-wp' ),
+				'text-align' => 'left',
+				'rows'       => '10',
+				'columns'    => '60',
+				'direction'  => 'ltr',
+			),
+
+			array(
+				'id'       => 'separate_mobile_used_css' . $suffix,
+				'title'    => esc_html__( 'Separate mobile used css', 'anony-flash-wp' ),
+				'type'     => 'switch',
+				'validate' => 'no_html',
+				'desc'     => esc_html__( 'Enable this if you need to load separate used css for mobile', 'anony-flash-wp' ),
+
+			),
+
+			array(
+				'id'         => 'mobile_used_css' . $suffix,
+				'title'      => esc_html__( 'Mobile\'s Used css', 'anony-flash-wp' ),
+				'type'       => 'textarea',
+				'validate'   => 'no_html',
+				'desc'       => __( 'Add css used in this page/post. CSS should be added without <code>style</code> tag.', 'anony-flash-wp' ),
+				'note'       => esc_html__( 'Works only on mobile\'s version', 'anony-flash-wp' ),
+				'text-align' => 'left',
+				'rows'       => '10',
+				'columns'    => '60',
+				'direction'  => 'ltr',
+			),
+			array(
+				'type'     => 'group_close',
+			),
+			array(
+				'id'          => 'images-preload',
+				'title'       => 'Images preload',
+				'collapsible' => true,
+				'type'        => 'group_start',
+			),
+			array(
+				'id'         => 'preload_desktop_images' . $suffix,
+				'title'      => esc_html__( 'Images to preload on desktop', 'anony-flash-wp' ),
+				'type'       => 'textarea',
+				'validate'   => 'no_html',
+				'text-align' => 'left',
+				'rows'       => '10',
+				'columns'    => '60',
+				'direction'  => 'ltr',
+				'desc'       => esc_html__( 'Help to improve largest content paint.Please add a URL perline.', 'anony-flash-wp' ),
+			),
+
+			array(
+				'id'         => 'preload_mobile_images' . $suffix,
+				'title'      => esc_html__( 'Images to preload on mobile', 'anony-flash-wp' ),
+				'type'       => 'textarea',
+				'validate'   => 'no_html',
+				'text-align' => 'left',
+				'rows'       => '10',
+				'columns'    => '60',
+				'direction'  => 'ltr',
+				'desc'       => esc_html__( 'Help to improve largest content paint.Please add a URL perline.', 'anony-flash-wp' ),
+			),
+			array(
+				'type'     => 'group_close',
+			),
+			array(
+				'id'          => 'styles-files',
+				'title'       => 'Styles\'s files',
+				'collapsible' => true,
+				'type'        => 'group_start',
+			),
+			array(
+				'id'         => 'deferred_styles' . $suffix,
+				'title'      => esc_html__( 'Deferred styles', 'anony-flash-wp' ),
+				'type'       => 'textarea',
+				'validate'   => 'no_html',
+				'text-align' => 'left',
+				'rows'       => '10',
+				'columns'    => '60',
+				'direction'  => 'ltr',
+				'desc'       => esc_html__( 'Help to improve eliminate render-blocking resources.', 'anony-flash-wp' ),
+				'note'       => esc_html__( 'Please add one handle per line', 'anony-flash-wp' ),
+			),
+			array(
+				'id'         => 'dequeued_styles' . $suffix,
+				'title'      => esc_html__( 'Dequeued styles', 'anony-flash-wp' ),
+				'type'       => 'textarea',
+				'validate'   => 'no_html',
+				'text-align' => 'left',
+				'rows'       => '10',
+				'columns'    => '60',
+				'direction'  => 'ltr',
+				'desc'       => esc_html__( 'Stop loading unneccessary styles', 'anony-flash-wp' ),
+				'note'       => esc_html__( 'Please add one handle per line', 'anony-flash-wp' ),
+			),
+			array(
+				'type'     => 'group_close',
+			),
+			array(
+				'id'          => 'scripts-files',
+				'title'       => 'Scripts\'s files',
+				'collapsible' => true,
+				'type'        => 'group_start',
+			),
+
+			array(
+				'id'         => 'unloaded_js' . $suffix,
+				'title'      => esc_html__( 'Unload js files', 'anony-flash-wp' ),
+				'type'       => 'checkbox',
+				'validate'   => 'no_html',
+				'desc'       => esc_html__( 'Select files you need to unload on frontend of this page', 'anony-flash-wp' ),
+				'options'    => ANONY_Wp_Misc_Help::list_post_scripts()
+			),
+			array(
+				'type'     => 'group_close',
+			),
+
+			array(
+				'id'          => 'load-css-asynchronously',
+				'title'       => 'Load CSS asynchronously',
+				'collapsible' => true,
+				'type'        => 'group_start',
+			),
+			array(
+				'id'         => 'above_the_fold_styles' . $suffix,
+				'title'      => esc_html__( 'Enable above the fold styles', 'anony-flash-wp' ),
+				'type'       => 'switch',
+				'validate'   => 'no_html',
+				'desc'       => esc_html__( 'Usefull for first content paint', 'anony-flash-wp' ),
+				'note'       => esc_html__( 'Shouldn\'t be used if you enabled the used css option.', 'anony-flash-wp' ),
+			),
+
+			array(
+				'id'         => 'desktop_above_fold_css' . $suffix,
+				'title'      => esc_html__( 'Desktop\'s above the fold css', 'anony-flash-wp' ),
+				'type'       => 'textarea',
+				'validate'   => 'no_html',
+				'text-align' => 'left',
+				'rows'       => '10',
+				'columns'    => '60',
+				'direction'  => 'ltr',
+				'desc'       => esc_html__( 'Please add your above the fold css for desktop', 'anony-flash-wp' ),
+			),
+			array(
+				'id'         => 'mobile_above_fold_css' . $suffix,
+				'title'      => esc_html__( 'Mobile\'s above the fold css', 'anony-flash-wp' ),
+				'type'       => 'textarea',
+				'validate'   => 'no_html',
+				'text-align' => 'left',
+				'rows'       => '10',
+				'columns'    => '60',
+				'direction'  => 'ltr',
+				'desc'       => esc_html__( 'Please add your above the fold css for mobile', 'anony-flash-wp' ),
+			),
+			array(
+				'id'         => 'defer_all_styles' . $suffix,
+				'title'      => esc_html__( 'Defer all styles', 'anony-flash-wp' ),
+				'type'       => 'switch',
+				'validate'   => 'no_html',
+				'desc'       => esc_html__( 'Help to improve eliminate render-blocking resources.', 'anony-flash-wp' ),
+				'note'       => esc_html__( 'Recommended to be enabled with above the fold styles.', 'anony-flash-wp' ),
+			),
+			array(
+				'type'     => 'group_close',
+			),
+		);
+	}
 	/**
 	 * Create optimization's metabox. By default for page and post post types.
 	 *
@@ -597,193 +786,8 @@ anony-lazyload-bg',
 			'hook_priority' => '10', // Default 10.
 			'post_type'     => apply_filters( 'optimize_per_post_types', array( 'post', 'page', 'product' ) ),
 			'layout'        => 'tabs',
-			'fields'        =>
-					array(
-						array(
-							'id'          => 'css',
-							'title'       => 'CSS',
-							'collapsible' => true,
-							'type'        => 'group_start',
-						),
-						array(
-							'id'       => 'enable_used_css',
-							'title'    => esc_html__( 'Enable used css', 'anony-flash-wp' ),
-							'type'     => 'switch',
-							'validate' => 'no_html',
-							'desc'     => esc_html__( 'Enabling this will disable all stylesheets of this page/post and will replace them with used css that you will add below', 'anony-flash-wp' ),
-
-						),
-
-						array(
-							'id'         => 'desktop_used_css',
-							'title'      => esc_html__( 'Desktop\'s Used css', 'anony-flash-wp' ),
-							'type'       => 'textarea',
-							'validate'   => 'no_html',
-							'desc'       => __( 'Add css used in this page/post. CSS should be added without <code>style</code> tag.', 'anony-flash-wp' ),
-							'note'       => esc_html__( 'Works only on desktop\'s version', 'anony-flash-wp' ),
-							'text-align' => 'left',
-							'rows'       => '10',
-							'columns'    => '60',
-							'direction'  => 'ltr',
-						),
-
-						array(
-							'id'       => 'separate_mobile_used_css',
-							'title'    => esc_html__( 'Separate mobile used css', 'anony-flash-wp' ),
-							'type'     => 'switch',
-							'validate' => 'no_html',
-							'desc'     => esc_html__( 'Enable this if you need to load separate used css for mobile', 'anony-flash-wp' ),
-
-						),
-
-						array(
-							'id'         => 'mobile_used_css',
-							'title'      => esc_html__( 'Mobile\'s Used css', 'anony-flash-wp' ),
-							'type'       => 'textarea',
-							'validate'   => 'no_html',
-							'desc'       => __( 'Add css used in this page/post. CSS should be added without <code>style</code> tag.', 'anony-flash-wp' ),
-							'note'       => esc_html__( 'Works only on mobile\'s version', 'anony-flash-wp' ),
-							'text-align' => 'left',
-							'rows'       => '10',
-							'columns'    => '60',
-							'direction'  => 'ltr',
-						),
-						array(
-							'type'     => 'group_close',
-						),
-						array(
-							'id'          => 'images-preload',
-							'title'       => 'Images preload',
-							'collapsible' => true,
-							'type'        => 'group_start',
-						),
-						array(
-							'id'         => 'preload_desktop_images',
-							'title'      => esc_html__( 'Images to preload on desktop', 'anony-flash-wp' ),
-							'type'       => 'textarea',
-							'validate'   => 'no_html',
-							'text-align' => 'left',
-							'rows'       => '10',
-							'columns'    => '60',
-							'direction'  => 'ltr',
-							'desc'       => esc_html__( 'Help to improve largest content paint.Please add a URL perline.', 'anony-flash-wp' ),
-						),
-
-						array(
-							'id'         => 'preload_mobile_images',
-							'title'      => esc_html__( 'Images to preload on mobile', 'anony-flash-wp' ),
-							'type'       => 'textarea',
-							'validate'   => 'no_html',
-							'text-align' => 'left',
-							'rows'       => '10',
-							'columns'    => '60',
-							'direction'  => 'ltr',
-							'desc'       => esc_html__( 'Help to improve largest content paint.Please add a URL perline.', 'anony-flash-wp' ),
-						),
-						array(
-							'type'     => 'group_close',
-						),
-						array(
-							'id'          => 'styles-files',
-							'title'       => 'Styles\'s files',
-							'collapsible' => true,
-							'type'        => 'group_start',
-						),
-						array(
-							'id'         => 'deferred_styles',
-							'title'      => esc_html__( 'Deferred styles', 'anony-flash-wp' ),
-							'type'       => 'textarea',
-							'validate'   => 'no_html',
-							'text-align' => 'left',
-							'rows'       => '10',
-							'columns'    => '60',
-							'direction'  => 'ltr',
-							'desc'       => esc_html__( 'Help to improve eliminate render-blocking resources.', 'anony-flash-wp' ),
-							'note'       => esc_html__( 'Please add one handle per line', 'anony-flash-wp' ),
-						),
-						array(
-							'id'         => 'dequeued_styles',
-							'title'      => esc_html__( 'Dequeued styles', 'anony-flash-wp' ),
-							'type'       => 'textarea',
-							'validate'   => 'no_html',
-							'text-align' => 'left',
-							'rows'       => '10',
-							'columns'    => '60',
-							'direction'  => 'ltr',
-							'desc'       => esc_html__( 'Stop loading unneccessary styles', 'anony-flash-wp' ),
-							'note'       => esc_html__( 'Please add one handle per line', 'anony-flash-wp' ),
-						),
-						array(
-							'type'     => 'group_close',
-						),
-						array(
-							'id'          => 'scripts-files',
-							'title'       => 'Scripts\'s files',
-							'collapsible' => true,
-							'type'        => 'group_start',
-						),
-
-						array(
-							'id'         => 'unloaded_js',
-							'title'      => esc_html__( 'Unload js files', 'anony-flash-wp' ),
-							'type'       => 'checkbox',
-							'validate'   => 'no_html',
-							'desc'       => esc_html__( 'Select files you need to unload on frontend of this page', 'anony-flash-wp' ),
-							'options'    => ANONY_Wp_Misc_Help::list_post_scripts()
-						),
-						array(
-							'type'     => 'group_close',
-						),
-
-						array(
-							'id'          => 'load-css-asynchronously',
-							'title'       => 'Load CSS asynchronously',
-							'collapsible' => true,
-							'type'        => 'group_start',
-						),
-						array(
-							'id'         => 'above_the_fold_styles',
-							'title'      => esc_html__( 'Enable above the fold styles', 'anony-flash-wp' ),
-							'type'       => 'switch',
-							'validate'   => 'no_html',
-							'desc'       => esc_html__( 'Usefull for first content paint', 'anony-flash-wp' ),
-							'note'       => esc_html__( 'Shouldn\'t be used if you enabled the used css option.', 'anony-flash-wp' ),
-						),
-
-						array(
-							'id'         => 'desktop_above_fold_css',
-							'title'      => esc_html__( 'Desktop\'s above the fold css', 'anony-flash-wp' ),
-							'type'       => 'textarea',
-							'validate'   => 'no_html',
-							'text-align' => 'left',
-							'rows'       => '10',
-							'columns'    => '60',
-							'direction'  => 'ltr',
-							'desc'       => esc_html__( 'Please add your above the fold css for desktop', 'anony-flash-wp' ),
-						),
-						array(
-							'id'         => 'mobile_above_fold_css',
-							'title'      => esc_html__( 'Mobile\'s above the fold css', 'anony-flash-wp' ),
-							'type'       => 'textarea',
-							'validate'   => 'no_html',
-							'text-align' => 'left',
-							'rows'       => '10',
-							'columns'    => '60',
-							'direction'  => 'ltr',
-							'desc'       => esc_html__( 'Please add your above the fold css for mobile', 'anony-flash-wp' ),
-						),
-						array(
-							'id'         => 'defer_all_styles',
-							'title'      => esc_html__( 'Defer all styles', 'anony-flash-wp' ),
-							'type'       => 'switch',
-							'validate'   => 'no_html',
-							'desc'       => esc_html__( 'Help to improve eliminate render-blocking resources.', 'anony-flash-wp' ),
-							'note'       => esc_html__( 'Recommended to be enabled with above the fold styles.', 'anony-flash-wp' ),
-						),
-						array(
-							'type'     => 'group_close',
-						),
-					),
+			'fields'        => $this->optimization_fields()
+					
 		);
 
 		return $metaboxes;
