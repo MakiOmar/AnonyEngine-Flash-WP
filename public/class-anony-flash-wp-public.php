@@ -1063,6 +1063,25 @@ class Anony_Flash_Wp_Public {
 		}
 	}
 
+	function is_post_type_used_css_enabled(){
+		global $post;
+
+		if ( current_user_can( 'administrator' ) || is_admin() || false !== strpos( $_SERVER['REQUEST_URI'], 'elementor' ) || ! $post || is_null( $post ) ) {
+			return false;
+		}
+
+		$anofl_options = ANONY_Options_Model::get_instance( 'Anofl_Options' );
+
+		$option_name = 'enable_used_css_' . $post->post_type;
+
+		$optimize_post_types = $anofl_options->optimize_post_types;
+
+		if( $optimize_post_types && is_array( $optimize_post_types ) && in_array( $post->post_type,  $optimize_post_types ) && '1' === $anofl_options->$option_name ){
+			return true;
+		}
+
+		return false;
+	}
 	public function is_used_css_enabled() {
 		
 		global $post;
@@ -1070,7 +1089,6 @@ class Anony_Flash_Wp_Public {
 			return false;
 		}
 
-		
 		$optimize_per_post = get_post_meta( $post->ID, 'optimize_per_post', true );
 
 		$is_used_css_enabled = ! empty( $optimize_per_post ) && ! empty( $optimize_per_post['enable_used_css'] ) && '1' === $optimize_per_post['enable_used_css'] ? true : false;
@@ -1084,8 +1102,8 @@ class Anony_Flash_Wp_Public {
 		return false;
 	}
 	public function remove_all_stylesheets( $tag ) {
-
-		if ( $this->is_used_css_enabled() ) {
+		
+		if ( $this->is_used_css_enabled() || $this->is_post_type_used_css_enabled()) {
 			return '';
 		}
 
@@ -1178,6 +1196,31 @@ class Anony_Flash_Wp_Public {
 		return $style;
 	}
 
+
+	public function post_type_global_used_css( $post, $options ){
+		$style = '';
+		$desktop_used_css = 'desktop_used_css_' . $post->post_type;
+		$separate_mobile_used_css = 'separate_mobile_used_css_' . $post->post_type;
+		$mobile_used_css = 'mobile_used_css_' . $post->post_type;
+
+		if ( ! wp_is_mobile() && ! empty( $options->$desktop_used_css ) ) {
+			$style .= '<style type="text/css" id="anony-desktop-used-css-' . esc_attr( $post->ID ) . '">
+			' . $options->$desktop_used_css . '
+			</style>';
+
+		}
+
+		if ( wp_is_mobile() ) {
+			if ( ( empty( $options->$separate_mobile_used_css ) || '1' !== $options->$separate_mobile_used_css ) && ! empty( $options->$desktop_used_css ) ) {
+				$style .= '<style type="text/css" id="anony-all-used-css-' . esc_attr( $post->ID ) . '">' . $options->$desktop_used_css . '</style>';
+			} elseif ( '1' === $options->$separate_mobile_used_css && ! empty( $options->$mobile_used_css ) ) {
+				$style .= '<style type="text/css" id="anony-mobile-used-css-' . esc_attr( $post->ID ) . '">' . $options->$mobile_used_css . '</style>';
+			}
+		}
+
+		return $style;
+	}
+
 	
 	/**
 	 * Remove inline <style> blocks.
@@ -1207,6 +1250,13 @@ class Anony_Flash_Wp_Public {
 			return '';
 		}
 
+		
+		$anofl_options = ANONY_Options_Model::get_instance( 'Anofl_Options' );
+		
+		if(  $this->is_post_type_used_css_enabled() &&  !$this->is_used_css_enabled()){
+			echo $this->post_type_global_used_css($post, $anofl_options);
+			return;
+		}
 		
 		$optimize_per_post = get_post_meta( $post->ID, 'optimize_per_post', true );
 
