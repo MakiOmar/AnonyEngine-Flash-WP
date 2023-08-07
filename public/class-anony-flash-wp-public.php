@@ -1066,7 +1066,7 @@ class Anony_Flash_Wp_Public {
 	function is_post_type_used_css_enabled(){
 		global $post;
 
-		if ( current_user_can( 'administrator' ) || is_admin() || false !== strpos( $_SERVER['REQUEST_URI'], 'elementor' ) || ! $post || is_null( $post ) ) {
+		if ( !is_singular() || current_user_can( 'administrator' ) || is_admin() || false !== strpos( $_SERVER['REQUEST_URI'], 'elementor' ) || ! $post || is_null( $post ) ) {
 			return false;
 		}
 
@@ -1082,10 +1082,45 @@ class Anony_Flash_Wp_Public {
 
 		return false;
 	}
+	
+	function is_taxonomy_used_css_enabled(){
+
+		if ( 
+			current_user_can( 'administrator' ) || 
+			is_admin() || 
+			false !== strpos( $_SERVER['REQUEST_URI'], 'elementor' ) || 
+			(
+				! is_tax() && 
+				! is_category() &&
+				! is_tag()
+			)
+		) 
+		{
+			return false;
+		}
+
+
+		
+		$anofl_options = ANONY_Options_Model::get_instance( 'Anofl_Options' );
+		$term = get_queried_object();
+		$option_name = 'enable_used_css_' . $term->taxonomy;
+		$optimize_taxonomies = $anofl_options->optimize_taxonomies;
+		if( 
+			$optimize_taxonomies && 
+			is_array( $optimize_taxonomies ) && 
+			in_array( $term->taxonomy,  $optimize_taxonomies ) && 
+			'1' === $anofl_options->$option_name 
+		)
+		{
+			return true;
+		}
+
+		return false;
+	}
 	public function is_used_css_enabled() {
 		
 		global $post;
-		if ( current_user_can( 'administrator' ) || is_admin() || false !== strpos( $_SERVER['REQUEST_URI'], 'elementor' ) || ! $post || is_null( $post ) ) {
+		if ( !is_singular() || current_user_can( 'administrator' ) || is_admin() || false !== strpos( $_SERVER['REQUEST_URI'], 'elementor' ) || ! $post || is_null( $post ) ) {
 			return false;
 		}
 
@@ -1103,7 +1138,10 @@ class Anony_Flash_Wp_Public {
 	}
 	public function remove_all_stylesheets( $tag ) {
 		
-		if ( $this->is_used_css_enabled() || $this->is_post_type_used_css_enabled()) {
+		if( $this->is_taxonomy_used_css_enabled() ){
+			return '';
+		}
+		if ( $this->is_used_css_enabled() || $this->is_post_type_used_css_enabled() ) {
 			return '';
 		}
 
@@ -1221,6 +1259,31 @@ class Anony_Flash_Wp_Public {
 		return $style;
 	}
 
+
+	public function taxonomy_global_used_css( $term, $options ){
+		$style = '';
+		$desktop_used_css = 'desktop_used_css_' . $term->taxonomy;
+		$separate_mobile_used_css = 'separate_mobile_used_css_' . $term->taxonomy;
+		$mobile_used_css = 'mobile_used_css_' . $term->taxonomy;
+
+		if ( ! wp_is_mobile() && ! empty( $options->$desktop_used_css ) ) {
+			$style .= '<style type="text/css" id="anony-desktop-used-css-' . esc_attr( $term->term_id ) . '">
+			' . $options->$desktop_used_css . '
+			</style>';
+
+		}
+
+		if ( wp_is_mobile() ) {
+			if ( ( empty( $options->$separate_mobile_used_css ) || '1' !== $options->$separate_mobile_used_css ) && ! empty( $options->$desktop_used_css ) ) {
+				$style .= '<style type="text/css" id="anony-all-used-css-' . esc_attr( $term->term_id ) . '">' . $options->$desktop_used_css . '</style>';
+			} elseif ( '1' === $options->$separate_mobile_used_css && ! empty( $options->$mobile_used_css ) ) {
+				$style .= '<style type="text/css" id="anony-mobile-used-css-' . esc_attr( $term->term_id ) . '">' . $options->$mobile_used_css . '</style>';
+			}
+		}
+
+		return $style;
+	}
+
 	
 	/**
 	 * Remove inline <style> blocks.
@@ -1244,14 +1307,19 @@ class Anony_Flash_Wp_Public {
 
 	public function load_optimized_css()
 	{
-		global $post;
+		
+		$anofl_options = ANONY_Options_Model::get_instance( 'Anofl_Options' );
 
-		if( !$post || is_null( $post ) ) {
+		if( !is_singular() ) {
+			if( $this->is_taxonomy_used_css_enabled() ){
+				echo $this->taxonomy_global_used_css( get_queried_object(), $anofl_options );
+				return;
+			}
 			return '';
 		}
 
+		global $post;
 		
-		$anofl_options = ANONY_Options_Model::get_instance( 'Anofl_Options' );
 		
 		if(  $this->is_post_type_used_css_enabled() &&  !$this->is_used_css_enabled()){
 			echo $this->post_type_global_used_css($post, $anofl_options);
@@ -1265,6 +1333,7 @@ class Anony_Flash_Wp_Public {
 		if( $this->is_used_css_enabled() && !$this->is_above_the_fold_styles_enabled() ){
 			
 			$style = $this->used_css( $post, $optimize_per_post );
+
 		}
 		
 		
