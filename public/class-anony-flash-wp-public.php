@@ -1495,17 +1495,11 @@ class Anony_Flash_Wp_Public {
 					h.appendChild(l, h);
 				});
 			};
-			var raf = requestAnimationFrame || mozRequestAnimationFrame ||
-			webkitRequestAnimationFrame || msRequestAnimationFrame;
-			if (raf) {
-				raf(inject_stylesheets_upon_interact);
-			}else {
-				document.body.addEventListener('mousemove', inject_stylesheets_upon_interact);
-				document.body.addEventListener('scroll', inject_stylesheets_upon_interact);
-				document.body.addEventListener('keydown', inject_stylesheets_upon_interact);
-				document.body.addEventListener('click', inject_stylesheets_upon_interact);
-				document.body.addEventListener('touchstart', inject_stylesheets_upon_interact);
-			}
+			document.body.addEventListener('mousemove', inject_stylesheets_upon_interact);
+			document.body.addEventListener('scroll', inject_stylesheets_upon_interact);
+			document.body.addEventListener('keydown', inject_stylesheets_upon_interact);
+			document.body.addEventListener('click', inject_stylesheets_upon_interact);
+			document.body.addEventListener('touchstart', inject_stylesheets_upon_interact);
 		</script>
 		<?php
 	}
