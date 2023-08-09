@@ -1489,7 +1489,7 @@ class Anony_Flash_Wp_Public {
 					var l = document.createElement('link'); 
 					l.rel = 'stylesheet';
 					l.href = styleInput.value;
-					l.id = styleInput.id;
+					l.id = styleInput.id.replace('create-', '');
 					l.media = "all";
 					l.type = "text/css";
 					h.appendChild(l, h);
@@ -1498,7 +1498,7 @@ class Anony_Flash_Wp_Public {
 			var raf = requestAnimationFrame || mozRequestAnimationFrame ||
 			webkitRequestAnimationFrame || msRequestAnimationFrame;
 			if (raf) {
-				raf(cb);
+				raf(inject_stylesheets_upon_interact);
 			}else {
 				document.body.addEventListener('mousemove', inject_stylesheets_upon_interact);
 				document.body.addEventListener('scroll', inject_stylesheets_upon_interact);
