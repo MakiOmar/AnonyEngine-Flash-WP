@@ -191,7 +191,7 @@ class Anony_Flash_Wp {
 		$this->loader->add_filter( 'elementor/frontend/print_google_fonts', $plugin_public, 'elementor_google_fonts', 99 );
 
 		// phpcs:disable
-		// $this->loader->add_action( 'wp_print_footer_scripts', $plugin_public, 'inject_scripts', 999 );
+		$this->loader->add_action( 'wp_print_footer_scripts', $plugin_public, 'inject_styles', 999 );
 		// phpcs:enable
 
 		// ---------------------Optimized CSS----------------------------------------------------..
