@@ -1403,7 +1403,7 @@ class Anony_Flash_Wp_Public {
 		}
 	}
 
-	public function common_injected_styles( $tag ) {
+	public function to_be_injected_styles( $tag ) {
 
 		if ( current_user_can( 'administrator' ) || is_admin() || false !== strpos( $_SERVER['REQUEST_URI'], 'wp-admin' ) ) {
 			return $tag;
