@@ -1405,20 +1405,12 @@ class Anony_Flash_Wp_Public {
 
 	public function common_injected_styles( $tag ) {
 
-		if ( is_admin() ) {
+		if ( current_user_can( 'administrator' ) || is_admin() || false !== strpos( $_SERVER['REQUEST_URI'], 'wp-admin' ) ) {
 			return $tag;
 		}
 
 		if ( preg_match( "/rel='stylesheet'/im", $tag ) ) {
 
-			if ( false !== strpos( $tag, 'wpml-legacy-horizontal-list' )
-				|| false !== strpos( $tag, 'flexible_shipping_notices' )
-				|| false !== strpos( $tag, 'jet-cw' )
-				|| false !== strpos( $tag, 'jet-cw-frontend' )
-				|| false !== strpos( $tag, 'jet-popup-frontend' )
-				|| false !== strpos( $tag, 'photoswipe' )
-				|| false !== strpos( $tag, 'photoswipe-default-skin' )
-			) {
 				preg_match( "/id='(.*?)'/im", $tag, $id );
 				$style_id = $id[1];
 
@@ -1434,19 +1426,17 @@ class Anony_Flash_Wp_Public {
 					}
 				);
 				return '';
-			}
-
-			return $tag;
 		}
+		return $tag;
 	}
 	/**
 	 * Injects stylesheets using css.
 	 */
-	public function inject_scripts() {
+	public function inject_styles() {
 		?>
 
 		<script>
-			var cb = function() {
+			var inject_stylesheets_upon_interact = function() {
 				var h = document.getElementsByTagName('head')[0];
 				document.querySelectorAll('.create-style-tag').forEach(function(styleInput) {
 					var l = document.createElement('link'); 
@@ -1460,8 +1450,15 @@ class Anony_Flash_Wp_Public {
 			};
 			var raf = requestAnimationFrame || mozRequestAnimationFrame ||
 			webkitRequestAnimationFrame || msRequestAnimationFrame;
-			if (raf) raf(cb);
-			else window.addEventListener('load', cb);
+			if (raf) {
+				raf(cb);
+			}else {
+				document.body.addEventListener('mousemove', inject_stylesheets_upon_interact);
+				document.body.addEventListener('scroll', inject_stylesheets_upon_interact);
+				document.body.addEventListener('keydown', inject_stylesheets_upon_interact);
+				document.body.addEventListener('click', inject_stylesheets_upon_interact);
+				document.body.addEventListener('touchstart', inject_stylesheets_upon_interact);
+			}
 		</script>
 		<?php
 	}
