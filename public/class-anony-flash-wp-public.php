@@ -1181,7 +1181,7 @@ class Anony_Flash_Wp_Public {
 	public function is_tax(){
 		return is_tax() || is_category() || is_tag();
 	}
-	public function defer_all_page_styles($tag){
+	public function stylesheet_media_to_print($tag){
 		if ( current_user_can( 'administrator' ) || is_admin() || false !== strpos( $_SERVER['REQUEST_URI'], 'wp-admin' ) ) {
 			return $tag;
 		}
