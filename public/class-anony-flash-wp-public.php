@@ -602,10 +602,11 @@ class Anony_Flash_Wp_Public {
 	}
 	public function load_stylesheets_upon_interact(){
 		//var_dump($this->is_above_the_fold_styles_enabled());
+		/*
 		if( !$this->is_above_the_fold_styles_enabled() ){
 			return;
 		}
-		
+		*/
 		?>
 		<script type="text/javascript">
 			jQuery(document).ready(function($){
@@ -1137,6 +1138,21 @@ class Anony_Flash_Wp_Public {
 		return false;
 	}
 	public function remove_all_stylesheets( $tag ) {
+
+		if( $this->is_tax() ){
+			$anofl_options = ANONY_Options_Model::get_instance( 'Anofl_Options' );
+			$term = get_queried_object();
+			$option_name = 'defer_all_styles_' . $term->taxonomy;
+			$optimize_taxonomies = $anofl_options->optimize_taxonomies;
+			if( 
+				$optimize_taxonomies && 
+				is_array( $optimize_taxonomies ) && 
+				in_array( $term->taxonomy,  $optimize_taxonomies ) && 
+				'1' === $anofl_options->$option_name 
+			){
+				return $tag;
+			}
+		}
 		
 		if( $this->is_taxonomy_used_css_enabled() ){
 			return '';
@@ -1162,11 +1178,41 @@ class Anony_Flash_Wp_Public {
 
 		return $enabled;
 	}
-
+	public function is_tax(){
+		return is_tax() || is_category() || is_tag();
+	}
 	public function defer_all_page_styles($tag){
+		if ( current_user_can( 'administrator' ) || is_admin() || false !== strpos( $_SERVER['REQUEST_URI'], 'wp-admin' ) ) {
+			return $tag;
+		}
+		if( $this->is_tax() ){
+
+			$anofl_options = ANONY_Options_Model::get_instance( 'Anofl_Options' );
+			$term = get_queried_object();
+			$option_name = 'defer_all_styles_' . $term->taxonomy;
+			$optimize_taxonomies = $anofl_options->optimize_taxonomies;
+			if( 
+				$optimize_taxonomies && 
+				is_array( $optimize_taxonomies ) && 
+				in_array( $term->taxonomy,  $optimize_taxonomies ) && 
+				'1' === $anofl_options->$option_name 
+			)
+			{
+				$method = 'interact';
+				if('onload' === $method ){
+					$tag = preg_replace( "/media='\w+'/", "media='print' onload=\"this.media='all'\"", $tag );
+				}else{
+					$tag = preg_replace( "/media='\w+'/", "media='print'", $tag );
+				}
+
+				return $tag;
+
+			}
+
+		}
 		if( !is_singular() ) return $tag;
 		global $post;
-		if ( current_user_can( 'administrator' ) || is_admin() || false !== strpos( $_SERVER['REQUEST_URI'], 'elementor' ) || ! $post || is_null( $post ) ) {
+		if ( ! $post || is_null( $post ) ) {
 			return $tag;
 		}
 
