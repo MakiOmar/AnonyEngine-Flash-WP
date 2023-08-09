@@ -206,6 +206,7 @@ class Anony_Flash_Wp {
 
 		$this->loader->add_filter( 'style_loader_tag', $plugin_public, 'remove_all_stylesheets', 99 );
 		$this->loader->add_filter( 'style_loader_tag', $plugin_public, 'stylesheet_media_to_print', 99 );
+		$this->loader->add_filter( 'style_loader_tag', $plugin_public, 'to_be_injected_styles', 99 );
 		$this->loader->add_filter( 'wp_footer', $plugin_public, 'load_stylesheets_upon_interact', 99 );
 
 		$this->loader->add_action( 'get_header', $plugin_public, 'wp_html_compression_finish' );
