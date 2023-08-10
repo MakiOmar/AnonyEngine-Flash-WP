@@ -1170,9 +1170,10 @@ class Anony_Flash_Wp_Public {
 		if ( current_user_can( 'administrator' ) || is_admin() || false !== strpos( $_SERVER['REQUEST_URI'], 'wp-admin' ) ) {
 			return $tag;
 		}
+		$anofl_options = ANONY_Options_Model::get_instance( 'Anofl_Options' );
 		if( $this->is_tax() ){
 
-			$anofl_options = ANONY_Options_Model::get_instance( 'Anofl_Options' );
+			
 			$term = get_queried_object();
 			$option_name = 'defer_all_styles_' . $term->taxonomy;
 			$optimize_taxonomies = $anofl_options->optimize_taxonomies;
@@ -1195,10 +1196,31 @@ class Anony_Flash_Wp_Public {
 			}
 
 		}
+
+		
 		if( !is_singular() ) return $tag;
 		global $post;
+		
 		if ( ! $post || is_null( $post ) ) {
 			return $tag;
+		}
+
+		if( is_singular() ){
+
+			$option_name = 'defer_all_styles_' . $post->post_type;
+
+			$optimize_post_types = $anofl_options->optimize_post_types;
+
+			if( $optimize_post_types && is_array( $optimize_post_types ) && in_array( $post->post_type,  $optimize_post_types ) && '1' === $anofl_options->$option_name ){
+				$method = 'interact';
+				if('onload' === $method ){
+					$tag = preg_replace( "/media='\w+'/", "media='print' onload=\"this.media='all'\"", $tag );
+				}else{
+					$tag = preg_replace( "/media='\w+'/", "media='print'", $tag );
+				}
+
+				return $tag;
+			}
 		}
 
 		$optimize_per_post = get_post_meta( $post->ID, 'optimize_per_post', true );
