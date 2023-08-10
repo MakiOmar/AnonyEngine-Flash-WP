@@ -600,7 +600,7 @@ class Anony_Flash_Wp_Public {
 		</script>
 		<?php
 	}
-	public function load_stylesheets_upon_interact(){
+	public function stylesheets_media_to_all(){
 		//var_dump($this->is_above_the_fold_styles_enabled());
 		/*
 		if( !$this->is_above_the_fold_styles_enabled() ){
