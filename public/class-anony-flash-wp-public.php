@@ -240,6 +240,15 @@ class Anony_Flash_Wp_Public {
 			return $tag; // don't break WP Admin.
 		}
 
+		$exclusions = ANONY_STRING_HELP::line_by_line_textarea($anofl_options->delay_scripts_exclusions);
+		if( is_array( $exclusions ) ){
+			foreach( $exclusions as $exclusion ){
+				if( false !== strpos($_SERVER['REQUEST_URI'], $exclusion) ){
+					return $tag;
+				}
+			}
+		}
+
 		if ( false === strpos( $src, '.js' ) ) {
 			return $tag;
 		}
