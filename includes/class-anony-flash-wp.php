@@ -167,6 +167,8 @@ class Anony_Flash_Wp {
 	 */
 	private function define_public_hooks() {
 
+		$anofl_options = ANONY_Options_Model::get_instance( 'Anofl_Options' );
+
 		$plugin_public = new Anony_Flash_Wp_Public( $this->get_plugin_name(), $this->get_version() );
 
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'lazy_elementor_background_images_js', 999 );
@@ -190,9 +192,21 @@ class Anony_Flash_Wp {
 		// Disable google fonts.
 		$this->loader->add_filter( 'elementor/frontend/print_google_fonts', $plugin_public, 'elementor_google_fonts', 99 );
 
-		// phpcs:disable
-		$this->loader->add_action( 'wp_print_footer_scripts', $plugin_public, 'inject_styles', 999 );
-		// phpcs:enable
+		if( 'inject' === $anofl_options->defer_stylesheets_method ){
+			// phpcs:disable
+			$this->loader->add_action( 'wp_print_footer_scripts', $plugin_public, 'inject_styles', 999 );
+			// phpcs:enable
+
+			$this->loader->add_filter( 'style_loader_tag', $plugin_public, 'to_be_injected_styles', 99 );
+		}
+		
+
+		if( 'media-attribute' === $anofl_options->defer_stylesheets_method ){
+			$this->loader->add_action( 'wp_footer', $plugin_public, 'stylesheets_media_to_all', 99 );
+			$this->loader->add_filter( 'style_loader_tag', $plugin_public, 'stylesheet_media_to_print', 99 );
+		}
+
+		
 
 		// ---------------------Optimized CSS----------------------------------------------------..
 		$this->loader->add_action( 'wp_head', $plugin_public, 'load_optimized_css' );
@@ -205,9 +219,10 @@ class Anony_Flash_Wp {
 		// ---------------------End optimized CSS----------------------------------------------------..
 
 		$this->loader->add_filter( 'style_loader_tag', $plugin_public, 'remove_all_stylesheets', 99 );
-		$this->loader->add_filter( 'style_loader_tag', $plugin_public, 'stylesheet_media_to_print', 99 );
-		$this->loader->add_filter( 'style_loader_tag', $plugin_public, 'to_be_injected_styles', 99 );
-		$this->loader->add_filter( 'wp_footer', $plugin_public, 'load_stylesheets_upon_interact', 99 );
+		// styles full defer.
+		$this->loader->add_filter( 'style_loader_tag', $plugin_public, 'defer_stylesheets' );
+		
+		
 
 		$this->loader->add_action( 'get_header', $plugin_public, 'wp_html_compression_finish' );
 
@@ -217,8 +232,7 @@ class Anony_Flash_Wp {
 		// controls add query strings to styles.
 		$this->loader->add_filter( 'style_loader_src', $plugin_public, 'anony_control_query_strings', 15, 2 );
 
-		// styles full defer.
-		$this->loader->add_filter( 'style_loader_tag', $plugin_public, 'defer_stylesheets' );
+		
 
 		// Scripts defer.
 		$this->loader->add_filter( 'script_loader_tag', $plugin_public, 'defer_scripts', 99, 3 );
