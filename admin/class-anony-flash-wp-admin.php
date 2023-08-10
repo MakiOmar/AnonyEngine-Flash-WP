@@ -330,6 +330,19 @@ class Anony_Flash_Wp_Admin {
 					'columns'    => '60',
 					'direction'  => 'ltr',
 				),
+				
+				array(
+					'id'         => 'external_scripts_exclusions',
+					'title'      => esc_html__( 'Exclude from External scripts', 'anony-flash-wp' ),
+					'type'       => 'textarea',
+					'validate'   => 'html',
+					// translators: An escaped script tag.
+					'desc'       => esc_html__( 'Add full URLs or URL sub-strings to prevent loading external scripts on these URLs. Please add one per line', 'anony-flash-wp' ),
+					'text-align' => 'left',
+					'rows'       => '10',
+					'columns'    => '60',
+					'direction'  => 'ltr',
+				),
 			),
 		);
 
