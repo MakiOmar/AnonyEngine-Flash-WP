@@ -351,15 +351,6 @@ class Anony_Flash_Wp_Admin {
 					'validate' => 'no_html',
 					'desc'     => esc_html__( 'Add comma separated handles of scripts/styles you want to keep query string', 'anony-flash-wp' ),
 				),
-
-				array(
-					'id'       => 'defer_stylesheets',
-					'title'    => esc_html__( 'Defer stylesheets loading', 'anony-flash-wp' ),
-					'type'     => 'switch',
-					'validate' => 'no_html',
-					'desc'     => esc_html__( 'Improves First content paint, and get higher score on page speed insights. Be careful when using with minification plugins, it may cause style issues', 'anony-flash-wp' ),
-				),
-
 				array(
 					'id'       => 'defer_stylesheets_method',
 					'title'    => esc_html__( 'Defer stylesheets method', 'anony-flash-wp' ),
