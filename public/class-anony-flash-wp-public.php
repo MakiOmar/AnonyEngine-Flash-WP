@@ -212,38 +212,7 @@ class Anony_Flash_Wp_Public {
 		return $src;
 
 	}
-	/**
-	 * Defer stylesheet
-	 *
-	 * @param string $tag Stylesheet tag.
-	 * @return string
-	 */
-	public function defer_stylesheets( $tag ) {
 
-		if ( is_admin() ) {
-			return $tag;
-		}
-
-		$anofl_options = ANONY_Options_Model::get_instance( 'Anofl_Options' );
-
-		if ( '1' === $anofl_options->defer_stylesheets ) {
-
-			if ( class_exists( 'ANONY_STRING_HELP' ) ) {
-
-				$deferred_styles = ANONY_STRING_HELP::line_by_line_textarea( $anofl_options->deferred_styles );
-
-				if( !empty( $deferred_styles )  )
-				{
-					foreach ($deferred_styles as $handle) {
-						$tag = preg_replace( "/media='\w+'/", "media='print' onload=\"this.media='all'\"", $tag );
-					}
-				}
-			}
-		}
-		
-
-		return $tag;
-	}
 	public function remove_unused_scripts( $tag, $handle, $src )
 	{
 		if( !is_singular() || !empty( $_GET['list_scripts'] ) ) return $tag;

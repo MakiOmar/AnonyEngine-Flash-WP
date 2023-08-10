@@ -219,10 +219,6 @@ class Anony_Flash_Wp {
 		// ---------------------End optimized CSS----------------------------------------------------..
 
 		$this->loader->add_filter( 'style_loader_tag', $plugin_public, 'remove_all_stylesheets', 99 );
-		// styles full defer.
-		$this->loader->add_filter( 'style_loader_tag', $plugin_public, 'defer_stylesheets' );
-		
-		
 
 		$this->loader->add_action( 'get_header', $plugin_public, 'wp_html_compression_finish' );
 
