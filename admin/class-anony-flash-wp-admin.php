@@ -361,6 +361,26 @@ class Anony_Flash_Wp_Admin {
 				),
 
 				array(
+					'id'       => 'defer_stylesheets_method',
+					'title'    => esc_html__( 'Defer stylesheets method', 'anony-flash-wp' ),
+					'type'     => 'radio',
+					'options'  => array(
+
+						'media-attribute'    => array(
+							'title' => esc_html__( 'Media attribute', 'anony-flash-wp' ),
+						),
+	
+						'inject' => array(
+							'title' => esc_html__( 'Inject', 'anony-flash-wp' ),
+						),
+	
+					),
+					'default'  => 'inject',
+					'validate' => 'no_html',
+					'desc'     => esc_html__( 'When choose (Media attribute), this will change the media attibute value to print, then later will be replaced back with all. But if you choos Inject, this will inject stylesheets later on (user interact/Window load)', 'anony-flash-wp' ),
+				),
+
+				array(
 					'id'         => 'deferred_styles',
 					'title'      => esc_html__( 'Deferred styles', 'anony-flash-wp' ),
 					'type'       => 'textarea',
