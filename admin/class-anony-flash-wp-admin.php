@@ -421,6 +421,19 @@ class Anony_Flash_Wp_Admin {
 					'validate' => 'no_html',
 					'desc'     => __( 'This will delay javascript execution until user interacts.<code>jQuery</code> will not be delayed', 'anony-flash-wp' ),
 				),
+
+				array(
+					'id'         => 'delay_scripts_exclusions',
+					'title'      => esc_html__( 'Exclude from scripts delay', 'anony-flash-wp' ),
+					'type'       => 'textarea',
+					'validate'   => 'html',
+					// translators: An escaped script tag.
+					'desc'       => esc_html__( 'Add full URLs or URL sub-strings to prevent scripts delay on these URLs. Please add one per line', 'anony-flash-wp' ),
+					'text-align' => 'left',
+					'rows'       => '10',
+					'columns'    => '60',
+					'direction'  => 'ltr',
+				),
 				array(
 					'id'       => 'disable_gutenburg_scripts',
 					'title'    => esc_html__( 'Disable Gutenburg editor scripts', 'anony-flash-wp' ),
