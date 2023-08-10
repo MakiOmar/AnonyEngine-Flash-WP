@@ -661,7 +661,14 @@ class Anony_Flash_Wp_Public {
 	 */
 	public function defer_inline_external_scripts() {
 		$anofl_options = ANONY_Options_Model::get_instance( 'Anofl_Options' );
-
+		$exclusions = ANONY_STRING_HELP::line_by_line_textarea($anofl_options->external_scripts_exclusions);
+		if( is_array( $exclusions ) ){
+			foreach( $exclusions as $exclusion ){
+				if( false !== strpos($_SERVER['REQUEST_URI'], $exclusion) ){
+					return;
+				}
+			}
+		}
 		if ( ! empty( $anofl_options->external_scripts ) ) {
 			?>
 			<script type="anony-external-scripts">
