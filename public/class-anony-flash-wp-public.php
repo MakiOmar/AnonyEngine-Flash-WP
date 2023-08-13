@@ -1013,7 +1013,7 @@ class Anony_Flash_Wp_Public {
 	}
 
 	public function dequeued_styles() {
-		if ( current_user_can( 'administrator' ) || is_admin() || false !== strpos( $_SERVER['REQUEST_URI'], 'elementor' ) ) {
+		if ( is_admin() || false !== strpos( $_SERVER['REQUEST_URI'], 'elementor' ) ) {
 			return;
 		}
 
@@ -1052,7 +1052,7 @@ class Anony_Flash_Wp_Public {
 	function is_post_type_used_css_enabled(){
 		global $post;
 
-		if ( !is_singular() || current_user_can( 'administrator' ) || is_admin() || false !== strpos( $_SERVER['REQUEST_URI'], 'elementor' ) || ! $post || is_null( $post ) ) {
+		if ( !is_singular() || is_admin() || false !== strpos( $_SERVER['REQUEST_URI'], 'elementor' ) || ! $post || is_null( $post ) ) {
 			return false;
 		}
 
@@ -1072,7 +1072,7 @@ class Anony_Flash_Wp_Public {
 	function is_taxonomy_used_css_enabled(){
 
 		if ( 
-			current_user_can( 'administrator' ) || 
+			
 			is_admin() || 
 			false !== strpos( $_SERVER['REQUEST_URI'], 'elementor' ) || 
 			(
@@ -1106,7 +1106,7 @@ class Anony_Flash_Wp_Public {
 	public function is_used_css_enabled() {
 		
 		global $post;
-		if ( !is_singular() || current_user_can( 'administrator' ) || is_admin() || false !== strpos( $_SERVER['REQUEST_URI'], 'elementor' ) || ! $post || is_null( $post ) ) {
+		if ( !is_singular() || is_admin() || false !== strpos( $_SERVER['REQUEST_URI'], 'elementor' ) || ! $post || is_null( $post ) ) {
 			return false;
 		}
 
@@ -1167,7 +1167,7 @@ class Anony_Flash_Wp_Public {
 	protected function is_switch_meta_field_enabled( $field_name ){
 		if( !is_singular() ) return false;
 		global $post;
-		if ( current_user_can( 'administrator' ) || is_admin() || false !== strpos( $_SERVER['REQUEST_URI'], 'elementor' ) || ! $post || is_null( $post ) ) {
+		if ( is_admin() || false !== strpos( $_SERVER['REQUEST_URI'], 'elementor' ) || ! $post || is_null( $post ) ) {
 			return false;
 		}
 
@@ -1183,7 +1183,7 @@ class Anony_Flash_Wp_Public {
 		return is_tax() || is_category() || is_tag();
 	}
 	public function stylesheet_media_to_print($tag){
-		if ( current_user_can( 'administrator' ) || is_admin() || false !== strpos( $_SERVER['REQUEST_URI'], 'wp-admin' ) ) {
+		if ( is_admin() || false !== strpos( $_SERVER['REQUEST_URI'], 'wp-admin' ) ) {
 			return $tag;
 		}
 		$anofl_options = ANONY_Options_Model::get_instance( 'Anofl_Options' );
@@ -1428,7 +1428,7 @@ class Anony_Flash_Wp_Public {
 
 	public function to_be_injected_styles( $tag ) {
 
-		if ( current_user_can( 'administrator' ) || is_admin() || false !== strpos( $_SERVER['REQUEST_URI'], 'wp-admin' ) ) {
+		if ( is_admin() || false !== strpos( $_SERVER['REQUEST_URI'], 'wp-admin' ) ) {
 			return $tag;
 		}
 
