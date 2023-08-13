@@ -169,7 +169,21 @@ class Anony_Flash_Wp {
 
 		$anofl_options = ANONY_Options_Model::get_instance( 'Anofl_Options' );
 
+		$excluded_roles = $anofl_options->excluded_roles;
+
 		$plugin_public = new Anony_Flash_Wp_Public( $this->get_plugin_name(), $this->get_version() );
+
+		if( is_user_logged_in() && is_array( $excluded_roles ) ){
+			$current_user = wp_get_current_user();
+			$current_user_roles = $current_user->roles;
+
+			$intersection = array_intersect($current_user_roles, $excluded_roles);
+
+			if( !empty( $intersection ) )
+			{
+				return;
+			}
+		}
 
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'lazy_elementor_background_images_js', 999 );
 
