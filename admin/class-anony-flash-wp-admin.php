@@ -103,6 +103,17 @@ class Anony_Flash_Wp_Admin {
 
 	}
 
+	public function user_roles(){
+		$roles = wp_roles()->roles;
+
+		$_roles	= array();	
+		foreach( $roles as $slug => $role ){
+			$_roles[ $slug ] = $role[ 'name' ];
+		}
+
+		return $_roles;
+	}
+
 	/**
 	 * Create plugin's options' page
 	 */
@@ -200,6 +211,13 @@ class Anony_Flash_Wp_Admin {
 			'title'  => esc_html__( 'General', 'anony-flash-wp' ),
 			'icon'   => 'x',
 			'fields' => array(
+				array(
+					'id'         => 'excluded_roles',
+					'title'      => esc_html__( 'Don\'t optimize for', 'anony-flash-wp' ),
+					'type'       => 'checkbox',
+					'validate'   => 'no_html',
+					'options'    => $this->user_roles(),
+				),
 				array(
 					'id'       => 'compress_html',
 					'title'    => esc_html__( 'Compress HTML', 'anony-flash-wp' ),
