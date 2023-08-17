@@ -605,23 +605,35 @@ class Anony_Flash_Wp_Public {
 		</script>
 	<?php
 	}
+
+	public function google_tag_script( $tag_id, $defer_js_id , $console = '' ){
+		?>
+		Defer.js('https://www.googletagmanager.com/gtag/js?id=<?php echo esc_html( $tag_id ); ?>', '<?php echo $defer_js_id ?>', 1500, 
+		function() {
+			window.dataLayer = window.dataLayer || [];
+			dataLayer.push(['js', new Date()]);
+			dataLayer.push(['config', '<?php echo esc_html( $tag_id ); ?>']);
+			console.info('<?php echo esc_html( $console ); ?>'); // debug.
+		}, false);
+
+		<?php
+	}
 	/**
 	 * Load Google tag manager deferred depending on defer.js
 	 */
 	public function defer_gtgm() {
 		$anofl_options = ANONY_Options_Model::get_instance( 'Anofl_Options' );
-
+		$gads_id = $anofl_options->gads_id;
 		if ( ! empty( $anofl_options->gtgm_id ) ) {
 			?>
 			<script>
-				var GTM_ID = '<?php echo esc_html( $anofl_options->gtgm_id ); ?>';
-				window.dataLayer = window.dataLayer || [];
-				dataLayer.push(['js', new Date()]);
-				dataLayer.push(['config', GTM_ID]);
+				<?php 
+				$this->google_tag_script($anofl_options->gtgm_id, 'google-tag-main' ,'Google tag manager is loaded' );
 
-				Defer.js('https://www.googletagmanager.com/gtag/js?id=' + GTM_ID, 'google-tag', 0, function() {
-				console.info('Google Tag Manager is loaded.'); // debug.
-			}, true);
+				if ( ! empty( $gads_id ) ) { 
+					$this->google_tag_script($gads_id, 'google-tag-ads' , 'Google ADs is loaded' );
+				} 
+				?>
 		</script>
 			<?php
 		}

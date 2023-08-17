@@ -326,6 +326,14 @@ class Anony_Flash_Wp_Admin {
 					'desc'      => esc_html__( 'This option will load Google tag manager without affecting page loading speed', 'anony-flash-wp' ),
 					'direction' => 'ltr',
 				),
+				array(
+					'id'        => 'gads_id',
+					'title'     => esc_html__( 'Google ads ID', 'anony-flash-wp' ),
+					'type'      => 'text',
+					'validat e' => 'no_html',
+					'desc'      => esc_html__( 'This option will load Google ADs without affecting page loading speed', 'anony-flash-wp' ),
+					'direction' => 'ltr',
+				),
 
 				array(
 					'id'        => 'facebook_pixel_id',
