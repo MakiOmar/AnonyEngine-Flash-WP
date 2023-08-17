@@ -345,6 +345,18 @@ class Anony_Flash_Wp_Admin {
 				),
 
 				array(
+					'id'         => 'gtm_events',
+					'title'      => esc_html__( 'GTM Events', 'anony-flash-wp' ),
+					'type'       => 'textarea',
+					'validate'   => 'html',
+					// translators: An escaped script tag.
+					'desc'       => sprintf( __( 'Scripts should be added without the <code>%s</code> tag', 'anony-flash-wp' ), esc_html( '<script>' ) ),
+					'text-align' => 'left',
+					'rows'       => '10',
+					'columns'    => '60',
+					'direction'  => 'ltr',
+				),
+				array(
 					'id'        => 'facebook_pixel_id',
 					'title'     => esc_html__( 'Facebook\'s pixel\'s id', 'anony-flash-wp' ),
 					'type'      => 'text',

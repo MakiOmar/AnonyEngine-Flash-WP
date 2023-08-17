@@ -607,12 +607,17 @@ class Anony_Flash_Wp_Public {
 	}
 
 	public function google_tag_script( $tag_id, $defer_js_id , $console = '' ){
+		$anofl_options = ANONY_Options_Model::get_instance( 'Anofl_Options' );
+		$gtm_events = $anofl_options->gtm_events;
 		?>
 		Defer.js('https://www.googletagmanager.com/gtag/js?id=<?php echo esc_html( $tag_id ); ?>', '<?php echo $defer_js_id ?>', 1500, 
 		function() {
 			window.dataLayer = window.dataLayer || [];
 			dataLayer.push(['js', new Date()]);
 			dataLayer.push(['config', '<?php echo esc_html( $tag_id ); ?>']);
+			<?php if( 'google-tag-main' === $defer_js_id  && ! empty( $gtm_events )){ 
+				echo $gtm_events;
+			}?>
 			console.info('<?php echo esc_html( $console ); ?>'); // debug.
 		}, false);
 
