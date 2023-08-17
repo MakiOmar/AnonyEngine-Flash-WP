@@ -624,6 +624,7 @@ class Anony_Flash_Wp_Public {
 	public function defer_gtgm() {
 		$anofl_options = ANONY_Options_Model::get_instance( 'Anofl_Options' );
 		$gads_id = $anofl_options->gads_id;
+		$ganalytics_id = $anofl_options->ganalytics_id;
 		if ( ! empty( $anofl_options->gtgm_id ) ) {
 			?>
 			<script>
@@ -631,7 +632,11 @@ class Anony_Flash_Wp_Public {
 				$this->google_tag_script($anofl_options->gtgm_id, 'google-tag-main' ,'Google tag manager is loaded' );
 
 				if ( ! empty( $gads_id ) ) { 
-					$this->google_tag_script($gads_id, 'google-tag-ads' , 'Google ADs is loaded' );
+					$this->google_tag_script($gads_id, 'google-tag-ads' , 'Google ADs tag is loaded' );
+				}
+
+				if ( ! empty( $ganalytics_id ) ) { 
+					$this->google_tag_script($ganalytics_id, 'google-tag-analytics' , 'Google analytics tag is loaded' );
 				} 
 				?>
 		</script>
