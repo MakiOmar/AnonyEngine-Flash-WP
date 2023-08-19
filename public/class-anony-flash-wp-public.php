@@ -608,16 +608,12 @@ class Anony_Flash_Wp_Public {
 
 	public function google_tag_script( $tag_id, $defer_js_id , $console = '' ){
 		$anofl_options = ANONY_Options_Model::get_instance( 'Anofl_Options' );
-		$gtm_events = $anofl_options->gtm_events;
 		?>
 		Defer.js('https://www.googletagmanager.com/gtag/js?id=<?php echo esc_html( $tag_id ); ?>', '<?php echo $defer_js_id ?>', 1500, 
 		function() {
 			window.dataLayer = window.dataLayer || [];
 			dataLayer.push(['js', new Date()]);
 			dataLayer.push(['config', '<?php echo esc_html( $tag_id ); ?>']);
-			<?php if( 'google-tag-main' === $defer_js_id  && ! empty( $gtm_events )){ 
-				echo $gtm_events;
-			}?>
 			console.info('<?php echo esc_html( $console ); ?>'); // debug.
 		}, false);
 
@@ -631,7 +627,7 @@ class Anony_Flash_Wp_Public {
 		$gads_id = $anofl_options->gads_id;
 		$ganalytics_id = $anofl_options->ganalytics_id;
 		if ( ! empty( $anofl_options->gtgm_id ) ) {
-			?>
+		?>
 			<script>
 				<?php 
 				$this->google_tag_script($anofl_options->gtgm_id, 'google-tag-main' ,'Google tag manager is loaded' );
@@ -645,10 +641,25 @@ class Anony_Flash_Wp_Public {
 				} 
 				?>
 		</script>
+		<?php
+			$this->gtag_events();
+		}
+	}
+	public function gtag_events(){
+		$anofl_options = ANONY_Options_Model::get_instance( 'Anofl_Options' );
+		$gtm_events = $anofl_options->gtm_events;
+		if ( ! empty( $gtm_events ) ) {
+			?>
+			<script type="anony-gtag-events-scripts">
+			<?php echo $gtm_events ?>
+			</script>
+
+			<script>
+				Defer.all('script[type="anony-gtag-events-scripts"]', 1800);
+			</script>
 			<?php
 		}
 	}
-
 	/**
 	 * Load Facebook pixel deferred depending on defer.js
 	 */
@@ -681,7 +692,7 @@ class Anony_Flash_Wp_Public {
 			<!-- End Meta Pixel Code -->
 
 			<script>
-				Defer.all('script[type="anony-facebook-pixel"]', 5000);
+				Defer.all('script[type="anony-facebook-pixel"]', 1500);
 			</script>
 			<?php
 		}
@@ -707,7 +718,7 @@ class Anony_Flash_Wp_Public {
 			</script>
 
 			<script>
-				Defer.all('script[type="anony-external-scripts"]', 5000);
+				Defer.all('script[type="anony-external-scripts"]', 1500);
 			</script>
 			<?php
 		}
