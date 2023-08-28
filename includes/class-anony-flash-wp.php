@@ -188,9 +188,14 @@ class Anony_Flash_Wp {
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'lazy_elementor_background_images_js', 999 );
 
 		$this->loader->add_action( 'wp_head', $plugin_public, 'lazy_elementor_background_images_css' );
+		
 
 		$this->loader->add_filter( 'the_content', $plugin_public, 'elementor_add_lazyload_class' );
 
+		$this->loader->add_action( 'wp_head', $plugin_public, 'load_bg_on_interaction_styles' );
+		$this->loader->add_filter( 'the_content', $plugin_public, 'load_bg_on_interaction' );
+		$this->loader->add_action( 'wp_print_footer_scripts', $plugin_public, 'load_bg_on_interaction_sctipt', 999 );
+		
 		// Actions..
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles' );
 
@@ -209,6 +214,7 @@ class Anony_Flash_Wp {
 		if( 'inject' === $anofl_options->defer_stylesheets_method ){
 			// phpcs:disable
 			$this->loader->add_action( 'wp_print_footer_scripts', $plugin_public, 'inject_styles', 999 );
+			
 			// phpcs:enable
 
 			$this->loader->add_filter( 'style_loader_tag', $plugin_public, 'to_be_injected_styles', 99 );

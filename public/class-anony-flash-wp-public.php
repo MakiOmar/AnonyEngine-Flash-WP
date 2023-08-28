@@ -932,7 +932,20 @@ class Anony_Flash_Wp_Public {
 		return $content;
 
 	}
-
+	public function load_bg_on_interaction($content){
+		$anofl_options = ANONY_Options_Model::get_instance( 'Anofl_Options' );
+		$opt_targets = ANONY_STRING_HELP::line_by_line_textarea( $anofl_options->interact_lazyload_this_classes );
+		$targets = apply_filters( 'load_bg_on_interaction', array());
+		if( !empty( $opt_targets ) && is_array( $opt_targets ) ){
+			$targets = array_merge($targets, $opt_targets);
+		}
+		if( !empty( $targets ) ){
+			foreach( $targets as $target ){
+				$content = str_replace( $target, $target.' interact-hidden', $content );
+			}
+		}
+		return $content;
+	}
 	/**
 	 * Add css to hide bg image on images with lazyelementorbackgroundimages class.
 	 *
@@ -961,6 +974,30 @@ class Anony_Flash_Wp_Public {
 		</style>
 		<?php
 		echo ob_get_clean();
+	}
+	
+	public function load_bg_on_interaction_styles() {
+		$anofl_options = ANONY_Options_Model::get_instance( 'Anofl_Options' );
+		$opt_targets = ANONY_STRING_HELP::line_by_line_textarea( $anofl_options->interact_lazyload_this_classes );
+		$targets = apply_filters( 'load_bg_on_interaction', array());
+		if( !empty( $opt_targets ) && is_array( $opt_targets ) ){
+			$targets = array_merge($targets, $opt_targets);
+		}
+		$styles = '';
+		if( !empty( $targets ) ){
+			
+			$styles .= '<style>';
+
+			foreach( $targets as $target ){ 
+				$styles .= '.'.$target.'.interact-hidden,';
+			}
+			$styles = trim($styles,',');
+			$styles .= '{
+				background-image: none !important;
+			}';
+			$styles .= '</style>';
+		}	
+		echo $styles;
 	}
 
 
@@ -1543,6 +1580,44 @@ class Anony_Flash_Wp_Public {
 			document.body.addEventListener('keydown', inject_stylesheets_upon_interact);
 			document.body.addEventListener('click', inject_stylesheets_upon_interact);
 			document.body.addEventListener('touchstart', inject_stylesheets_upon_interact);
+		</script>
+		<?php
+	}	
+	
+	public function load_bg_on_interaction_sctipt() {
+		$anofl_options = ANONY_Options_Model::get_instance( 'Anofl_Options' );
+		$opt_targets = ANONY_STRING_HELP::line_by_line_textarea( $anofl_options->interact_lazyload_this_classes );
+		$targets = apply_filters( 'load_bg_on_interaction', array());
+		if( !empty( $opt_targets ) && is_array( $opt_targets ) ){
+			$targets = array_merge($targets, $opt_targets);
+		}
+
+		// Convert PHP array to JSON
+		$jsonArray = json_encode($targets);
+		?>
+
+		<script>
+			document.addEventListener('DOMContentLoaded', function() {
+				var loadBgOnInteract = function() {
+					// Decode JSON array in JavaScript
+					var jsArray = <?php echo $jsonArray; ?>;
+					// Loop through JavaScript array
+					for (var i = 0; i < jsArray.length; i++) {
+						var lazyBgElements = document.querySelectorAll('.' + jsArray[i]);
+						lazyBgElements.forEach(function(element) {
+							element.classList.remove('interact-hidden');
+						});
+					}
+					
+				};
+
+				document.body.addEventListener('mousemove', loadBgOnInteract);
+				document.body.addEventListener('scroll', loadBgOnInteract);
+				document.body.addEventListener('keydown', loadBgOnInteract);
+				document.body.addEventListener('click', loadBgOnInteract);
+				document.body.addEventListener('touchstart', loadBgOnInteract);
+			});
+
 		</script>
 		<?php
 	}

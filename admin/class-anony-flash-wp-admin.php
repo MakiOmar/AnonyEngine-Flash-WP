@@ -583,6 +583,14 @@ elementor-widget-container
 elementor-background-overlay
 anony-lazyload-bg',
 			);
+
+			$anofl_sections['media']['fields'][] = array(
+				'id'       => 'interact_lazyload_this_classes',
+				'title'    => esc_html__( 'Load backgrounds on interaction', 'anony-flash-wp' ),
+				'type'     => 'textarea',
+				'validate' => 'no_html',
+				'desc'     => esc_html__( 'Add classes of the elements with backgrounds you want to load only on user interaction', 'anony-flash-wp' ),
+			);
 			$anofl_sections['media']['fields'][] = array(
 				'id'       => 'lazyloading_elementor_bg_method',
 				'title'    => esc_html__( 'lazyloading elementor\'s backgrounds\s method', 'anony-flash-wp' ),
