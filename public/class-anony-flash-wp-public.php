@@ -1591,7 +1591,9 @@ class Anony_Flash_Wp_Public {
 		if( !empty( $opt_targets ) && is_array( $opt_targets ) ){
 			$targets = array_merge($targets, $opt_targets);
 		}
-
+		if ( empty( $targets ) ){
+			return;
+		}
 		// Convert PHP array to JSON
 		$jsonArray = json_encode($targets);
 		?>
