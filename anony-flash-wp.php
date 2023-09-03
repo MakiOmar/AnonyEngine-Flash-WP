@@ -16,7 +16,7 @@
  * Plugin Name:       AnonyEngine Flash WP
  * Plugin URI:        http://makiomar.com
  * Description:       For WordPress higher speed.
- * Version:           1.0.067
+ * Version:           1.0.068
  * Author:            Makiomar
  * Author URI:        https://github.com/MakiOmar
  * License:           GPL-2.0+
