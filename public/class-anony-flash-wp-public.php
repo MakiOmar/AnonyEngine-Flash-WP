@@ -1504,9 +1504,9 @@ class Anony_Flash_Wp_Public {
 		if ( is_admin() || $this->uri_strpos( 'wp-admin' ) ) {
 			return $tag;
 		}
-
+		$anofl_options = ANONY_Options_Model::get_instance( 'Anofl_Options' );
 		if( $this->is_tax() ){
-			$anofl_options = ANONY_Options_Model::get_instance( 'Anofl_Options' );
+			
 			$term = get_queried_object();
 			$option_name = 'defer_all_styles_' . $term->taxonomy;
 			$optimize_taxonomies = $anofl_options->optimize_taxonomies;
@@ -1586,7 +1586,7 @@ class Anony_Flash_Wp_Public {
 	
 	public function load_bg_on_interaction_sctipt() {
 		$anofl_options = ANONY_Options_Model::get_instance( 'Anofl_Options' );
-		$opt_targets = ANONY_STRING_HELP::line_by_line_textarea( $anofl_options->interact_lazyload_this_classes );
+		$opt_targets = array_filter(ANONY_STRING_HELP::line_by_line_textarea( $anofl_options->interact_lazyload_this_classes ));
 		$targets = apply_filters( 'load_bg_on_interaction', array());
 		if( !empty( $opt_targets ) && is_array( $opt_targets ) ){
 			$targets = array_merge($targets, $opt_targets);
