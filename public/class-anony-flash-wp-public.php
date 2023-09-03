@@ -1605,10 +1605,13 @@ class Anony_Flash_Wp_Public {
 					var jsArray = <?php echo $jsonArray; ?>;
 					// Loop through JavaScript array
 					for (var i = 0; i < jsArray.length; i++) {
-						var lazyBgElements = document.querySelectorAll('.' + jsArray[i]);
-						lazyBgElements.forEach(function(element) {
-							element.classList.remove('interact-hidden');
-						});
+						if( jsArray[i] !== '' ){
+							var lazyBgElements = document.querySelectorAll('.' + jsArray[i]);
+							lazyBgElements.forEach(function(element) {
+								element.classList.remove('interact-hidden');
+							});
+						}
+
 					}
 					
 				};
