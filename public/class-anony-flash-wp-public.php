@@ -286,12 +286,13 @@ class Anony_Flash_Wp_Public {
 		if ( false === strpos( $src, '.js' ) ) {
 			return $tag;
 		}
-
+		
 		if ( false !== strpos( $tag, 'defer' ) ) {
 			return $tag;
 		}
-
-		if ( strpos( $src, 'wp-includes/js' ) ) return $tag; //Exclude all from w-includes.
+		if ( strpos( $tag, 'wp-includes' ) !== false ){
+			return $tag; //Exclude all from w-includes.
+		} 
 
 		// Try not defer all.
 		$not_deferred = array(
@@ -1501,7 +1502,7 @@ class Anony_Flash_Wp_Public {
 
 	public function to_be_injected_styles( $tag ) {
 
-		if ( is_admin() || $this->uri_strpos( 'wp-admin' ) ) {
+		if ( is_admin() || $this->uri_strpos( 'wp-admin' ) || !is_singular() || !$this->is_tax() ) {
 			return $tag;
 		}
 		$anofl_options = ANONY_Options_Model::get_instance( 'Anofl_Options' );
@@ -1519,7 +1520,6 @@ class Anony_Flash_Wp_Public {
 				return $tag;
 			}
 		}
-		
 		if( is_singular() ){
 			global $post;
 			$option_name = 'defer_all_styles_' . $post->post_type;
