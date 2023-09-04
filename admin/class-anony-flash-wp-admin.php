@@ -462,6 +462,18 @@ class Anony_Flash_Wp_Admin {
 					'desc'     => esc_html__( 'Improves First content paint, and get higher score on page speed insights.', 'anony-flash-wp' ),
 				),
 				array(
+					'id'         => 'not_to_be_defered_scripts',
+					'title'      => esc_html__( 'Do not defer these files', 'anony-flash-wp' ),
+					'type'       => 'textarea',
+					'validate'   => 'html',
+					// translators: An escaped script tag.
+					'desc'       => esc_html__( 'Add full URLs or URL sub-strings to prevent scripts defer on these URLs. Please add one per line', 'anony-flash-wp' ),
+					'text-align' => 'left',
+					'rows'       => '10',
+					'columns'    => '60',
+					'direction'  => 'ltr',
+				),
+				array(
 					'id'       => 'load_scripts_on_interaction',
 					'title'    => esc_html__( 'Delay javascript execution', 'anony-flash-wp' ),
 					'type'     => 'switch',
