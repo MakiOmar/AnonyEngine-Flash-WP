@@ -312,6 +312,8 @@ class Anony_Flash_Wp_Public {
 				$not_deferred = array_merge( $not_deferred, $not_to_be_defered_scripts );
 			}
 		}
+
+		$not_deferred = apply_filters( 'anony_not_to_be_defered_scripts', $not_deferred );
 		foreach( $not_deferred as $search ){
 			if( false !== strpos( $tag, $search ) ){
 				return $tag;
