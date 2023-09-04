@@ -888,13 +888,13 @@ class Anony_Flash_Wp_Public {
 
 		$anofl_options = ANONY_Options_Model::get_instance( 'Anofl_Options' );
 
-		if ( empty( $anofl_options->wc_mobile_thumb_size ) ) {
+		if ( empty( $anofl_options->wc_mobile_thumb_width ) || empty( $anofl_options->wc_mobile_thumb_height ) ) {
 			return $size;
 		}
 
-		$size['width'] = $anofl_options->wc_mobile_thumb_size;
+		$size['width'] = $anofl_options->wc_mobile_thumb_width;
 
-		$size['height'] = $anofl_options->wc_mobile_thumb_size;
+		$size['height'] = $anofl_options->wc_mobile_thumb_height;
 
 		return $size;
 	}

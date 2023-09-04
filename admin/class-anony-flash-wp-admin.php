@@ -642,8 +642,15 @@ anony-lazyload-bg',
 						'desc'     => esc_html__( 'Sometimes you may need to disable srcsets on mobile if you need to set the image size manually on mobile devices. Use the option below to set product thumbnail size on mobile' ),
 					),
 					array(
-						'id'       => 'wc_mobile_thumb_size',
-						'title'    => esc_html__( 'Product thumnbnail size on mobile', 'anony-flash-wp' ),
+						'id'       => 'wc_mobile_thumb_width',
+						'title'    => esc_html__( 'Product thumnbnail width on mobile', 'anony-flash-wp' ),
+						'type'     => 'number',
+						'validate' => 'no_html',
+					),
+
+					array(
+						'id'       => 'wc_mobile_thumb_height',
+						'title'    => esc_html__( 'Product thumnbnail height on mobile', 'anony-flash-wp' ),
 						'type'     => 'number',
 						'validate' => 'no_html',
 					),
