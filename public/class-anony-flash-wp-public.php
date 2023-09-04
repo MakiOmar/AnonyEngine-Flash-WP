@@ -304,8 +304,18 @@ class Anony_Flash_Wp_Public {
 			'wp-tinymce-root',
 			'wc_price_slider'
 		);
-		if ( in_array( $handle, $not_deferred ) ) {
-			return $tag;
+
+		if( !empty( $anofl_options->not_to_be_defered_scripts ) ){
+			$not_to_be_defered_scripts = array_filter(ANONY_STRING_HELP::line_by_line_textarea( $anofl_options->not_to_be_defered_scripts ));
+			
+			if( !empty( $not_to_be_defered_scripts ) ){
+				$not_deferred = array_merge( $not_deferred, $not_to_be_defered_scripts );
+			}
+		}
+		foreach( $not_deferred as $search ){
+			if( false !== strpos( $tag, $search ) ){
+				return $tag;
+			}
 		}
 		return str_replace( ' src', ' defer src', $tag );
 	}
@@ -918,9 +928,7 @@ class Anony_Flash_Wp_Public {
 
 		if ( class_exists( 'ANONY_STRING_HELP' ) ) {
 
-			$lazyloaded_backgrounds = ANONY_STRING_HELP::line_by_line_textarea( $anofl_options->lazyload_this_classes );
-
-			$lazyloaded_backgrounds = array_filter($lazyloaded_backgrounds);
+			$lazyloaded_backgrounds = array_filter( ANONY_STRING_HELP::line_by_line_textarea( $anofl_options->lazyload_this_classes ) );
 			
 			if( !empty( $lazyloaded_backgrounds )  )
 			{
