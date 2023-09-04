@@ -210,8 +210,9 @@ class Anony_Flash_Wp {
 		if( '1' === $anofl_options->lazyload_images ){
 			add_filter( 'wp_lazy_loading_enabled', '__return_false' );
 		}
-		//$this->loader->add_filter( 'the_content', $plugin_public, 'add_missing_image_Dimensions' );
+		$this->loader->add_filter( 'the_content', $plugin_public, 'add_missing_image_Dimensions', 99 );
 		$this->loader->add_filter( 'post_thumbnail_html', $plugin_public, 'add_missing_image_Dimensions', 99 );
+		$this->loader->add_filter( 'woocommerce_product_get_image', $plugin_public, 'add_missing_image_Dimensions', 99 );
 
 		// Disable google fonts.
 		$this->loader->add_filter( 'elementor/frontend/print_google_fonts', $plugin_public, 'elementor_google_fonts', 99 );
