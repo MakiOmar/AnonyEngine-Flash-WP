@@ -569,9 +569,19 @@ class Anony_Flash_Wp_Admin {
 			'fields' => array(
 				array(
 					'id'       => 'add_missing_image_dimensions',
-					'title'    => esc_html__( 'Add missing image dimensions', 'anony-flash-wp' ),
+					'title'    => esc_html__( 'Optimize images', 'anony-flash-wp' ),
 					'type'     => 'switch',
 					'validate' => 'no_html',
+					'desc'       => esc_html__( 'This will by default add width and height to imgs, but if you want to lazyload image, Please enable the lazyload option below.', 'anony-flash-wp' ),
+
+				),
+				
+				array(
+					'id'       => 'lazyload_images',
+					'title'    => esc_html__( 'Lazyload images', 'anony-flash-wp' ),
+					'type'     => 'switch',
+					'validate' => 'no_html',
+					'desc'       => esc_html__( 'Please enable optimize images first.', 'anony-flash-wp' ),
 				),
 			),
 		);

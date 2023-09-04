@@ -1086,12 +1086,18 @@ class Anony_Flash_Wp_Public {
 	}
 
 	public function add_missing_image_Dimensions( $content ) {
+
 		$anofl_options = ANONY_Options_Model::get_instance( 'Anofl_Options' );
-
+		
 		if ( '1' === $anofl_options->add_missing_image_dimensions ) {
-			return ANONY_IMAGES_HELP::add_missing_dimensions( $content );
+			if( '1' === $anofl_options->lazyload_images ){
+				$lazyload = true;
+			}else{
+				$lazyload = false;
+			}
+	
+			return ANONY_IMAGES_HELP::add_missing_dimensions( $content, $lazyload );
 		}
-
 		return $content;
 
 	}
@@ -1635,6 +1641,15 @@ class Anony_Flash_Wp_Public {
 
 		</script>
 		<?php
+	}
+
+	public function lazyload_images() {
+		$anofl_options = ANONY_Options_Model::get_instance( 'Anofl_Options' );
+		if( '1' === $anofl_options->lazyload_images ){?>
+			<script>
+				Defer.dom('img', 0, true);
+			</script>
+		<?php }
 	}
 
 

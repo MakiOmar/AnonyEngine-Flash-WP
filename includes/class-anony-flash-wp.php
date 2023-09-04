@@ -195,6 +195,7 @@ class Anony_Flash_Wp {
 		$this->loader->add_action( 'wp_head', $plugin_public, 'load_bg_on_interaction_styles' );
 		$this->loader->add_filter( 'the_content', $plugin_public, 'load_bg_on_interaction' );
 		$this->loader->add_action( 'wp_print_footer_scripts', $plugin_public, 'load_bg_on_interaction_sctipt', 999 );
+		$this->loader->add_action( 'wp_print_footer_scripts', $plugin_public, 'lazyload_images', 999 );
 		
 		// Actions..
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles' );
@@ -206,7 +207,11 @@ class Anony_Flash_Wp {
 		$this->loader->add_action( 'wp_print_scripts', $plugin_public, 'dequeue_scripts', 999 );
 
 		// Add missing image dimensions.
-		$this->loader->add_filter( 'the_content', $plugin_public, 'add_missing_image_Dimensions' );
+		if( '1' === $anofl_options->lazyload_images ){
+			add_filter( 'wp_lazy_loading_enabled', '__return_false' );
+		}
+		//$this->loader->add_filter( 'the_content', $plugin_public, 'add_missing_image_Dimensions' );
+		$this->loader->add_filter( 'post_thumbnail_html', $plugin_public, 'add_missing_image_Dimensions', 99 );
 
 		// Disable google fonts.
 		$this->loader->add_filter( 'elementor/frontend/print_google_fonts', $plugin_public, 'elementor_google_fonts', 99 );
