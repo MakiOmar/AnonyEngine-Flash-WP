@@ -592,6 +592,8 @@ class Anony_Flash_Wp_Public {
 		<?php
 	}
 	public function stylesheets_media_to_all(){
+		$anofl_options = ANONY_Options_Model::get_instance( 'Anofl_Options' );
+		
 		//var_dump($this->is_above_the_fold_styles_enabled());
 		/*
 		if( !$this->is_above_the_fold_styles_enabled() ){
@@ -601,18 +603,24 @@ class Anony_Flash_Wp_Public {
 		?>
 		<script type="text/javascript">
 			jQuery(document).ready(function($){
-				function load_stylesheets_upon_interact(){
+				function load_deferred_stylesheets(){
 					$('link[media="print"]').each(function() {
 						var media = $(this).attr('media');
 						media = media.replace('print', 'all');
 						$(this).attr('media', media);
 					});
 				}
-				document.body.addEventListener('mousemove', load_stylesheets_upon_interact);
-				document.body.addEventListener('scroll', load_stylesheets_upon_interact);
-				document.body.addEventListener('keydown', load_stylesheets_upon_interact);
-				document.body.addEventListener('click', load_stylesheets_upon_interact);
-				document.body.addEventListener('touchstart', load_stylesheets_upon_interact);
+				<?php if( 'interact' === $anofl_options->load_stylesheets_on ) {?>
+					document.body.addEventListener('mousemove', load_deferred_stylesheets);
+					document.body.addEventListener('scroll', load_deferred_stylesheets);
+					document.body.addEventListener('keydown', load_deferred_stylesheets);
+					document.body.addEventListener('click', load_deferred_stylesheets);
+					document.body.addEventListener('touchstart', load_deferred_stylesheets);
+				<?php } ?>
+
+				<?php if( 'load' === $anofl_options->load_stylesheets_on ) {?>
+					window.addEventListener.addEventListener('load', load_deferred_stylesheets);
+				<?php } ?>
 			});
 
 		</script>
