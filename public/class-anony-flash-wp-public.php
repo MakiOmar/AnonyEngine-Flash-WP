@@ -1647,7 +1647,8 @@ class Anony_Flash_Wp_Public {
 		$anofl_options = ANONY_Options_Model::get_instance( 'Anofl_Options' );
 		if( '1' === $anofl_options->lazyload_images ){?>
 			<script>
-				Defer.dom('img', 0, true);
+				Defer.dom('img', 500);
+				Defer.lazy = true;
 			</script>
 		<?php }
 	}
