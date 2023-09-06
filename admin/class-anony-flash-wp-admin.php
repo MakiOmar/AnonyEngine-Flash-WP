@@ -430,6 +430,26 @@ class Anony_Flash_Wp_Admin {
 					'validate' => 'no_html',
 					'desc'     => esc_html__( 'When choose (Media attribute), this will change the media attibute value to print, then later will be replaced back with all. But if you choos Inject, this will inject stylesheets later on (user interact/Window load)', 'anony-flash-wp' ),
 				),
+				
+				array(
+					'id'       => 'load_stylesheets_on',
+					'title'    => esc_html__( 'load deferred stylesheets on', 'anony-flash-wp' ),
+					'type'     => 'radio',
+					'options'  => array(
+
+						'load'    => array(
+							'title' => esc_html__( 'Window loaded', 'anony-flash-wp' ),
+						),
+	
+						'interact' => array(
+							'title' => esc_html__( 'User interaction', 'anony-flash-wp' ),
+						),
+	
+					),
+					'default'  => 'load',
+					'validate' => 'no_html',
+					'desc'     => __( 'When choose <code>Window loaded</code>, this will load deferred stylesheets after window is loaded, but <code>user interaction</code> will load them once user interacts with the page', 'anony-flash-wp' ),
+				),
 
 				array(
 					'id'         => 'deferred_styles',
