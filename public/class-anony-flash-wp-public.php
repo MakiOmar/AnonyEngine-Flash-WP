@@ -619,7 +619,7 @@ class Anony_Flash_Wp_Public {
 				<?php } ?>
 
 				<?php if( 'load' === $anofl_options->load_stylesheets_on ) {?>
-					window.addEventListener.addEventListener('load', load_deferred_stylesheets);
+					window.addEventListener('load', load_deferred_stylesheets);
 				<?php } ?>
 			});
 
@@ -1525,10 +1525,11 @@ class Anony_Flash_Wp_Public {
 	}
 
 	public function to_be_injected_styles( $tag ) {
-
-		if ( is_admin() || $this->uri_strpos( 'wp-admin' ) || !is_singular() || !$this->is_tax() ) {
+		
+		if ( is_admin() || $this->uri_strpos( 'wp-admin' ) || (!is_singular() && !$this->is_tax()) ) {
 			return $tag;
 		}
+
 		$anofl_options = ANONY_Options_Model::get_instance( 'Anofl_Options' );
 		if( $this->is_tax() ){
 			
@@ -1559,7 +1560,7 @@ class Anony_Flash_Wp_Public {
 				return $tag;
 			}
 		}
-
+		
 		if ( preg_match( "/rel='stylesheet'/im", $tag ) ) {
 
 				preg_match( "/id='(.*?)'/im", $tag, $id );
@@ -1567,12 +1568,16 @@ class Anony_Flash_Wp_Public {
 
 				preg_match( "/href='(.*?)'/im", $tag, $href );
 				$style_href = $href[1];
-
+				
 				add_action(
-					'wp_print_footer_scripts',
+					'wp_head',
 					function () use ( $style_id, $style_href ) {
 						?>
-							<input type="hidden" class="create-style-tag" id="create-<?php echo esc_html( $style_id ); ?>" value="<?php echo esc_html( $style_href ); ?>"/>
+						<script>
+							Defer.css('<?php echo $style_href ?>', '<?php echo $style_href ?>', 0, function() {
+								
+							}, true);
+						</script>
 						<?php
 					}
 				);
