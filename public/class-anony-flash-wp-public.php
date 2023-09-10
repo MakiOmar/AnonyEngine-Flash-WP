@@ -1095,6 +1095,10 @@ class Anony_Flash_Wp_Public {
 
 	public function add_missing_image_Dimensions( $content ) {
 
+		if (defined('DOING_AJAX') || DOING_AJAX){
+			return $content;
+		}
+
 		$anofl_options = ANONY_Options_Model::get_instance( 'Anofl_Options' );
 		
 		if ( '1' === $anofl_options->add_missing_image_dimensions ) {
