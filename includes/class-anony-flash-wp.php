@@ -214,6 +214,9 @@ class Anony_Flash_Wp {
 		$this->loader->add_filter( 'post_thumbnail_html', $plugin_public, 'add_missing_image_Dimensions', 99 );
 		$this->loader->add_filter( 'woocommerce_product_get_image', $plugin_public, 'add_missing_image_Dimensions', 99 );
 		$this->loader->add_filter( 'wp_get_attachment_image', $plugin_public, 'add_missing_image_Dimensions', 99 );
+		$this->loader->add_filter( 'elementor/frontend/the_content', $plugin_public, 'add_missing_image_Dimensions', 99 );
+		$this->loader->add_filter( 'fl_builder_render_content', $plugin_public, 'add_missing_image_Dimensions', 99 );
+		$this->loader->add_filter( 'et_pb_render', $plugin_public, 'add_missing_image_Dimensions', 99 );
 
 		// Disable google fonts.
 		$this->loader->add_filter( 'elementor/frontend/print_google_fonts', $plugin_public, 'elementor_google_fonts', 99 );
