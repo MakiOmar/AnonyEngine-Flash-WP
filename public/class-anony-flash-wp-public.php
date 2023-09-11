@@ -302,7 +302,10 @@ class Anony_Flash_Wp_Public {
 			'wp-hooks',
 			'wp-i18n',
 			'wp-tinymce-root',
-			'wc_price_slider'
+			'wc_price_slider',
+			'firebase',
+			'firebase-auth'
+			
 		);
 
 		if( !empty( $anofl_options->not_to_be_defered_scripts ) ){
