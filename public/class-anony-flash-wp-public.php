@@ -586,7 +586,7 @@ class Anony_Flash_Wp_Public {
 	 */
 	public function inline_defer_js() {
 		?>
-		<script type="text/javascript">
+		<script data-use="defer.js">
 			/*!@shinsenter/defer.js@3.4.0*/
 			!(function(n){function t(e){n.addEventListener(e,B)}function o(e){n.removeEventListener(e,B)}function u(e,n,t){L?C(e,n):(t||u.lazy&&void 0===t?q:S).push(e,n)}function c(e){k.head.appendChild(e)}function i(e,n){z.call(e.attributes)[y](n)}function r(e,n,t,o){return o=(n?k.getElementById(n):o)||k.createElement(e),n&&(o.id=n),t&&(o.onload=t),o}function s(e,n,t){(t=e.src)&&((n=r(m)).rel="preload",n.as=h,n.href=t,(t=e[g](w))&&n[b](w,t),(t=e[g](x))&&n[b](x,t),c(n))}function a(e,n){return z.call((n||k).querySelectorAll(e))}function f(e,n){e.parentNode.replaceChild(n,e)}function l(t,e){a("source,img",t)[y](l),i(t,function(e,n){(n=/^data-(.+)/.exec(e.name))&&t[b](n[1],e.value)}),"string"==typeof e&&e&&(t.className+=" "+e),p in t&&t[p]()}function e(e,n,t){u(function(t){(t=a(e||N))[y](s),(function o(e,n){(e=t[E]())&&((n=r(e.nodeName)).text=e.text,i(e,function(e){"type"!=e.name&&n[b](e.name,e.value)}),n.src&&!n[g]("async")?(n.onload=n.onerror=o,f(e,n)):(f(e,n),o()))})()},n,t)}var d="Defer",m="link",h="script",p="load",v="pageshow",y="forEach",g="getAttribute",b="setAttribute",E="shift",w="crossorigin",x="integrity",A=["mousemove","keydown","touchstart","wheel"],I="on"+v in n?v:p,N=h+"[type=deferjs]",j=n.IntersectionObserver,k=n.document||n,C=n.setTimeout,L=/p/.test(k.readyState),S=[],q=[],z=S.slice,B=function(e,n){for(n=I==e.type?(o(I),L=u,A[y](t),S):(A[y](o),q);n[0];)C(n[E](),n[E]())};e(),u.all=e,u.dom=function(e,n,i,c,r){u(function(t){function o(e){c&&!1===c(e)||l(e,i)}t=!!j&&new j(function(e){e[y](function(e,n){e.isIntersecting&&(t.unobserve(n=e.target),o(n))})},r),a(e||"[data-src]")[y](function(e){e[d]!=u&&(e[d]=u,t?t.observe(e):o(e))})},n,!1)},u.css=function(n,t,e,o,i){u(function(e){(e=r(m,t,o)).rel="stylesheet",e.href=n,c(e)},e,i)},u.js=function(n,t,e,o,i){u(function(e){(e=r(h,t,o)).src=n,c(e)},e,i)},u.reveal=l,n[d]=u,L||t(I)})(this);
 			 
@@ -678,7 +678,7 @@ class Anony_Flash_Wp_Public {
 			<?php echo $gtm_events ?>
 			</script>
 
-			<script>
+			<script data-use="defer.js">
 				Defer.all('script[type="anony-gtag-events-scripts"]', 1800);
 			</script>
 			<?php
@@ -715,7 +715,7 @@ class Anony_Flash_Wp_Public {
 			</noscript>
 			<!-- End Meta Pixel Code -->
 
-			<script>
+			<script data-use="defer.js">
 				Defer.all('script[type="anony-facebook-pixel"]', 1500);
 			</script>
 			<?php
@@ -744,7 +744,7 @@ class Anony_Flash_Wp_Public {
 			<?php echo $anofl_options->external_scripts; ?>
 			</script>
 
-			<script>
+			<script data-use="defer.js">
 				Defer.all('script[type="anony-external-scripts"]', 1500);
 			</script>
 			<?php
@@ -753,7 +753,7 @@ class Anony_Flash_Wp_Public {
 		if ( '1' === $anofl_options->load_scripts_on_interaction ) {
 
 			?>
-			<script>
+			<script data-use="defer.js">
 				Defer.all('script[type="anony-delay-scripts"]', 0, true);
 			</script>
 			<?php
@@ -1460,7 +1460,7 @@ class Anony_Flash_Wp_Public {
 
 	
 	/**
-	 * Remove inline <style> blocks.
+	 * Delay js excution.
 	 * Start HTML buffer
 	 */
 	public function start_html_buffer() 
@@ -1473,6 +1473,21 @@ class Anony_Flash_Wp_Public {
 
 	public function start_html_buffer_cb( $html )
 	{
+		if( $this->uri_strpos( 'elementor' ) || $this->uri_strpos( 'wp-admin' )){
+			return $html;
+		}
+		$anofl_options = ANONY_Options_Model::get_instance( 'Anofl_Options' );
+
+		if( '1' === $anofl_options->load_scripts_on_interaction ){
+			$pattern = '/<script>/i';
+			$replacement = '<script type="anony-delay-scripts">';
+			$html = preg_replace($pattern, $replacement, $html);
+
+			$pattern = '/<script([^>]*)type=("|\')text\/javascript("|\')([^>]*)>/i';
+			$replacement = '<script$1type="anony-delay-scripts"$4>';
+			$html = preg_replace($pattern, $replacement, $html);
+			return $html;
+		}
 	
 		// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped
 		return $html;
@@ -1580,7 +1595,7 @@ class Anony_Flash_Wp_Public {
 					'wp_head',
 					function () use ( $style_id, $style_href ) {
 						?>
-						<script>
+						<script data-use="defer.js">
 							Defer.css('<?php echo $style_href ?>', '<?php echo $style_href ?>', 0, function() {
 								
 							}, true);
@@ -1666,7 +1681,7 @@ class Anony_Flash_Wp_Public {
 	public function lazyload_images() {
 		$anofl_options = ANONY_Options_Model::get_instance( 'Anofl_Options' );
 		if( '1' === $anofl_options->lazyload_images ){?>
-			<script>
+			<script data-use="defer.js">
 				Defer.dom('img', 500);
 				Defer.lazy = true;
 			</script>

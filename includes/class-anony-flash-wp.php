@@ -251,6 +251,8 @@ class Anony_Flash_Wp {
 		$this->loader->add_filter( 'style_loader_tag', $plugin_public, 'remove_all_stylesheets', 99 );
 
 		$this->loader->add_action( 'get_header', $plugin_public, 'wp_html_compression_finish' );
+		
+		$this->loader->add_action( 'get_header', $plugin_public, 'start_html_buffer' );
 
 		// controls add query strings to scripts.
 		$this->loader->add_filter( 'script_loader_src', $plugin_public, 'anony_control_query_strings', 15, 2 );
