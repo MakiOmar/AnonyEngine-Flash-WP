@@ -1488,6 +1488,33 @@ class Anony_Flash_Wp_Public {
 			$html = preg_replace($pattern, $replacement, $html);
 			return $html;
 		}
+
+		/*
+		if( '1' === $anofl_options->load_scripts_on_interaction ){
+			$pattern = '/<script>/i';
+			$replacement = '<script type="anony-delay-scripts">';
+			$html = preg_replace($pattern, $replacement, $html);
+
+			$pattern = '/<script([^>]*)type=("|\')text\/javascript("|\')([^>]*)>/i';
+			$replacement = '<script$1type="anony-delay-scripts"$4>';
+			preg_match_all($pattern, $html, $matches);
+			
+			if( $matches && !empty( $matches[0] ) ){
+				foreach($matches[0] as $script_tag){
+					if( false !== strpos($script_tag , ' src') ){
+						continue;
+					}
+					
+					$new_script_tag = preg_replace($pattern, $replacement, $script_tag);
+					$html = str_replace($script_tag, $new_script_tag, $html);
+				}
+				return $html;
+			}
+			
+			
+			return $html;
+		}
+		*/
 	
 		// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped
 		return $html;
