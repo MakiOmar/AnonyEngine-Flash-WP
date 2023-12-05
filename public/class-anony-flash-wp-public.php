@@ -52,7 +52,6 @@ class Anony_Flash_Wp_Public {
 
 		$this->plugin_name = $plugin_name;
 		$this->version     = $version;
-
 	}
 
 	/**
@@ -73,7 +72,6 @@ class Anony_Flash_Wp_Public {
 		 * between the defined hooks and the functions defined in this
 		 * class.
 		 */
-
 	}
 
 	/**
@@ -96,22 +94,20 @@ class Anony_Flash_Wp_Public {
 		 */
 	}
 
-	public function elementor_google_fonts( $print_google_fonts )
-	{
+	public function elementor_google_fonts( $print_google_fonts ) {
 		$anofl_options = ANONY_Options_Model::get_instance( 'Anofl_Options' );
 
-		if ( '1' === $anofl_options->disable_elementor_google_fonts) {
+		if ( '1' === $anofl_options->disable_elementor_google_fonts ) {
 			return false;
 		}
 
 		return $print_google_fonts;
-		
 	}
 
 	public function anony_add_head_scripts() {
 		$anofl_options = ANONY_Options_Model::get_instance( 'Anofl_Options' );
 
-		if ( !empty( $anofl_options->head_scripts ) ){
+		if ( ! empty( $anofl_options->head_scripts ) ) {
 			echo $anofl_options->head_scripts;
 		}
 	}
@@ -119,16 +115,16 @@ class Anony_Flash_Wp_Public {
 	public function anony_add_footer_scripts() {
 		$anofl_options = ANONY_Options_Model::get_instance( 'Anofl_Options' );
 
-		if ( !empty( $anofl_options->footer_scripts ) ){
+		if ( ! empty( $anofl_options->footer_scripts ) ) {
 			echo $anofl_options->footer_scripts;
 		}
 	}
 
-	public function output_preloader(){
-		$anofl_options = ANONY_Options_Model::get_instance( 'Anofl_Options' );
+	public function output_preloader() {
+		$anofl_options     = ANONY_Options_Model::get_instance( 'Anofl_Options' );
 		$preloader_timeout = $anofl_options->preloader_timeout;
-		 if ($anofl_options->preloader == '1' ) : ?>
-		 	<style>
+		if ( $anofl_options->preloader == '1' ) : ?>
+			<style>
 				#anony-preloader p{
 					font-size: 18px;
 				}
@@ -154,10 +150,11 @@ class Anony_Flash_Wp_Public {
 					setTimeout(function(){
 						var loader = document.getElementById('anony-preloader');
 						if(loader !== null) loader.style.display = 'none';
-					}, <?php echo $preloader_timeout ?>);
+					}, <?php echo $preloader_timeout; ?>);
 				};
 			</script>
-		<?php endif;
+			<?php
+		endif;
 	}
 	/**
 	 * Callback for ob_start
@@ -210,40 +207,38 @@ class Anony_Flash_Wp_Public {
 			$src = remove_query_arg( 'ver', $src );
 		}
 		return $src;
-
 	}
 
-	public function remove_unused_scripts( $tag, $handle, $src )
-	{
-		if( !is_singular() || !empty( $_GET['list_scripts'] ) ) return $tag;
-		
+	public function remove_unused_scripts( $tag, $handle, $src ) {
+		if ( ! is_singular() || ! empty( $_GET['list_scripts'] ) ) {
+			return $tag;
+		}
+
 		global $post;
 		$optimize_per_post = get_post_meta( $post->ID, 'optimize_per_post', true );
 
-		if ( ! empty( $optimize_per_post ) && ! empty( $optimize_per_post[ 'unloaded_js' ] ) ) {
-			foreach( $optimize_per_post[ 'unloaded_js' ] as $script )
-			{
-				if( false !== strpos( $tag,  $script) ){
+		if ( ! empty( $optimize_per_post ) && ! empty( $optimize_per_post['unloaded_js'] ) ) {
+			foreach ( $optimize_per_post['unloaded_js'] as $script ) {
+				if ( false !== strpos( $tag, $script ) ) {
 					return '';
 				}
 			}
-			
 		}
 		return $tag;
 	}
 
-	public function load_scripts_on_interaction( $tag, $handle, $src ){
-		
+	public function load_scripts_on_interaction( $tag, $handle, $src ) {
+
 		$anofl_options = ANONY_Options_Model::get_instance( 'Anofl_Options' );
 
-		if ( is_admin() || '1' !== $anofl_options->load_scripts_on_interaction ||  $this->uri_strpos( 'elementor' ) ) {
+		if ( is_admin() || '1' !== $anofl_options->load_scripts_on_interaction || $this->uri_strpos( 'elementor' ) ) {
 			return $tag; // don't break WP Admin.
 		}
 
-		$exclusions = ANONY_STRING_HELP::line_by_line_textarea($anofl_options->delay_scripts_exclusions);
-		if( is_array( $exclusions ) ){
-			foreach( $exclusions as $exclusion ){
-				if( $this->uri_strpos($exclusion) ){
+		$exclusions = ANONY_STRING_HELP::line_by_line_textarea( $anofl_options->delay_scripts_exclusions );
+		if ( is_array( $exclusions ) ) {
+			foreach ( $exclusions as $exclusion ) {
+				if ( $this->uri_strpos( $exclusion ) ) {
 					return $tag;
 				}
 			}
@@ -257,15 +252,15 @@ class Anony_Flash_Wp_Public {
 			return $tag;
 		}
 
-		$exclusion_list = apply_filters( 'load_scripts_on_interaction_exclude', array('jquery-core-js') );
-		
-		foreach( $exclusion_list as $target ){
-			if ( false !== strpos( $tag, $target )) {
+		$exclusion_list = apply_filters( 'load_scripts_on_interaction_exclude', array( 'jquery-core-js' ) );
+
+		foreach ( $exclusion_list as $target ) {
+			if ( false !== strpos( $tag, $target ) ) {
 				return $tag;
 			}
 		}
 
-		$tag = str_replace('text/javascript', 'anony-delay-scripts' ,$tag);
+		$tag = str_replace( 'text/javascript', 'anony-delay-scripts', $tag );
 
 		return $tag;
 	}
@@ -286,13 +281,13 @@ class Anony_Flash_Wp_Public {
 		if ( false === strpos( $src, '.js' ) ) {
 			return $tag;
 		}
-		
+
 		if ( false !== strpos( $tag, 'defer' ) ) {
 			return $tag;
 		}
-		if ( strpos( $tag, 'wp-includes' ) !== false ){
-			return $tag; //Exclude all from w-includes.
-		} 
+		if ( strpos( $tag, 'wp-includes' ) !== false ) {
+			return $tag; // Exclude all from w-includes.
+		}
 
 		// Try not defer all.
 		$not_deferred = array(
@@ -304,21 +299,21 @@ class Anony_Flash_Wp_Public {
 			'wp-tinymce-root',
 			'wc_price_slider',
 			'firebase',
-			'firebase-auth'
-			
+			'firebase-auth',
+
 		);
 
-		if( !empty( $anofl_options->not_to_be_defered_scripts ) ){
-			$not_to_be_defered_scripts = array_filter(ANONY_STRING_HELP::line_by_line_textarea( $anofl_options->not_to_be_defered_scripts ));
-			
-			if( !empty( $not_to_be_defered_scripts ) ){
+		if ( ! empty( $anofl_options->not_to_be_defered_scripts ) ) {
+			$not_to_be_defered_scripts = array_filter( ANONY_STRING_HELP::line_by_line_textarea( $anofl_options->not_to_be_defered_scripts ) );
+
+			if ( ! empty( $not_to_be_defered_scripts ) ) {
 				$not_deferred = array_merge( $not_deferred, $not_to_be_defered_scripts );
 			}
 		}
 
 		$not_deferred = apply_filters( 'anony_not_to_be_defered_scripts', $not_deferred );
-		foreach( $not_deferred as $search ){
-			if( false !== strpos( $tag, $search ) ){
+		foreach ( $not_deferred as $search ) {
+			if ( false !== strpos( $tag, $search ) ) {
 				return $tag;
 			}
 		}
@@ -445,7 +440,7 @@ class Anony_Flash_Wp_Public {
 				if ( 'dns-prefetch' == $relation_type ) {
 					/**
 					* This filter is documented in wp-includes/formatting.php
-					  */
+					 */
 					$emoji_svg_url = apply_filters( 'emoji_svg_url', 'https://s.w.org/images/core/emoji/2/svg/' );
 
 					$urls = array_diff( $urls, array( $emoji_svg_url ) );
@@ -507,7 +502,8 @@ class Anony_Flash_Wp_Public {
 				return;
 			}
 
-			foreach ( $arr as $line ) { ?>
+			foreach ( $arr as $line ) {
+				?>
 					<link rel="preload" href="<?php echo $line; ?>" as="font" type="font/woff2" crossorigin>
 				<?php
 			}
@@ -594,10 +590,10 @@ class Anony_Flash_Wp_Public {
 		</script>
 		<?php
 	}
-	public function stylesheets_media_to_all(){
+	public function stylesheets_media_to_all() {
 		$anofl_options = ANONY_Options_Model::get_instance( 'Anofl_Options' );
-		
-		//var_dump($this->is_above_the_fold_styles_enabled());
+
+		// var_dump($this->is_above_the_fold_styles_enabled());
 		/*
 		if( !$this->is_above_the_fold_styles_enabled() ){
 			return;
@@ -613,7 +609,7 @@ class Anony_Flash_Wp_Public {
 						$(this).attr('media', media);
 					});
 				}
-				<?php if( 'interact' === $anofl_options->load_stylesheets_on ) {?>
+				<?php if ( 'interact' === $anofl_options->load_stylesheets_on ) { ?>
 					document.body.addEventListener('mousemove', load_deferred_stylesheets);
 					document.body.addEventListener('scroll', load_deferred_stylesheets);
 					document.body.addEventListener('keydown', load_deferred_stylesheets);
@@ -621,19 +617,19 @@ class Anony_Flash_Wp_Public {
 					document.body.addEventListener('touchstart', load_deferred_stylesheets);
 				<?php } ?>
 
-				<?php if( 'load' === $anofl_options->load_stylesheets_on ) {?>
+				<?php if ( 'load' === $anofl_options->load_stylesheets_on ) { ?>
 					window.addEventListener('load', load_deferred_stylesheets);
 				<?php } ?>
 			});
 
 		</script>
-	<?php
+		<?php
 	}
 
-	public function google_tag_script( $tag_id, $defer_js_id , $console = '' ){
+	public function google_tag_script( $tag_id, $defer_js_id, $console = '' ) {
 		$anofl_options = ANONY_Options_Model::get_instance( 'Anofl_Options' );
 		?>
-		Defer.js('https://www.googletagmanager.com/gtag/js?id=<?php echo esc_html( $tag_id ); ?>', '<?php echo $defer_js_id ?>', 1500, 
+		Defer.js('https://www.googletagmanager.com/gtag/js?id=<?php echo esc_html( $tag_id ); ?>', '<?php echo $defer_js_id; ?>', 1500, 
 		function() {
 			window.dataLayer = window.dataLayer || [];
 			dataLayer.push(['js', new Date()]);
@@ -648,34 +644,34 @@ class Anony_Flash_Wp_Public {
 	 */
 	public function defer_gtgm() {
 		$anofl_options = ANONY_Options_Model::get_instance( 'Anofl_Options' );
-		$gads_id = $anofl_options->gads_id;
+		$gads_id       = $anofl_options->gads_id;
 		$ganalytics_id = $anofl_options->ganalytics_id;
 		if ( ! empty( $anofl_options->gtgm_id ) ) {
-		?>
+			?>
 			<script>
-				<?php 
-				$this->google_tag_script($anofl_options->gtgm_id, 'google-tag-main' ,'Google tag manager is loaded' );
+				<?php
+				$this->google_tag_script( $anofl_options->gtgm_id, 'google-tag-main', 'Google tag manager is loaded' );
 
-				if ( ! empty( $gads_id ) ) { 
-					$this->google_tag_script($gads_id, 'google-tag-ads' , 'Google ADs tag is loaded' );
+				if ( ! empty( $gads_id ) ) {
+					$this->google_tag_script( $gads_id, 'google-tag-ads', 'Google ADs tag is loaded' );
 				}
 
-				if ( ! empty( $ganalytics_id ) ) { 
-					$this->google_tag_script($ganalytics_id, 'google-tag-analytics' , 'Google analytics tag is loaded' );
-				} 
+				if ( ! empty( $ganalytics_id ) ) {
+					$this->google_tag_script( $ganalytics_id, 'google-tag-analytics', 'Google analytics tag is loaded' );
+				}
 				?>
 		</script>
-		<?php
+			<?php
 			$this->gtag_events();
 		}
 	}
-	public function gtag_events(){
+	public function gtag_events() {
 		$anofl_options = ANONY_Options_Model::get_instance( 'Anofl_Options' );
-		$gtm_events = $anofl_options->gtm_events;
+		$gtm_events    = $anofl_options->gtm_events;
 		if ( ! empty( $gtm_events ) ) {
 			?>
 			<script type="anony-gtag-events-scripts">
-			<?php echo $gtm_events ?>
+			<?php echo $gtm_events; ?>
 			</script>
 
 			<script data-use="defer.js">
@@ -722,11 +718,10 @@ class Anony_Flash_Wp_Public {
 		}
 	}
 
-	public function uri_strpos( $string ){
-		if( 
-			(!empty( $_SERVER['REQUEST_URI'] ) && !empty( $string ) && false !== strpos($_SERVER['REQUEST_URI'], $string)) ||
-			(!empty( $_SERVER['QUERY_STRING'] ) && !empty( $string ) && false !== strpos($_SERVER['QUERY_STRING'], $string))
-		){
+	public function uri_strpos( $string ) {
+		if ( ( ! empty( $_SERVER['REQUEST_URI'] ) && ! empty( $string ) && false !== strpos( $_SERVER['REQUEST_URI'], $string ) ) ||
+			( ! empty( $_SERVER['QUERY_STRING'] ) && ! empty( $string ) && false !== strpos( $_SERVER['QUERY_STRING'], $string ) )
+		) {
 			return true;
 		}
 
@@ -855,7 +850,6 @@ class Anony_Flash_Wp_Public {
 			wp_dequeue_style( 'contact-form-7-rtl' );
 			wp_deregister_style( 'contact-form-7-rtl' );
 		}
-
 	}
 
 	public function load_scripts_on_cf7_pages_only() {
@@ -875,7 +869,6 @@ class Anony_Flash_Wp_Public {
 			wp_dequeue_script( 'google-recaptcha' );
 			wp_deregister_script( 'google-recaptcha' );
 		}
-
 	}
 
 	/**
@@ -937,33 +930,29 @@ class Anony_Flash_Wp_Public {
 			return $content;
 		}
 
-		
-
 		if ( class_exists( 'ANONY_STRING_HELP' ) ) {
 
 			$lazyloaded_backgrounds = array_filter( ANONY_STRING_HELP::line_by_line_textarea( $anofl_options->lazyload_this_classes ) );
-			
-			if( !empty( $lazyloaded_backgrounds )  )
-			{
-				foreach ($lazyloaded_backgrounds as $selector) {
-					$content = str_replace( $selector. ' ', $selector . ' lazyelementorbackgroundimages ', $content );
+
+			if ( ! empty( $lazyloaded_backgrounds ) ) {
+				foreach ( $lazyloaded_backgrounds as $selector ) {
+					$content = str_replace( $selector . ' ', $selector . ' lazyelementorbackgroundimages ', $content );
 				}
 			}
 		}
 
 		return $content;
-
 	}
-	public function load_bg_on_interaction($content){
+	public function load_bg_on_interaction( $content ) {
 		$anofl_options = ANONY_Options_Model::get_instance( 'Anofl_Options' );
-		$opt_targets = ANONY_STRING_HELP::line_by_line_textarea( $anofl_options->interact_lazyload_this_classes );
-		$targets = apply_filters( 'load_bg_on_interaction', array());
-		if( !empty( $opt_targets ) && is_array( $opt_targets ) ){
-			$targets = array_merge($targets, $opt_targets);
+		$opt_targets   = ANONY_STRING_HELP::line_by_line_textarea( $anofl_options->interact_lazyload_this_classes );
+		$targets       = apply_filters( 'load_bg_on_interaction', array() );
+		if ( ! empty( $opt_targets ) && is_array( $opt_targets ) ) {
+			$targets = array_merge( $targets, $opt_targets );
 		}
-		if( !empty( $targets ) ){
-			foreach( $targets as $target ){
-				$content = str_replace( $target, $target.' interact-hidden', $content );
+		if ( ! empty( $targets ) ) {
+			foreach ( $targets as $target ) {
+				$content = str_replace( $target, $target . ' interact-hidden', $content );
 			}
 		}
 		return $content;
@@ -997,28 +986,28 @@ class Anony_Flash_Wp_Public {
 		<?php
 		echo ob_get_clean();
 	}
-	
+
 	public function load_bg_on_interaction_styles() {
 		$anofl_options = ANONY_Options_Model::get_instance( 'Anofl_Options' );
-		$opt_targets = ANONY_STRING_HELP::line_by_line_textarea( $anofl_options->interact_lazyload_this_classes );
-		$targets = apply_filters( 'load_bg_on_interaction', array());
-		if( !empty( $opt_targets ) && is_array( $opt_targets ) ){
-			$targets = array_merge($targets, $opt_targets);
+		$opt_targets   = ANONY_STRING_HELP::line_by_line_textarea( $anofl_options->interact_lazyload_this_classes );
+		$targets       = apply_filters( 'load_bg_on_interaction', array() );
+		if ( ! empty( $opt_targets ) && is_array( $opt_targets ) ) {
+			$targets = array_merge( $targets, $opt_targets );
 		}
 		$styles = '';
-		if( !empty( $targets ) ){
-			
+		if ( ! empty( $targets ) ) {
+
 			$styles .= '<style>';
 
-			foreach( $targets as $target ){ 
-				$styles .= '.'.$target.'.interact-hidden,';
+			foreach ( $targets as $target ) {
+				$styles .= '.' . $target . '.interact-hidden,';
 			}
-			$styles = trim($styles,',');
+			$styles  = trim( $styles, ',' );
 			$styles .= '{
 				background-image: none !important;
 			}';
 			$styles .= '</style>';
-		}	
+		}
 		echo $styles;
 	}
 
@@ -1098,23 +1087,22 @@ class Anony_Flash_Wp_Public {
 
 	public function add_missing_image_Dimensions( $content ) {
 
-		if ( wp_doing_ajax() || (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest') ){
+		if ( wp_doing_ajax() || ( isset( $_SERVER['HTTP_X_REQUESTED_WITH'] ) && strtolower( $_SERVER['HTTP_X_REQUESTED_WITH'] ) === 'xmlhttprequest' ) ) {
 			return $content;
 		}
 
 		$anofl_options = ANONY_Options_Model::get_instance( 'Anofl_Options' );
-		
+
 		if ( '1' === $anofl_options->add_missing_image_dimensions ) {
-			if( '1' === $anofl_options->lazyload_images ){
+			if ( '1' === $anofl_options->lazyload_images ) {
 				$lazyload = true;
-			}else{
+			} else {
 				$lazyload = false;
 			}
-	
+
 			return ANONY_IMAGES_HELP::add_missing_dimensions( $content, $lazyload );
 		}
 		return $content;
-
 	}
 
 	public function dequeued_styles() {
@@ -1127,17 +1115,15 @@ class Anony_Flash_Wp_Public {
 
 			$dequeued_styles = ANONY_STRING_HELP::line_by_line_textarea( $anofl_options->dequeued_styles );
 
-			if( !empty( $dequeued_styles )  )
-			{
-				foreach ($dequeued_styles as $handle) {
+			if ( ! empty( $dequeued_styles ) ) {
+				foreach ( $dequeued_styles as $handle ) {
 
 					wp_dequeue_style( $handle );
 					wp_deregister_style( $handle );
-					
+
 				}
 			}
 		}
-
 	}
 
 	public function dequeue_scripts() {
@@ -1154,10 +1140,10 @@ class Anony_Flash_Wp_Public {
 		}
 	}
 
-	function is_post_type_used_css_enabled(){
+	function is_post_type_used_css_enabled() {
 		global $post;
 
-		if ( !is_singular() || is_admin() || $this->uri_strpos( 'elementor' ) || ! $post || is_null( $post ) ) {
+		if ( ! is_singular() || is_admin() || $this->uri_strpos( 'elementor' ) || ! $post || is_null( $post ) ) {
 			return false;
 		}
 
@@ -1167,51 +1153,44 @@ class Anony_Flash_Wp_Public {
 
 		$optimize_post_types = $anofl_options->optimize_post_types;
 
-		if( $optimize_post_types && is_array( $optimize_post_types ) && in_array( $post->post_type,  $optimize_post_types ) && '1' === $anofl_options->$option_name ){
+		if ( $optimize_post_types && is_array( $optimize_post_types ) && in_array( $post->post_type, $optimize_post_types ) && '1' === $anofl_options->$option_name ) {
 			return true;
 		}
 
 		return false;
 	}
-	
-	function is_taxonomy_used_css_enabled(){
 
-		if ( 
-			
-			is_admin() || 
-			$this->uri_strpos( 'elementor' ) || 
+	function is_taxonomy_used_css_enabled() {
+
+		if ( is_admin() ||
+			$this->uri_strpos( 'elementor' ) ||
 			(
-				! is_tax() && 
+				! is_tax() &&
 				! is_category() &&
 				! is_tag()
 			)
-		) 
-		{
+		) {
 			return false;
 		}
 
-
-		
-		$anofl_options = ANONY_Options_Model::get_instance( 'Anofl_Options' );
-		$term = get_queried_object();
-		$option_name = 'enable_used_css_' . $term->taxonomy;
+		$anofl_options       = ANONY_Options_Model::get_instance( 'Anofl_Options' );
+		$term                = get_queried_object();
+		$option_name         = 'enable_used_css_' . $term->taxonomy;
 		$optimize_taxonomies = $anofl_options->optimize_taxonomies;
-		if( 
-			$optimize_taxonomies && 
-			is_array( $optimize_taxonomies ) && 
-			in_array( $term->taxonomy,  $optimize_taxonomies ) && 
-			'1' === $anofl_options->$option_name 
-		)
-		{
+		if ( $optimize_taxonomies &&
+			is_array( $optimize_taxonomies ) &&
+			in_array( $term->taxonomy, $optimize_taxonomies ) &&
+			'1' === $anofl_options->$option_name
+		) {
 			return true;
 		}
 
 		return false;
 	}
 	public function is_used_css_enabled() {
-		
+
 		global $post;
-		if ( !is_singular('page') || is_admin() || $this->uri_strpos( 'elementor' ) || ! $post || is_null( $post ) ) {
+		if ( ! is_singular( 'page' ) || is_admin() || $this->uri_strpos( 'elementor' ) || ! $post || is_null( $post ) ) {
 			return false;
 		}
 
@@ -1219,9 +1198,9 @@ class Anony_Flash_Wp_Public {
 
 		$is_used_css_enabled = ! empty( $optimize_per_post ) && ! empty( $optimize_per_post['enable_used_css'] ) && '1' === $optimize_per_post['enable_used_css'] ? true : false;
 
-		//$defer_all_styles = ! empty( $optimize_per_post ) && ! empty( $optimize_per_post['defer_all_styles'] ) && '1' === $optimize_per_post['defer_all_styles'] ? true : false;
+		// $defer_all_styles = ! empty( $optimize_per_post ) && ! empty( $optimize_per_post['defer_all_styles'] ) && '1' === $optimize_per_post['defer_all_styles'] ? true : false;
 
-		if( $is_used_css_enabled/* && !$defer_all_styles*/){
+		if ( $is_used_css_enabled/* && !$defer_all_styles*/ ) {
 			return true;
 		}
 
@@ -1229,38 +1208,36 @@ class Anony_Flash_Wp_Public {
 	}
 	public function remove_all_stylesheets( $tag ) {
 		$anofl_options = ANONY_Options_Model::get_instance( 'Anofl_Options' );
-		if( $this->is_tax() ){
-			
-			$term = get_queried_object();
-			$option_name = 'defer_all_styles_' . $term->taxonomy;
+		if ( $this->is_tax() ) {
+
+			$term                = get_queried_object();
+			$option_name         = 'defer_all_styles_' . $term->taxonomy;
 			$optimize_taxonomies = $anofl_options->optimize_taxonomies;
-			if( 
-				$optimize_taxonomies && 
-				is_array( $optimize_taxonomies ) && 
-				in_array( $term->taxonomy,  $optimize_taxonomies ) && 
-				'1' === $anofl_options->$option_name 
-			){
+			if ( $optimize_taxonomies &&
+				is_array( $optimize_taxonomies ) &&
+				in_array( $term->taxonomy, $optimize_taxonomies ) &&
+				'1' === $anofl_options->$option_name
+			) {
 				return $tag;
 			}
 		}
 
-		if( is_singular() ){
+		if ( is_singular() ) {
 			global $post;
 			$option_name = 'defer_all_styles_' . $post->post_type;
 
 			$optimize_post_types = $anofl_options->optimize_post_types;
 
-			if( 
-				$optimize_post_types && 
+			if ( $optimize_post_types &&
 				is_array( $optimize_post_types ) &&
-				in_array( $post->post_type,  $optimize_post_types ) && 
-				'1' === $anofl_options->$option_name 
-			){
+				in_array( $post->post_type, $optimize_post_types ) &&
+				'1' === $anofl_options->$option_name
+			) {
 				return $tag;
 			}
 		}
-		
-		if( $this->is_taxonomy_used_css_enabled() ){
+
+		if ( $this->is_taxonomy_used_css_enabled() ) {
 			return '';
 		}
 		if ( $this->is_used_css_enabled() || $this->is_post_type_used_css_enabled() ) {
@@ -1269,74 +1246,71 @@ class Anony_Flash_Wp_Public {
 
 		return $tag;
 	}
-	protected function is_switch_meta_field_enabled( $field_name ){
-		if( !is_singular() ) return false;
+	protected function is_switch_meta_field_enabled( $field_name ) {
+		if ( ! is_singular() ) {
+			return false;
+		}
 		global $post;
 		if ( is_admin() || $this->uri_strpos( 'elementor' ) || ! $post || is_null( $post ) ) {
 			return false;
 		}
 
 		$optimize_per_post = get_post_meta( $post->ID, 'optimize_per_post', true );
-	
-		$enabled = ! empty( $optimize_per_post ) && ! empty( $optimize_per_post[$field_name] ) && '1' === $optimize_per_post[$field_name] ? true : false;
 
-		
+		$enabled = ! empty( $optimize_per_post ) && ! empty( $optimize_per_post[ $field_name ] ) && '1' === $optimize_per_post[ $field_name ] ? true : false;
 
 		return $enabled;
 	}
-	public function is_tax(){
+	public function is_tax() {
 		return is_tax() || is_category() || is_tag();
 	}
-	public function stylesheet_media_to_print($tag){
+	public function stylesheet_media_to_print( $tag ) {
 		if ( is_admin() || $this->uri_strpos( 'wp-admin' ) ) {
 			return $tag;
 		}
 		$anofl_options = ANONY_Options_Model::get_instance( 'Anofl_Options' );
-		if( $this->is_tax() ){
+		if ( $this->is_tax() ) {
 
-			
-			$term = get_queried_object();
-			$option_name = 'defer_all_styles_' . $term->taxonomy;
+			$term                = get_queried_object();
+			$option_name         = 'defer_all_styles_' . $term->taxonomy;
 			$optimize_taxonomies = $anofl_options->optimize_taxonomies;
-			if( 
-				$optimize_taxonomies && 
-				is_array( $optimize_taxonomies ) && 
-				in_array( $term->taxonomy,  $optimize_taxonomies ) && 
-				'1' === $anofl_options->$option_name 
-			)
-			{
+			if ( $optimize_taxonomies &&
+				is_array( $optimize_taxonomies ) &&
+				in_array( $term->taxonomy, $optimize_taxonomies ) &&
+				'1' === $anofl_options->$option_name
+			) {
 				$method = 'interact';
-				if('onload' === $method ){
+				if ( 'onload' === $method ) {
 					$tag = preg_replace( "/media='\w+'/", "media='print' onload=\"this.media='all'\"", $tag );
-				}else{
+				} else {
 					$tag = preg_replace( "/media='\w+'/", "media='print'", $tag );
 				}
 
 				return $tag;
 
 			}
-
 		}
 
-		
-		if( !is_singular() ) return $tag;
+		if ( ! is_singular() ) {
+			return $tag;
+		}
 		global $post;
-		
+
 		if ( ! $post || is_null( $post ) ) {
 			return $tag;
 		}
 
-		if( is_singular() ){
+		if ( is_singular() ) {
 
 			$option_name = 'defer_all_styles_' . $post->post_type;
 
 			$optimize_post_types = $anofl_options->optimize_post_types;
 
-			if( $optimize_post_types && is_array( $optimize_post_types ) && in_array( $post->post_type,  $optimize_post_types ) && '1' === $anofl_options->$option_name ){
+			if ( $optimize_post_types && is_array( $optimize_post_types ) && in_array( $post->post_type, $optimize_post_types ) && '1' === $anofl_options->$option_name ) {
 				$method = 'interact';
-				if('onload' === $method ){
+				if ( 'onload' === $method ) {
 					$tag = preg_replace( "/media='\w+'/", "media='print' onload=\"this.media='all'\"", $tag );
-				}else{
+				} else {
 					$tag = preg_replace( "/media='\w+'/", "media='print'", $tag );
 				}
 
@@ -1347,27 +1321,25 @@ class Anony_Flash_Wp_Public {
 		$optimize_per_post = get_post_meta( $post->ID, 'optimize_per_post', true );
 
 		$defer_all_styles = ! empty( $optimize_per_post ) && ! empty( $optimize_per_post['defer_all_styles'] ) && '1' === $optimize_per_post['defer_all_styles'] ? true : false;
-		if( $defer_all_styles ){
+		if ( $defer_all_styles ) {
 			$method = 'interact';
-			if('onload' === $method ){
+			if ( 'onload' === $method ) {
 				$tag = preg_replace( "/media='\w+'/", "media='print' onload=\"this.media='all'\"", $tag );
-			}else{
+			} else {
 				$tag = preg_replace( "/media='\w+'/", "media='print'", $tag );
 			}
-			
 		}
 		return $tag;
 	}
 
 	public function is_above_the_fold_styles_enabled() {
-		
-		return $this->is_switch_meta_field_enabled( 'above_the_fold_styles' );
 
+		return $this->is_switch_meta_field_enabled( 'above_the_fold_styles' );
 	}
 
-	public function above_the_fold_css( $post, $optimize_per_post ){
+	public function above_the_fold_css( $post, $optimize_per_post ) {
 		$style = '';
-		
+
 		if ( ! wp_is_mobile() && ! empty( $optimize_per_post['desktop_above_fold_css'] ) ) {
 			$style .= '<style type="text/css" id="anony-desktop-above-the-fold-css-' . esc_attr( $post->ID ) . '">
 			' . $optimize_per_post['desktop_above_fold_css'] . '
@@ -1375,7 +1347,6 @@ class Anony_Flash_Wp_Public {
 
 		}
 
-				
 		if ( wp_is_mobile() && ! empty( $optimize_per_post['mobile_above_fold_css'] ) ) {
 			$style .= '<style type="text/css" id="anony-mobile-above-the-fold-css-' . esc_attr( $post->ID ) . '">
 			' . $optimize_per_post['mobile_above_fold_css'] . '
@@ -1383,11 +1354,10 @@ class Anony_Flash_Wp_Public {
 
 		}
 
-		
 		return $style;
 	}
 
-	public function used_css( $post, $optimize_per_post ){
+	public function used_css( $post, $optimize_per_post ) {
 		$style = '';
 
 		if ( ! wp_is_mobile() && ! empty( $optimize_per_post['desktop_used_css'] ) ) {
@@ -1409,11 +1379,11 @@ class Anony_Flash_Wp_Public {
 	}
 
 
-	public function post_type_global_used_css( $post, $options ){
-		$style = '';
-		$desktop_used_css = 'desktop_used_css_' . $post->post_type;
+	public function post_type_global_used_css( $post, $options ) {
+		$style                    = '';
+		$desktop_used_css         = 'desktop_used_css_' . $post->post_type;
 		$separate_mobile_used_css = 'separate_mobile_used_css_' . $post->post_type;
-		$mobile_used_css = 'mobile_used_css_' . $post->post_type;
+		$mobile_used_css          = 'mobile_used_css_' . $post->post_type;
 
 		if ( ! wp_is_mobile() && ! empty( $options->$desktop_used_css ) ) {
 			$style .= '<style type="text/css" id="anony-desktop-used-css-' . esc_attr( $post->ID ) . '">
@@ -1434,11 +1404,11 @@ class Anony_Flash_Wp_Public {
 	}
 
 
-	public function taxonomy_global_used_css( $term, $options ){
-		$style = '';
-		$desktop_used_css = 'desktop_used_css_' . $term->taxonomy;
+	public function taxonomy_global_used_css( $term, $options ) {
+		$style                    = '';
+		$desktop_used_css         = 'desktop_used_css_' . $term->taxonomy;
 		$separate_mobile_used_css = 'separate_mobile_used_css_' . $term->taxonomy;
-		$mobile_used_css = 'mobile_used_css_' . $term->taxonomy;
+		$mobile_used_css          = 'mobile_used_css_' . $term->taxonomy;
 
 		if ( ! wp_is_mobile() && ! empty( $options->$desktop_used_css ) ) {
 			$style .= '<style type="text/css" id="anony-desktop-used-css-' . esc_attr( $term->term_id ) . '">
@@ -1458,34 +1428,31 @@ class Anony_Flash_Wp_Public {
 		return $style;
 	}
 
-	
+
 	/**
 	 * Delay js excution.
 	 * Start HTML buffer
 	 */
-	public function start_html_buffer() 
-	{
+	public function start_html_buffer() {
 
 		// buffer output html..
-		ob_start( array( $this, 'start_html_buffer_cb' ), 0  );
-		
+		ob_start( array( $this, 'start_html_buffer_cb' ), 0 );
 	}
 
-	public function start_html_buffer_cb( $html )
-	{
-		if( $this->uri_strpos( 'elementor' ) || $this->uri_strpos( 'wp-admin' )){
+	public function start_html_buffer_cb( $html ) {
+		if ( $this->uri_strpos( 'elementor' ) || $this->uri_strpos( 'wp-admin' ) ) {
 			return $html;
 		}
 		$anofl_options = ANONY_Options_Model::get_instance( 'Anofl_Options' );
 
-		if( '1' === $anofl_options->load_scripts_on_interaction ){
-			$pattern = '/<script>/i';
+		if ( '1' === $anofl_options->load_scripts_on_interaction ) {
+			$pattern     = '/<script>/i';
 			$replacement = '<script type="anony-delay-scripts">';
-			$html = preg_replace($pattern, $replacement, $html);
+			$html        = preg_replace( $pattern, $replacement, $html );
 
-			$pattern = '/<script([^>]*)type=("|\')text\/javascript("|\')([^>]*)>/i';
+			$pattern     = '/<script([^>]*)type=("|\')text\/javascript("|\')([^>]*)>/i';
 			$replacement = '<script$1type="anony-delay-scripts"$4>';
-			$html = preg_replace($pattern, $replacement, $html);
+			$html        = preg_replace( $pattern, $replacement, $html );
 			return $html;
 		}
 
@@ -1498,36 +1465,35 @@ class Anony_Flash_Wp_Public {
 			$pattern = '/<script([^>]*)type=("|\')text\/javascript("|\')([^>]*)>/i';
 			$replacement = '<script$1type="anony-delay-scripts"$4>';
 			preg_match_all($pattern, $html, $matches);
-			
+
 			if( $matches && !empty( $matches[0] ) ){
 				foreach($matches[0] as $script_tag){
 					if( false !== strpos($script_tag , ' src') ){
 						continue;
 					}
-					
+
 					$new_script_tag = preg_replace($pattern, $replacement, $script_tag);
 					$html = str_replace($script_tag, $new_script_tag, $html);
 				}
 				return $html;
 			}
-			
-			
+
+
 			return $html;
 		}
 		*/
-	
+
 		// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped
 		return $html;
 		// phpcs:enable.
 	}
 
-	public function load_optimized_css()
-	{
-		
+	public function load_optimized_css() {
+
 		$anofl_options = ANONY_Options_Model::get_instance( 'Anofl_Options' );
 
-		if( !is_singular() ) {
-			if( $this->is_taxonomy_used_css_enabled() ){
+		if ( ! is_singular() ) {
+			if ( $this->is_taxonomy_used_css_enabled() ) {
 				echo $this->taxonomy_global_used_css( get_queried_object(), $anofl_options );
 				return;
 			}
@@ -1535,27 +1501,25 @@ class Anony_Flash_Wp_Public {
 		}
 
 		global $post;
-		
-		
-		if(  $this->is_post_type_used_css_enabled() &&  !$this->is_used_css_enabled()){
-			echo $this->post_type_global_used_css($post, $anofl_options);
+
+		if ( $this->is_post_type_used_css_enabled() && ! $this->is_used_css_enabled() ) {
+			echo $this->post_type_global_used_css( $post, $anofl_options );
 			return;
 		}
-		
+
 		$optimize_per_post = get_post_meta( $post->ID, 'optimize_per_post', true );
 
 		$style = '';
-		
-		if( $this->is_used_css_enabled() && !$this->is_above_the_fold_styles_enabled() ){
-			
+
+		if ( $this->is_used_css_enabled() && ! $this->is_above_the_fold_styles_enabled() ) {
+
 			$style = $this->used_css( $post, $optimize_per_post );
 
 		}
-		
-		
-		if( $this->is_above_the_fold_styles_enabled() && !$this->is_used_css_enabled() ) {
-			
-			$style = $this->above_the_fold_css($post, $optimize_per_post);
+
+		if ( $this->is_above_the_fold_styles_enabled() && ! $this->is_used_css_enabled() ) {
+
+			$style = $this->above_the_fold_css( $post, $optimize_per_post );
 		}
 
 		// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped
@@ -1574,42 +1538,40 @@ class Anony_Flash_Wp_Public {
 	}
 
 	public function to_be_injected_styles( $tag ) {
-		
-		if ( is_admin() || $this->uri_strpos( 'wp-admin' ) || (!is_singular() && !$this->is_tax()) ) {
+
+		if ( is_admin() || $this->uri_strpos( 'wp-admin' ) || ( ! is_singular() && ! $this->is_tax() ) ) {
 			return $tag;
 		}
 
 		$anofl_options = ANONY_Options_Model::get_instance( 'Anofl_Options' );
-		if( $this->is_tax() ){
-			
-			$term = get_queried_object();
-			$option_name = 'defer_all_styles_' . $term->taxonomy;
+		if ( $this->is_tax() ) {
+
+			$term                = get_queried_object();
+			$option_name         = 'defer_all_styles_' . $term->taxonomy;
 			$optimize_taxonomies = $anofl_options->optimize_taxonomies;
-			if( 
-				!$optimize_taxonomies ||
-				!is_array( $optimize_taxonomies ) || 
-				!in_array( $term->taxonomy,  $optimize_taxonomies ) || 
-				'1' !== $anofl_options->$option_name 
-			){
+			if ( ! $optimize_taxonomies ||
+				! is_array( $optimize_taxonomies ) ||
+				! in_array( $term->taxonomy, $optimize_taxonomies ) ||
+				'1' !== $anofl_options->$option_name
+			) {
 				return $tag;
 			}
 		}
-		if( is_singular() ){
+		if ( is_singular() ) {
 			global $post;
 			$option_name = 'defer_all_styles_' . $post->post_type;
 
 			$optimize_post_types = $anofl_options->optimize_post_types;
 
-			if( 
-				!$optimize_post_types || 
-				!is_array( $optimize_post_types ) ||
-				!in_array( $post->post_type,  $optimize_post_types ) || 
-				'1' !== $anofl_options->$option_name 
-			){
+			if ( ! $optimize_post_types ||
+				! is_array( $optimize_post_types ) ||
+				! in_array( $post->post_type, $optimize_post_types ) ||
+				'1' !== $anofl_options->$option_name
+			) {
 				return $tag;
 			}
 		}
-		
+
 		if ( preg_match( "/rel='stylesheet'/im", $tag ) ) {
 
 				preg_match( "/id='(.*?)'/im", $tag, $id );
@@ -1617,13 +1579,13 @@ class Anony_Flash_Wp_Public {
 
 				preg_match( "/href='(.*?)'/im", $tag, $href );
 				$style_href = $href[1];
-				
+
 				add_action(
 					'wp_head',
 					function () use ( $style_id, $style_href ) {
 						?>
 						<script data-use="defer.js">
-							Defer.css('<?php echo $style_href ?>', '<?php echo $style_href ?>', 0, function() {
+							Defer.css('<?php echo $style_href; ?>', '<?php echo $style_href; ?>', 0, function() {
 								
 							}, true);
 						</script>
@@ -1660,20 +1622,20 @@ class Anony_Flash_Wp_Public {
 			document.body.addEventListener('touchstart', inject_stylesheets_upon_interact);
 		</script>
 		<?php
-	}	
-	
+	}
+
 	public function load_bg_on_interaction_sctipt() {
 		$anofl_options = ANONY_Options_Model::get_instance( 'Anofl_Options' );
-		$opt_targets = array_filter(ANONY_STRING_HELP::line_by_line_textarea( $anofl_options->interact_lazyload_this_classes ));
-		$targets = apply_filters( 'load_bg_on_interaction', array());
-		if( !empty( $opt_targets ) && is_array( $opt_targets ) ){
-			$targets = array_merge($targets, $opt_targets);
+		$opt_targets   = array_filter( ANONY_STRING_HELP::line_by_line_textarea( $anofl_options->interact_lazyload_this_classes ) );
+		$targets       = apply_filters( 'load_bg_on_interaction', array() );
+		if ( ! empty( $opt_targets ) && is_array( $opt_targets ) ) {
+			$targets = array_merge( $targets, $opt_targets );
 		}
-		if ( empty( $targets ) ){
+		if ( empty( $targets ) ) {
 			return;
 		}
 		// Convert PHP array to JSON
-		$jsonArray = json_encode($targets);
+		$jsonArray = json_encode( $targets );
 		?>
 
 		<script>
@@ -1707,13 +1669,13 @@ class Anony_Flash_Wp_Public {
 
 	public function lazyload_images() {
 		$anofl_options = ANONY_Options_Model::get_instance( 'Anofl_Options' );
-		if( '1' === $anofl_options->lazyload_images ){?>
+		if ( '1' === $anofl_options->lazyload_images ) {
+			?>
 			<script data-use="defer.js">
 				Defer.dom('img', 500);
 				Defer.lazy = true;
 			</script>
-		<?php }
+			<?php
+		}
 	}
-
-
 }

@@ -77,7 +77,6 @@ class Anony_Flash_Wp {
 		$this->set_locale();
 		$this->define_admin_hooks();
 		$this->define_public_hooks();
-
 	}
 
 	/**
@@ -102,27 +101,26 @@ class Anony_Flash_Wp {
 		 * The class responsible for orchestrating the actions and filters of the
 		 * core plugin.
 		 */
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-anony-flash-wp-loader.php';
+		require_once plugin_dir_path( __DIR__ ) . 'includes/class-anony-flash-wp-loader.php';
 
 		/**
 		 * The class responsible for defining internationalization functionality
 		 * of the plugin.
 		 */
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-anony-flash-wp-i18n.php';
+		require_once plugin_dir_path( __DIR__ ) . 'includes/class-anony-flash-wp-i18n.php';
 
 		/**
 		 * The class responsible for defining all actions that occur in the admin area.
 		 */
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-anony-flash-wp-admin.php';
+		require_once plugin_dir_path( __DIR__ ) . 'admin/class-anony-flash-wp-admin.php';
 
 		/**
 		 * The class responsible for defining all actions that occur in the public-facing
 		 * side of the site.
 		 */
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-anony-flash-wp-public.php';
+		require_once plugin_dir_path( __DIR__ ) . 'public/class-anony-flash-wp-public.php';
 
 		$this->loader = new Anony_Flash_Wp_Loader();
-
 	}
 
 	/**
@@ -139,7 +137,6 @@ class Anony_Flash_Wp {
 		$plugin_i18n = new Anony_Flash_Wp_I18n();
 
 		$this->loader->add_action( 'plugins_loaded', $plugin_i18n, 'load_plugin_textdomain' );
-
 	}
 
 	/**
@@ -155,7 +152,6 @@ class Anony_Flash_Wp {
 
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
-
 	}
 
 	/**
@@ -173,14 +169,13 @@ class Anony_Flash_Wp {
 
 		$plugin_public = new Anony_Flash_Wp_Public( $this->get_plugin_name(), $this->get_version() );
 
-		if( is_user_logged_in() && is_array( $excluded_roles ) ){
-			$current_user = wp_get_current_user();
+		if ( is_user_logged_in() && is_array( $excluded_roles ) ) {
+			$current_user       = wp_get_current_user();
 			$current_user_roles = $current_user->roles;
 
-			$intersection = array_intersect($current_user_roles, $excluded_roles);
+			$intersection = array_intersect( $current_user_roles, $excluded_roles );
 
-			if( !empty( $intersection ) )
-			{
+			if ( ! empty( $intersection ) ) {
 				return;
 			}
 		}
@@ -188,7 +183,6 @@ class Anony_Flash_Wp {
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'lazy_elementor_background_images_js', 999 );
 
 		$this->loader->add_action( 'wp_head', $plugin_public, 'lazy_elementor_background_images_css' );
-		
 
 		$this->loader->add_filter( 'the_content', $plugin_public, 'elementor_add_lazyload_class' );
 
@@ -196,7 +190,7 @@ class Anony_Flash_Wp {
 		$this->loader->add_filter( 'the_content', $plugin_public, 'load_bg_on_interaction' );
 		$this->loader->add_action( 'wp_print_footer_scripts', $plugin_public, 'load_bg_on_interaction_sctipt', 999 );
 		$this->loader->add_action( 'wp_print_footer_scripts', $plugin_public, 'lazyload_images', 999 );
-		
+
 		// Actions..
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles' );
 
@@ -207,7 +201,7 @@ class Anony_Flash_Wp {
 		$this->loader->add_action( 'wp_print_scripts', $plugin_public, 'dequeue_scripts', 999 );
 
 		// Add missing image dimensions.
-		if( '1' === $anofl_options->lazyload_images ){
+		if ( '1' === $anofl_options->lazyload_images ) {
 			add_filter( 'wp_lazy_loading_enabled', '__return_false' );
 		}
 		$this->loader->add_filter( 'the_content', $plugin_public, 'add_missing_image_Dimensions', 99 );
@@ -221,7 +215,7 @@ class Anony_Flash_Wp {
 		// Disable google fonts.
 		$this->loader->add_filter( 'elementor/frontend/print_google_fonts', $plugin_public, 'elementor_google_fonts', 99 );
 
-		if( 'inject' === $anofl_options->defer_stylesheets_method ){
+		if ( 'inject' === $anofl_options->defer_stylesheets_method ) {
 			// phpcs:disable
 			$this->loader->add_action( 'wp_print_footer_scripts', $plugin_public, 'inject_styles', 999 );
 			
@@ -229,20 +223,17 @@ class Anony_Flash_Wp {
 
 			$this->loader->add_filter( 'style_loader_tag', $plugin_public, 'to_be_injected_styles', 99 );
 		}
-		
 
-		if( 'media-attribute' === $anofl_options->defer_stylesheets_method ){
+		if ( 'media-attribute' === $anofl_options->defer_stylesheets_method ) {
 			$this->loader->add_action( 'wp_footer', $plugin_public, 'stylesheets_media_to_all', 99 );
 			$this->loader->add_filter( 'style_loader_tag', $plugin_public, 'stylesheet_media_to_print', 99 );
 		}
-
-		
 
 		// ---------------------Optimized CSS----------------------------------------------------..
 		$this->loader->add_action( 'wp_head', $plugin_public, 'load_optimized_css' );
 
 		// wp hook just before the template is loaded..
-		//$this->loader->add_action( 'template_redirect', $plugin_public, 'start_html_buffer', 0 );
+		// $this->loader->add_action( 'template_redirect', $plugin_public, 'start_html_buffer', 0 );
 
 		// wp hook after wp_footer()..
 		// $this->loader->add_action( 'wp_footer', $plugin_public, 'end_html_buffer', PHP_INT_MAX );
@@ -251,7 +242,7 @@ class Anony_Flash_Wp {
 		$this->loader->add_filter( 'style_loader_tag', $plugin_public, 'remove_all_stylesheets', 99 );
 
 		$this->loader->add_action( 'get_header', $plugin_public, 'wp_html_compression_finish' );
-		
+
 		$this->loader->add_action( 'get_header', $plugin_public, 'start_html_buffer' );
 
 		// controls add query strings to scripts.
@@ -259,8 +250,6 @@ class Anony_Flash_Wp {
 
 		// controls add query strings to styles.
 		$this->loader->add_filter( 'style_loader_src', $plugin_public, 'anony_control_query_strings', 15, 2 );
-
-		
 
 		// Scripts defer.
 		$this->loader->add_filter( 'script_loader_tag', $plugin_public, 'defer_scripts', 99, 3 );
@@ -299,7 +288,6 @@ class Anony_Flash_Wp {
 		$this->loader->add_action( 'wp_print_styles', $plugin_public, 'load_styles_on_cf7_pages_only', 99 );
 
 		$this->loader->add_action( 'wp_print_scripts', $plugin_public, 'load_scripts_on_cf7_pages_only', 99 );
-
 	}
 
 	/**
@@ -341,5 +329,4 @@ class Anony_Flash_Wp {
 	public function get_version() {
 		return $this->version;
 	}
-
 }
