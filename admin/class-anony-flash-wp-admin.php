@@ -77,7 +77,6 @@ class Anony_Flash_Wp_Admin {
 		 */
 
 		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/anony-flash-wp-admin.css', array(), $this->version, 'all' );
-
 	}
 
 	/**
@@ -100,15 +99,18 @@ class Anony_Flash_Wp_Admin {
 		 */
 
 		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/anony-flash-wp-admin.js', array( 'jquery' ), $this->version, false );
-
 	}
-
-	public function user_roles(){
+	/**
+	 * Get user roles
+	 *
+	 * @return array
+	 */
+	public function user_roles() {
 		$roles = wp_roles()->roles;
 
-		$_roles	= array();	
-		foreach( $roles as $slug => $role ){
-			$_roles[ $slug ] = $role[ 'name' ];
+		$_roles = array();
+		foreach ( $roles as $slug => $role ) {
+			$_roles[ $slug ] = $role['name'];
 		}
 
 		return $_roles;
@@ -123,12 +125,12 @@ class Anony_Flash_Wp_Admin {
 		}
 		$public_post_types = ANONY_Post_Help::get_post_types_list();
 
-		$args = array(
-			'public'   => true
-		); 
-		$output = 'names'; // or objects
-		$operator = 'and'; // 'and' or 'or'
-		$taxonomies = get_taxonomies( $args, $output, $operator ); 
+		$args       = array(
+			'public' => true,
+		);
+		$output     = 'names'; // or objects.
+		$operator   = 'and';
+		$taxonomies = get_taxonomies( $args, $output, $operator );
 
 		$default_optimize_post_types = array();
 		$default_optimize_taxonomies = array();
@@ -138,58 +140,55 @@ class Anony_Flash_Wp_Admin {
 
 			$optimize_post_types = $anofl_options->optimize_post_types;
 
-			if( $optimize_post_types && is_array( $optimize_post_types ) ){
-				$default_optimize_post_types = array_unique(array_merge( $default_optimize_post_types, $optimize_post_types ));
+			if ( $optimize_post_types && is_array( $optimize_post_types ) ) {
+				$default_optimize_post_types = array_unique( array_merge( $default_optimize_post_types, $optimize_post_types ) );
 			}
 
 			$optimize_taxonomies = $anofl_options->optimize_taxonomies;
 
-			if( $optimize_taxonomies && is_array( $optimize_taxonomies ) ){
-				$default_optimize_taxonomies = array_unique(array_merge( $default_optimize_taxonomies, $optimize_taxonomies ));
+			if ( $optimize_taxonomies && is_array( $optimize_taxonomies ) ) {
+				$default_optimize_taxonomies = array_unique( array_merge( $default_optimize_taxonomies, $optimize_taxonomies ) );
 			}
-
-
 		}
-		
 
 		// Navigation elements.
 		$options_nav = array(
 			// General --------------------------------------------.
-			'general'        => array(
+			'general'                 => array(
 				'title' => esc_html__( 'General', 'anony-flash-wp' ),
 			),
 
 			// Scripts --------------------------------------------.
-			'scripts'        => array(
+			'scripts'                 => array(
 				'title' => esc_html__( 'Scripts/Styles', 'anony-flash-wp' ),
 			),
 			// Preloading --------------------------------------------.
-			'preloads'       => array(
+			'preloads'                => array(
 				'title' => esc_html__( 'Preloading', 'anony-flash-wp' ),
 			),
 			// Images --------------------------------------------.
-			'media'          => array(
+			'media'                   => array(
 				'title' => esc_html__( 'Media', 'anony-flash-wp' ),
 			),
 
 			// Custom Head/Footer scripts --------------------------------------------.
-			'custom-scripts' => array(
+			'custom-scripts'          => array(
 				'title'    => esc_html__( 'Custom scripts', 'anony-flash-wp' ),
 				'sections' => array( 'custom-scripts', 'external-services' ),
 			),
-			
+
 			// post types optimizations --------------------------------------------.
 			'post_types_optimization' => array(
-				'title'     => esc_html__( 'Optimize per post type', 'anony-flash-wp' ),
-				'sections'  => array_merge(array( 'post_types_optimization' ), $default_optimize_post_types),
-				
+				'title'    => esc_html__( 'Optimize per post type', 'anony-flash-wp' ),
+				'sections' => array_merge( array( 'post_types_optimization' ), $default_optimize_post_types ),
+
 			),
-			
+
 			// Taxonomies optimizations --------------------------------------------.
 			'taxonomies_optimization' => array(
-				'title'     => esc_html__( 'Optimize per taxonomy', 'anony-flash-wp' ),
-				'sections'  => array_merge(array( 'taxonomies_optimization' ), $default_optimize_taxonomies),
-				
+				'title'    => esc_html__( 'Optimize per taxonomy', 'anony-flash-wp' ),
+				'sections' => array_merge( array( 'taxonomies_optimization' ), $default_optimize_taxonomies ),
+
 			),
 
 		);
@@ -212,11 +211,11 @@ class Anony_Flash_Wp_Admin {
 			'icon'   => 'x',
 			'fields' => array(
 				array(
-					'id'         => 'excluded_roles',
-					'title'      => esc_html__( 'Don\'t optimize for', 'anony-flash-wp' ),
-					'type'       => 'checkbox',
-					'validate'   => 'no_html',
-					'options'    => $this->user_roles(),
+					'id'       => 'excluded_roles',
+					'title'    => esc_html__( 'Don\'t optimize for', 'anony-flash-wp' ),
+					'type'     => 'checkbox',
+					'validate' => 'no_html',
+					'options'  => $this->user_roles(),
 				),
 				array(
 					'id'       => 'compress_html',
@@ -334,7 +333,7 @@ class Anony_Flash_Wp_Admin {
 					'desc'      => esc_html__( 'This option will load Google ADs without affecting page loading speed', 'anony-flash-wp' ),
 					'direction' => 'ltr',
 				),
-				
+
 				array(
 					'id'        => 'ganalytics_id',
 					'title'     => esc_html__( 'Google analytics ID', 'anony-flash-wp' ),
@@ -377,7 +376,7 @@ class Anony_Flash_Wp_Admin {
 					'columns'    => '60',
 					'direction'  => 'ltr',
 				),
-				
+
 				array(
 					'id'         => 'external_scripts_exclusions',
 					'title'      => esc_html__( 'Exclude from External scripts', 'anony-flash-wp' ),
@@ -417,34 +416,34 @@ class Anony_Flash_Wp_Admin {
 					'type'     => 'radio',
 					'options'  => array(
 
-						'media-attribute'    => array(
+						'media-attribute' => array(
 							'title' => esc_html__( 'Media attribute', 'anony-flash-wp' ),
 						),
-	
-						'inject' => array(
+
+						'inject'          => array(
 							'title' => esc_html__( 'Inject', 'anony-flash-wp' ),
 						),
-	
+
 					),
 					'default'  => 'inject',
 					'validate' => 'no_html',
 					'desc'     => esc_html__( 'When choose (Media attribute), this will change the media attibute value to print, then later will be replaced back with all. But if you choos Inject, this will inject stylesheets later on (user interact/Window load)', 'anony-flash-wp' ),
 				),
-				
+
 				array(
 					'id'       => 'load_stylesheets_on',
 					'title'    => esc_html__( 'load deferred stylesheets on', 'anony-flash-wp' ),
 					'type'     => 'radio',
 					'options'  => array(
 
-						'load'    => array(
+						'load'     => array(
 							'title' => esc_html__( 'Window loaded', 'anony-flash-wp' ),
 						),
-	
+
 						'interact' => array(
 							'title' => esc_html__( 'User interaction', 'anony-flash-wp' ),
 						),
-	
+
 					),
 					'default'  => 'load',
 					'validate' => 'no_html',
@@ -592,16 +591,16 @@ class Anony_Flash_Wp_Admin {
 					'title'    => esc_html__( 'Optimize images', 'anony-flash-wp' ),
 					'type'     => 'switch',
 					'validate' => 'no_html',
-					'desc'       => esc_html__( 'This will by default add width and height to imgs, but if you want to lazyload image, Please enable the lazyload option below.', 'anony-flash-wp' ),
+					'desc'     => esc_html__( 'This will by default add width and height to imgs, but if you want to lazyload image, Please enable the lazyload option below.', 'anony-flash-wp' ),
 
 				),
-				
+
 				array(
 					'id'       => 'lazyload_images',
 					'title'    => esc_html__( 'Lazyload images', 'anony-flash-wp' ),
 					'type'     => 'switch',
 					'validate' => 'no_html',
-					'desc'       => esc_html__( 'Please enable optimize images first.', 'anony-flash-wp' ),
+					'desc'     => esc_html__( 'Please enable optimize images first.', 'anony-flash-wp' ),
 				),
 			),
 		);
@@ -695,12 +694,12 @@ anony-lazyload-bg',
 				'icon'   => 'x',
 				'fields' => array(
 					array(
-						'id'         => 'disable_elementor_google_fonts',
-						'title'      => esc_html__( 'Disable google fonts', 'anony-flash-wp' ),
-						'type'       => 'switch',
-						'validate'   => 'no_html',
+						'id'       => 'disable_elementor_google_fonts',
+						'title'    => esc_html__( 'Disable google fonts', 'anony-flash-wp' ),
+						'type'     => 'switch',
+						'validate' => 'no_html',
 					),
-				)
+				),
 			);
 		}
 
@@ -709,49 +708,45 @@ anony-lazyload-bg',
 			'icon'   => 'x',
 			'fields' => array(
 				array(
-					'id'         => 'optimize_post_types',
-					'title'      => esc_html__( 'Optimize selected post types', 'anony-flash-wp' ),
-					'type'       => 'checkbox',
-					'validate'   => 'no_html',
-					'options'    => $public_post_types,
+					'id'       => 'optimize_post_types',
+					'title'    => esc_html__( 'Optimize selected post types', 'anony-flash-wp' ),
+					'type'     => 'checkbox',
+					'validate' => 'no_html',
+					'options'  => $public_post_types,
 				),
-			)
+			),
 		);
 
-		foreach( $default_optimize_post_types as $default_optimize_post_type ){
-			$anofl_sections[$default_optimize_post_type] = array(
-				'title'  => $public_post_types[$default_optimize_post_type],
+		foreach ( $default_optimize_post_types as $default_optimize_post_type ) {
+			$anofl_sections[ $default_optimize_post_type ] = array(
+				'title'  => $public_post_types[ $default_optimize_post_type ],
 				'icon'   => 'x',
-				'fields' => $this->optimization_fields( '_' . $default_optimize_post_type )
+				'fields' => $this->optimization_fields( '_' . $default_optimize_post_type ),
 			);
 		}
-
 
 		$anofl_sections['taxonomies_optimization'] = array(
 			'title'  => esc_html__( 'Optimize taxonomies', 'anony-flash-wp' ),
 			'icon'   => 'x',
 			'fields' => array(
 				array(
-					'id'         => 'optimize_taxonomies',
-					'title'      => esc_html__( 'Optimize selected taxonomies', 'anony-flash-wp' ),
-					'type'       => 'checkbox',
-					'validate'   => 'no_html',
-					'options'    => $taxonomies,
+					'id'       => 'optimize_taxonomies',
+					'title'    => esc_html__( 'Optimize selected taxonomies', 'anony-flash-wp' ),
+					'type'     => 'checkbox',
+					'validate' => 'no_html',
+					'options'  => $taxonomies,
 				),
-			)
+			),
 		);
 
-		foreach( $default_optimize_taxonomies as $default_optimize_taxonomy ){
-			$anofl_sections[$default_optimize_taxonomy] = array(
+		foreach ( $default_optimize_taxonomies as $default_optimize_taxonomy ) {
+			$anofl_sections[ $default_optimize_taxonomy ] = array(
 				'title'  => $default_optimize_taxonomy,
 				'icon'   => 'x',
-				'fields' => $this->optimization_fields( '_' . $default_optimize_taxonomy )
+				'fields' => $this->optimization_fields( '_' . $default_optimize_taxonomy ),
 			);
 		}
 
-		
-		
-		
 		$anofl_options_page['opt_name']      = 'Anofl_Options';
 		$anofl_options_page['menu_title']    = esc_html__( 'Flash WP', 'anony-flash-wp' );
 		$anofl_options_page['page_title']    = esc_html__( 'Flash WP', 'anony-flash-wp' );
@@ -764,7 +759,13 @@ anony-lazyload-bg',
 		new ANONY_Theme_Settings( $options_nav, $anofl_sections, array(), $anofl_options_page );
 	}
 
-	public function optimization_fields( $suffix = ''){
+	/**
+	 * Optimiztion fields
+	 *
+	 * @param string $suffix Input fields id/name suffix.
+	 * @return array
+	 */
+	public function optimization_fields( $suffix = '' ) {
 		return array(
 			array(
 				'id'          => 'css' . $suffix,
@@ -816,7 +817,8 @@ anony-lazyload-bg',
 				'direction'  => 'ltr',
 			),
 			array(
-				'type'     => 'group_close',
+				'id'   => 'group_close_css',
+				'type' => 'group_close',
 			),
 			array(
 				'id'          => 'images-preload',
@@ -848,7 +850,8 @@ anony-lazyload-bg',
 				'desc'       => esc_html__( 'Help to improve largest content paint.Please add a URL perline.', 'anony-flash-wp' ),
 			),
 			array(
-				'type'     => 'group_close',
+				'type' => 'group_close',
+				'id'   => 'group_close_images-preload',
 			),
 			array(
 				'id'          => 'styles-files',
@@ -881,7 +884,8 @@ anony-lazyload-bg',
 				'note'       => esc_html__( 'Please add one handle per line', 'anony-flash-wp' ),
 			),
 			array(
-				'type'     => 'group_close',
+				'type' => 'group_close',
+				'id'   => 'group_close_styles-files',
 			),
 			array(
 				'id'          => 'scripts-files',
@@ -891,15 +895,17 @@ anony-lazyload-bg',
 			),
 
 			array(
-				'id'         => 'unloaded_js' . $suffix,
-				'title'      => esc_html__( 'Unload js files', 'anony-flash-wp' ),
-				'type'       => 'checkbox',
-				'validate'   => 'no_html',
-				'desc'       => esc_html__( 'Select files you need to unload on frontend of this page', 'anony-flash-wp' ),
-				'options'    => ANONY_Wp_Misc_Help::list_post_scripts()
+				'id'       => 'unloaded_js' . $suffix,
+				'title'    => esc_html__( 'Unload js files', 'anony-flash-wp' ),
+				'type'     => 'checkbox',
+				'validate' => 'no_html',
+				'desc'     => esc_html__( 'Select files you need to unload on frontend of this page', 'anony-flash-wp' ),
+				'options'  => ANONY_Wp_Misc_Help::list_post_scripts(),
 			),
 			array(
-				'type'     => 'group_close',
+				'type' => 'group_close',
+				'id'   => 'group_close_scripts-files',
+
 			),
 
 			array(
@@ -909,12 +915,12 @@ anony-lazyload-bg',
 				'type'        => 'group_start',
 			),
 			array(
-				'id'         => 'above_the_fold_styles' . $suffix,
-				'title'      => esc_html__( 'Enable above the fold styles', 'anony-flash-wp' ),
-				'type'       => 'switch',
-				'validate'   => 'no_html',
-				'desc'       => esc_html__( 'Usefull for first content paint', 'anony-flash-wp' ),
-				'note'       => esc_html__( 'Shouldn\'t be used if you enabled the used css option.', 'anony-flash-wp' ),
+				'id'       => 'above_the_fold_styles' . $suffix,
+				'title'    => esc_html__( 'Enable above the fold styles', 'anony-flash-wp' ),
+				'type'     => 'switch',
+				'validate' => 'no_html',
+				'desc'     => esc_html__( 'Usefull for first content paint', 'anony-flash-wp' ),
+				'note'     => esc_html__( 'Shouldn\'t be used if you enabled the used css option.', 'anony-flash-wp' ),
 			),
 
 			array(
@@ -940,15 +946,16 @@ anony-lazyload-bg',
 				'desc'       => esc_html__( 'Please add your above the fold css for mobile', 'anony-flash-wp' ),
 			),
 			array(
-				'id'         => 'defer_all_styles' . $suffix,
-				'title'      => esc_html__( 'Defer all styles', 'anony-flash-wp' ),
-				'type'       => 'switch',
-				'validate'   => 'no_html',
-				'desc'       => esc_html__( 'Help to improve eliminate render-blocking resources.', 'anony-flash-wp' ),
-				'note'       => esc_html__( 'Recommended to be enabled with above the fold styles.', 'anony-flash-wp' ),
+				'id'       => 'defer_all_styles' . $suffix,
+				'title'    => esc_html__( 'Defer all styles', 'anony-flash-wp' ),
+				'type'     => 'switch',
+				'validate' => 'no_html',
+				'desc'     => esc_html__( 'Help to improve eliminate render-blocking resources.', 'anony-flash-wp' ),
+				'note'     => esc_html__( 'Recommended to be enabled with above the fold styles.', 'anony-flash-wp' ),
 			),
 			array(
-				'type'     => 'group_close',
+				'type' => 'group_close',
+				'id'   => 'group_close_load-css-asynchronously',
 			),
 		);
 	}
@@ -968,8 +975,8 @@ anony-lazyload-bg',
 			'hook_priority' => '10', // Default 10.
 			'post_type'     => apply_filters( 'optimize_per_post_types', array( 'post', 'page', 'product' ) ),
 			'layout'        => 'tabs',
-			'fields'        => $this->optimization_fields()
-					
+			'fields'        => $this->optimization_fields(),
+
 		);
 
 		return $metaboxes;
