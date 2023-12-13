@@ -1084,8 +1084,13 @@ class Anony_Flash_Wp_Public {
 
 		$lazy_elementor_background_images_js_added = wp_add_inline_script( $dependancy, $skrip );
 	}
-
-	public function add_missing_image_Dimensions( $content ) {
+	/**
+	 * Add missing dimensions
+	 *
+	 * @param string $content Content.
+	 * @return string
+	 */
+	public function add_missing_image_dimensions( $content ) {
 
 		if ( wp_doing_ajax() || ( isset( $_SERVER['HTTP_X_REQUESTED_WITH'] ) && strtolower( $_SERVER['HTTP_X_REQUESTED_WITH'] ) === 'xmlhttprequest' ) ) {
 			return $content;
@@ -1120,7 +1125,7 @@ class Anony_Flash_Wp_Public {
 		if ( is_singular() ) {
 			global $post;
 			$optimize_per_post    = get_post_meta( $post->ID, 'optimize_per_post', true );
-			$post_dequeued_styles = ANONY_STRING_HELP::line_by_line_textarea( $optimize_per_post['dequeued_styles'] );
+			$post_dequeued_styles = ! empty( $optimize_per_post['dequeued_styles'] ) ? ANONY_STRING_HELP::line_by_line_textarea( $optimize_per_post['dequeued_styles'] ) : array();
 			$dequeued_styles      = array_merge( $dequeued_styles, $post_dequeued_styles );
 		}
 
