@@ -855,7 +855,7 @@ anony-lazyload-bg',
 			),
 			array(
 				'id'          => 'styles-files',
-				'title'       => 'Styles\'s files',
+				'title'       => 'Styles\' files',
 				'collapsible' => true,
 				'type'        => 'group_start',
 			),
