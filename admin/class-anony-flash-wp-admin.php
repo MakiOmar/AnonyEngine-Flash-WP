@@ -897,7 +897,7 @@ anony-lazyload-bg',
 			array(
 				'id'       => 'delay_js' . $suffix,
 				'title'    => esc_html__( 'Delay js files loading', 'anony-flash-wp' ),
-				'type'     => 'checkbox',
+				'type'     => 'switch',
 				'validate' => 'no_html',
 				'desc'     => esc_html__( 'Turn this on to delay js loading for this page', 'anony-flash-wp' ),
 			),
