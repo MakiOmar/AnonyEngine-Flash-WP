@@ -230,9 +230,22 @@ class Anony_Flash_Wp_Public {
 	public function load_scripts_on_interaction( $tag, $handle, $src ) {
 
 		$anofl_options = ANONY_Options_Model::get_instance( 'Anofl_Options' );
-
+		$delay = false;
 		if ( is_admin() || '1' !== $anofl_options->load_scripts_on_interaction || $this->uri_strpos( 'elementor' ) ) {
-			return $tag; // don't break WP Admin.
+			$delay = false; // don't break WP Admin.
+		} elseif ( '1' === $anofl_options->load_scripts_on_interaction ) {
+			$delay = true;
+		} elseif ( '1' !== $anofl_options->load_scripts_on_interaction && ( is_page() || is_front_page() ) ) {
+			global $post;
+			$optimize_per_post = get_post_meta( $post->ID, 'optimize_per_post', true );
+
+			if ( $optimize_per_post && ! empty( $optimize_per_post ) && isset( $optimize_per_post['delay_js'] ) && '1' === $optimize_per_post['delay_js'] ) {
+				$delay = true;
+			}
+		}
+
+		if ( ! $delay ) {
+			return $tag;
 		}
 
 		$exclusions = ANONY_STRING_HELP::line_by_line_textarea( $anofl_options->delay_scripts_exclusions );
@@ -752,6 +765,19 @@ class Anony_Flash_Wp_Public {
 				Defer.all('script[type="anony-delay-scripts"]', 0, true);
 			</script>
 			<?php
+		}
+
+		if ( '1' !== $anofl_options->load_scripts_on_interaction && ( is_page() || is_front_page() ) ) {
+			global $post;
+			$optimize_per_post = get_post_meta( $post->ID, 'optimize_per_post', true );
+
+			if ( $optimize_per_post && ! empty( $optimize_per_post ) && isset( $optimize_per_post['delay_js'] ) && '1' === $optimize_per_post['delay_js'] ) {
+				?>
+				<script data-use="defer.js">
+					Defer.all('script[type="anony-delay-scripts"]', 0, true);
+				</script>
+				<?php
+			}
 		}
 	}
 
