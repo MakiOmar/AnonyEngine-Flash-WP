@@ -1517,8 +1517,15 @@ class Anony_Flash_Wp_Public {
 		$html        = preg_replace( $pattern, $replacement, $html );
 
 		$pattern     = '/<script(?![^>]*delay-exclude)([^>]*)type=("|\')text\/javascript("|\')([^>]*)>/i';
-		$replacement = '<script$1type="anony-delay-scripts"$4>';
-		$html        = preg_replace( $pattern, $replacement, $html );
+		$replacement = function ( $matches ) {
+			// Don't delay wp-includes.
+			if ( strpos( $matches[0], 'wp-includes' ) !== false ) {
+				return '<script' . $matches[1] . 'type="anony-delay-scripts"' . $matches[4] . '>';
+			}
+			return $matches[0];
+		};
+
+		$html = preg_replace_callback( $pattern, $replacement, $html );
 		return $html;
 	}
 
