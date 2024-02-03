@@ -219,7 +219,7 @@ class Anony_Flash_Wp_Public {
 
 		if ( ! empty( $optimize_per_post ) && ! empty( $optimize_per_post['unloaded_js'] ) ) {
 			foreach ( $optimize_per_post['unloaded_js'] as $script ) {
-				if ( false !== strpos( $tag, $script ) ) {
+				if ( ! empty( $script ) && false !== strpos( $tag, $script ) ) {
 					return '';
 				}
 			}
@@ -230,12 +230,16 @@ class Anony_Flash_Wp_Public {
 	public function load_scripts_on_interaction( $tag, $handle, $src ) {
 
 		$anofl_options = ANONY_Options_Model::get_instance( 'Anofl_Options' );
-		$delay = false;
+		$delay         = false;
 		if ( is_admin() || '1' !== $anofl_options->load_scripts_on_interaction || $this->uri_strpos( 'elementor' ) ) {
 			$delay = false; // don't break WP Admin.
-		} elseif ( '1' === $anofl_options->load_scripts_on_interaction ) {
+		}
+
+		if ( '1' === $anofl_options->load_scripts_on_interaction ) {
 			$delay = true;
-		} elseif ( '1' !== $anofl_options->load_scripts_on_interaction && ( is_page() || is_front_page() ) ) {
+		}
+
+		if ( '1' !== $anofl_options->load_scripts_on_interaction && ( is_page() || is_front_page() ) ) {
 			global $post;
 			$optimize_per_post = get_post_meta( $post->ID, 'optimize_per_post', true );
 
@@ -251,7 +255,8 @@ class Anony_Flash_Wp_Public {
 		$exclusions = ANONY_STRING_HELP::line_by_line_textarea( $anofl_options->delay_scripts_exclusions );
 		if ( is_array( $exclusions ) ) {
 			foreach ( $exclusions as $exclusion ) {
-				if ( $this->uri_strpos( $exclusion ) ) {
+				if ( $this->uri_strpos( $exclusion ) || false !== strpos( $tag, $exclusion ) ) {
+					$tag = str_replace( '<script', '<script delay-exclude', $tag );
 					return $tag;
 				}
 			}
@@ -269,6 +274,7 @@ class Anony_Flash_Wp_Public {
 
 		foreach ( $exclusion_list as $target ) {
 			if ( false !== strpos( $tag, $target ) ) {
+				$tag = str_replace( '<script', '<script delay-exclude', $tag );
 				return $tag;
 			}
 		}
@@ -1246,6 +1252,9 @@ class Anony_Flash_Wp_Public {
 		return false;
 	}
 	public function remove_all_stylesheets( $tag ) {
+		if ( false !== strpos( $tag, 'google' ) ) {
+			return $tag;
+		}
 		$anofl_options = ANONY_Options_Model::get_instance( 'Anofl_Options' );
 		if ( $this->is_tax() ) {
 
@@ -1466,10 +1475,54 @@ class Anony_Flash_Wp_Public {
 
 		return $style;
 	}
+	/**
+	 * Exclude inline scripts if has a specific content.
+	 *
+	 * @param string $html HTML.
+	 * @return string
+	 */
+	public function exclude_inline_scripts( $html ) {
+		// String to match in the script content.
+		$string_to_match = 'woocs_drop_down_view';
 
+		// Attribute to add.
+		$new_attribute = 'delay-exclude';
+
+		// Modify <script> tags that contain the string.
+		$html = preg_replace_callback(
+			'/<script(?![^>]*delay-exclude)(?![^>]*anony-delay-scripts)[^>]*>.*?<\/script>/is',
+			function ( $_match ) use ( $string_to_match, $new_attribute ) {
+				if ( strpos( $_match[0], $string_to_match ) !== false ) {
+					return str_replace( '<script', '<script ' . $new_attribute, $_match[0] );
+				} else {
+					return $_match[0];
+				}
+			},
+			$html
+		);
+		return $html;
+	}
+	/**
+	 * Helper to replace add the type="anony-delay-scripts".
+	 *
+	 * @param string $html HTML.
+	 * @return string
+	 */
+	public function regex_delay_scripts( $html ) {
+		// Exclude inline scripts if has a specific content.
+		$html = $this->exclude_inline_scripts( $html );
+
+		$pattern     = '/<script(?!.*delay-exclude)>/is';
+		$replacement = '<script type="anony-delay-scripts">';
+		$html        = preg_replace( $pattern, $replacement, $html );
+
+		$pattern     = '/<script(?![^>]*delay-exclude)([^>]*)type=("|\')text\/javascript("|\')([^>]*)>/i';
+		$replacement = '<script$1type="anony-delay-scripts"$4>';
+		$html        = preg_replace( $pattern, $replacement, $html );
+		return $html;
+	}
 
 	/**
-	 * Delay js excution.
 	 * Start HTML buffer
 	 */
 	public function start_html_buffer() {
@@ -1477,65 +1530,59 @@ class Anony_Flash_Wp_Public {
 		// buffer output html..
 		ob_start( array( $this, 'start_html_buffer_cb' ), 0 );
 	}
-	public function regex_delay_scripts( $html ) {
-		$pattern     = '/<script>/i';
-		$replacement = '<script type="anony-delay-scripts">';
-		$html        = preg_replace( $pattern, $replacement, $html );
 
-		$pattern     = '/<script([^>]*)type=("|\')text\/javascript("|\')([^>]*)>/i';
-		$replacement = '<script$1type="anony-delay-scripts"$4>';
-		$html        = preg_replace( $pattern, $replacement, $html );
-		return $html;
-	}
+	/**
+	 * Manipulate buffer HTML.
+	 * For now we delay JS and Load backgrounds in interaction.
+	 *
+	 * @param string $html HTML.
+	 * @return string
+	 */
 	public function start_html_buffer_cb( $html ) {
-		if ( $this->uri_strpos( 'elementor' ) || $this->uri_strpos( 'wp-admin' ) ) {
-			return $html;
-		}
-		$anofl_options = ANONY_Options_Model::get_instance( 'Anofl_Options' );
+		// Delay js.
+		$html = $this->add_delay_type_attribute( $html );
 
-		if ( '1' === $anofl_options->load_scripts_on_interaction ) {
-			return $this->regex_delay_scripts( $html );
-		}
-
-		if ( '1' !== $anofl_options->load_scripts_on_interaction && ( is_page() || is_front_page() ) ) {
-			global $post;
-			$optimize_per_post = get_post_meta( $post->ID, 'optimize_per_post', true );
-
-			if ( $optimize_per_post && ! empty( $optimize_per_post ) && isset( $optimize_per_post['delay_js'] ) && '1' === $optimize_per_post['delay_js'] ) {
-				return $this->regex_delay_scripts( $html );
-			}
-		}
-
-		/*
-		if( '1' === $anofl_options->load_scripts_on_interaction ){
-			$pattern = '/<script>/i';
-			$replacement = '<script type="anony-delay-scripts">';
-			$html = preg_replace($pattern, $replacement, $html);
-
-			$pattern = '/<script([^>]*)type=("|\')text\/javascript("|\')([^>]*)>/i';
-			$replacement = '<script$1type="anony-delay-scripts"$4>';
-			preg_match_all($pattern, $html, $matches);
-
-			if( $matches && !empty( $matches[0] ) ){
-				foreach($matches[0] as $script_tag){
-					if( false !== strpos($script_tag , ' src') ){
-						continue;
-					}
-
-					$new_script_tag = preg_replace($pattern, $replacement, $script_tag);
-					$html = str_replace($script_tag, $new_script_tag, $html);
-				}
-				return $html;
-			}
-
-
-			return $html;
-		}
-		*/
+		// Load backgrounds in interaction.
+		$html = $this->load_bg_on_interaction( $html );
 
 		// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped
 		return $html;
 		// phpcs:enable.
+	}
+	/**
+	 * Apply JS delay.
+	 *
+	 * @param string $html HTML.
+	 * @return string
+	 */
+	protected function add_delay_type_attribute( $html ) {
+		// Delay JS.
+		$delay = false;
+
+		// If general delay option is enabled.
+		$anofl_options = ANONY_Options_Model::get_instance( 'Anofl_Options' );
+
+		if ( '1' === $anofl_options->load_scripts_on_interaction ) {
+			$delay = true;
+		}
+
+		// If general delay option is not enabled, we check if it is enabled for a page or front page.
+		if ( '1' !== $anofl_options->load_scripts_on_interaction && ( is_page() || is_front_page() ) ) {
+
+			global $post;
+
+			$optimize_per_post = get_post_meta( $post->ID, 'optimize_per_post', true );
+
+			if ( $optimize_per_post && ! empty( $optimize_per_post ) && isset( $optimize_per_post['delay_js'] ) && '1' === $optimize_per_post['delay_js'] ) {
+				$delay = true;
+			}
+		}
+
+		// If delay is enabled, Start delay.
+		if ( $delay && ! $this->uri_strpos( 'elementor' ) && ! $this->uri_strpos( 'wp-admin' ) ) {
+			$html = $this->regex_delay_scripts( $html );
+		}
+		return $html;
 	}
 
 	public function load_optimized_css() {
