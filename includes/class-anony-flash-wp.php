@@ -204,6 +204,7 @@ class Anony_Flash_Wp {
 		if ( '1' === $anofl_options->lazyload_images ) {
 			add_filter( 'wp_lazy_loading_enabled', '__return_false' );
 		}
+
 		$this->loader->add_filter( 'the_content', $plugin_public, 'add_missing_image_dimensions', 99 );
 		$this->loader->add_filter( 'post_thumbnail_html', $plugin_public, 'add_missing_image_dimensions', 99 );
 		$this->loader->add_filter( 'woocommerce_product_get_image', $plugin_public, 'add_missing_image_dimensions', 99 );
@@ -231,9 +232,6 @@ class Anony_Flash_Wp {
 
 		// ---------------------Optimized CSS----------------------------------------------------..
 		$this->loader->add_action( 'wp_head', $plugin_public, 'load_optimized_css' );
-
-		// wp hook just before the template is loaded..
-		// $this->loader->add_action( 'template_redirect', $plugin_public, 'start_html_buffer', 0 );
 
 		// wp hook after wp_footer()..
 		// $this->loader->add_action( 'wp_footer', $plugin_public, 'end_html_buffer', PHP_INT_MAX );
