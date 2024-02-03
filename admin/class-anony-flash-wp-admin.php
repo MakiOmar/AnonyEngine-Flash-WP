@@ -604,6 +604,13 @@ class Anony_Flash_Wp_Admin {
 				),
 			),
 		);
+		$anofl_sections['media']['fields'][] = array(
+			'id'       => 'interact_lazyload_this_classes',
+			'title'    => esc_html__( 'Load backgrounds on interaction', 'anony-flash-wp' ),
+			'type'     => 'textarea',
+			'validate' => 'no_html',
+			'desc'     => esc_html__( 'Add classes of the elements with backgrounds you want to load only on user interaction', 'anony-flash-wp' ),
+		);
 
 		if ( ANONY_Wp_Plugin_Help::is_active( 'elementor/elementor.php' ) ) {
 			$anofl_sections['media']['fields'][] = array(
@@ -623,14 +630,6 @@ elementor-widget-wrap
 elementor-widget-container
 elementor-background-overlay
 anony-lazyload-bg',
-			);
-
-			$anofl_sections['media']['fields'][] = array(
-				'id'       => 'interact_lazyload_this_classes',
-				'title'    => esc_html__( 'Load backgrounds on interaction', 'anony-flash-wp' ),
-				'type'     => 'textarea',
-				'validate' => 'no_html',
-				'desc'     => esc_html__( 'Add classes of the elements with backgrounds you want to load only on user interaction', 'anony-flash-wp' ),
 			);
 			$anofl_sections['media']['fields'][] = array(
 				'id'       => 'lazyloading_elementor_bg_method',
