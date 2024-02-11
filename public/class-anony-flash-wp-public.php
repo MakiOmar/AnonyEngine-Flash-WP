@@ -228,7 +228,6 @@ class Anony_Flash_Wp_Public {
 	}
 
 	public function load_scripts_on_interaction( $tag, $handle, $src ) {
-
 		$anofl_options = ANONY_Options_Model::get_instance( 'Anofl_Options' );
 		$delay         = false;
 		if ( is_admin() || '1' !== $anofl_options->load_scripts_on_interaction || $this->uri_strpos( 'elementor' ) ) {
@@ -270,7 +269,7 @@ class Anony_Flash_Wp_Public {
 			return $tag;
 		}
 
-		$exclusion_list = apply_filters( 'load_scripts_on_interaction_exclude', array( 'jquery-core-js' ) );
+		$exclusion_list = apply_filters( 'load_scripts_on_interaction_exclude', array( 'jquery-core-js', 'wp-includes' ) );
 
 		foreach ( $exclusion_list as $target ) {
 			if ( false !== strpos( $tag, $target ) ) {
@@ -1482,20 +1481,21 @@ class Anony_Flash_Wp_Public {
 	 * @return string
 	 */
 	public function exclude_inline_scripts( $html ) {
-		// String to match in the script content.
-		$string_to_match = 'woocs_drop_down_view';
-
-		// Attribute to add.
-		$new_attribute = 'delay-exclude';
 
 		// Modify <script> tags that contain the string.
 		$html = preg_replace_callback(
 			'/<script(?![^>]*delay-exclude)(?![^>]*anony-delay-scripts)[^>]*>.*?<\/script>/is',
-			function ( $_match ) use ( $string_to_match, $new_attribute ) {
-				if ( strpos( $_match[0], $string_to_match ) !== false ) {
-					return str_replace( '<script', '<script ' . $new_attribute, $_match[0] );
-				} else {
-					return $_match[0];
+			function ( $_match ) {
+				$anofl_options = ANONY_Options_Model::get_instance( 'Anofl_Options' );
+				$exclusions    = ANONY_STRING_HELP::line_by_line_textarea( $anofl_options->delay_scripts_exclusions );
+				if ( is_array( $exclusions ) ) {
+					foreach ( $exclusions as $exclusion ) {
+						if ( strpos( $_match[0], $exclusion ) !== false ) {
+							return str_replace( '<script', '<script delay-exclude', $_match[0] );
+						} else {
+							return $_match[0];
+						}
+					}
 				}
 			},
 			$html
@@ -1509,6 +1509,7 @@ class Anony_Flash_Wp_Public {
 	 * @return string
 	 */
 	public function regex_delay_scripts( $html ) {
+
 		// Exclude inline scripts if has a specific content.
 		$html = $this->exclude_inline_scripts( $html );
 
@@ -1519,7 +1520,12 @@ class Anony_Flash_Wp_Public {
 		$pattern     = '/<script(?![^>]*delay-exclude)([^>]*)type=("|\')text\/javascript("|\')([^>]*)>/i';
 		$replacement = function ( $matches ) {
 			// Don't delay wp-includes.
-			if ( strpos( $matches[0], 'wp-includes' ) !== false ) {
+			if (
+				false === strpos( $matches[0], 'wp-includes' )  ||
+				false === strpos( $matches[0], 'rocket-lazy-load' ) || //defer.js
+				false === strpos( $matches[0], 'defer.js' )
+			)
+			{
 				return '<script' . $matches[1] . 'type="anony-delay-scripts"' . $matches[4] . '>';
 			}
 			return $matches[0];
@@ -1546,6 +1552,7 @@ class Anony_Flash_Wp_Public {
 	 * @return string
 	 */
 	public function start_html_buffer_cb( $html ) {
+		
 		// Delay js.
 		$html = $this->add_delay_type_attribute( $html );
 
@@ -1563,6 +1570,7 @@ class Anony_Flash_Wp_Public {
 	 * @return string
 	 */
 	protected function add_delay_type_attribute( $html ) {
+		
 		// Delay JS.
 		$delay = false;
 
