@@ -125,6 +125,11 @@ class Anony_Flash_Wp_Public {
 
 		return $size;
 	}
+	/**
+	 * Add footer scripts
+	 *
+	 * @return void
+	 */
 	public function anony_add_footer_scripts() {
 		$anofl_options = ANONY_Options_Model::get_instance( 'Anofl_Options' );
 
