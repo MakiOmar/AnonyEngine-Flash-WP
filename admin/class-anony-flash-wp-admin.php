@@ -115,7 +115,19 @@ class Anony_Flash_Wp_Admin {
 
 		return $_roles;
 	}
-
+	/**
+	 * An array of available thumbs
+	 *
+	 * @return array
+	 */
+	public function thumbs_sizes() {
+		$registered = wp_get_registered_image_subsizes();
+		$temp       = array();
+		foreach ( $registered as $key => $data ) {
+			$temp[ $key ] = $data['width'] . ' x ' . $data['height'];
+		}
+		return $temp;
+	}
 	/**
 	 * Create plugin's options' page
 	 */
@@ -680,6 +692,14 @@ anony-lazyload-bg',
 						'id'       => 'wc_mobile_thumb_height',
 						'title'    => esc_html__( 'Product thumnbnail height on mobile', 'anony-flash-wp' ),
 						'type'     => 'number',
+						'validate' => 'no_html',
+					),
+
+					array(
+						'id'       => 'wc_mobile_thumb_size',
+						'title'    => esc_html__( 'Product thumnbnail size on mobile', 'anony-flash-wp' ),
+						'type'     => 'select',
+						'options'  => $this->thumbs_sizes(),
 						'validate' => 'no_html',
 					),
 				),

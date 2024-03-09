@@ -111,7 +111,20 @@ class Anony_Flash_Wp_Public {
 			echo $anofl_options->head_scripts;
 		}
 	}
+	/**
+	 * Filter product thumbnail size
+	 *
+	 * @param string $size Product thumbnail size.
+	 * @return string
+	 */
+	public function product_custom_mobile_thumb_size_slug( $size ) {
+		$anofl_options = ANONY_Options_Model::get_instance( 'Anofl_Options' );
+		if ( ! empty( $anofl_options->wc_mobile_thumb_size ) ) {
+			$size = $anofl_options->wc_mobile_thumb_size;
+		}
 
+		return $size;
+	}
 	public function anony_add_footer_scripts() {
 		$anofl_options = ANONY_Options_Model::get_instance( 'Anofl_Options' );
 

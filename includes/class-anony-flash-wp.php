@@ -280,6 +280,7 @@ class Anony_Flash_Wp {
 		$this->loader->add_action( 'wp_print_styles', $plugin_public, 'load_scripts_on_wc_templates_only' );
 
 		$this->loader->add_filter( 'woocommerce_get_image_size_thumbnail', $plugin_public, 'product_custom_mobile_thumb_size' );
+		$this->loader->add_filter( 'single_product_archive_thumbnail_size', $plugin_public, 'product_custom_mobile_thumb_size_slug' );
 
 		$this->loader->add_filter( 'wp_calculate_image_srcset_meta', $plugin_public, 'disable_product_mobile_srcset' );
 
