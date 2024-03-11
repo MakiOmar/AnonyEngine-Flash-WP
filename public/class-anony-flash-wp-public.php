@@ -1570,12 +1570,7 @@ class Anony_Flash_Wp_Public {
 		$pattern     = '/<script(?![^>]*delay-exclude)([^>]*)type=("|\')text\/javascript("|\')([^>]*)>/i';
 		$replacement = function ( $matches ) {
 			// Don't delay wp-includes.
-			if (
-				false === strpos( $matches[0], 'wp-includes' )  ||
-				false === strpos( $matches[0], 'rocket-lazy-load' ) || //defer.js
-				false === strpos( $matches[0], 'defer.js' )
-			)
-			{
+			if ( false === strpos( $matches[0], 'wp-includes' )  || false === strpos( $matches[0], 'defer.js' ) ) {
 				return '<script' . $matches[1] . 'type="anony-delay-scripts"' . $matches[4] . '>';
 			}
 			return $matches[0];
