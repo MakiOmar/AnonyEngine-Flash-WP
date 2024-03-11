@@ -94,6 +94,12 @@ class Anony_Flash_Wp_Public {
 		 */
 	}
 
+	/**
+	 * Disable elementor google foonts.
+	 *
+	 * @param bool $print_google_fonts true/false.
+	 * @return bool
+	 */
 	public function elementor_google_fonts( $print_google_fonts ) {
 		$anofl_options = ANONY_Options_Model::get_instance( 'Anofl_Options' );
 
@@ -103,12 +109,18 @@ class Anony_Flash_Wp_Public {
 
 		return $print_google_fonts;
 	}
-
+	/**
+	 * Head scripts
+	 *
+	 * @return void
+	 */
 	public function anony_add_head_scripts() {
 		$anofl_options = ANONY_Options_Model::get_instance( 'Anofl_Options' );
 
 		if ( ! empty( $anofl_options->head_scripts ) ) {
+			//phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped
 			echo $anofl_options->head_scripts;
+			//phpcs:enable
 		}
 	}
 	/**
@@ -118,11 +130,12 @@ class Anony_Flash_Wp_Public {
 	 * @return string
 	 */
 	public function product_custom_mobile_thumb_size_slug( $size ) {
-		$anofl_options = ANONY_Options_Model::get_instance( 'Anofl_Options' );
-		if ( ! empty( $anofl_options->wc_mobile_thumb_size ) ) {
-			$size = $anofl_options->wc_mobile_thumb_size;
+		if ( wp_is_mobile() ) {
+			$anofl_options = ANONY_Options_Model::get_instance( 'Anofl_Options' );
+			if ( ! empty( $anofl_options->wc_mobile_thumb_size ) ) {
+				$size = $anofl_options->wc_mobile_thumb_size;
+			}
 		}
-
 		return $size;
 	}
 	/**
@@ -134,14 +147,20 @@ class Anony_Flash_Wp_Public {
 		$anofl_options = ANONY_Options_Model::get_instance( 'Anofl_Options' );
 
 		if ( ! empty( $anofl_options->footer_scripts ) ) {
+			//phpcs:disable
 			echo $anofl_options->footer_scripts;
+			//phpcs:enable
 		}
 	}
-
+	/**
+	 * Preloder
+	 *
+	 * @return void
+	 */
 	public function output_preloader() {
 		$anofl_options     = ANONY_Options_Model::get_instance( 'Anofl_Options' );
 		$preloader_timeout = $anofl_options->preloader_timeout;
-		if ( $anofl_options->preloader == '1' ) : ?>
+		if ( '1' === $anofl_options->preloader ) : ?>
 			<style>
 				#anony-preloader p{
 					font-size: 18px;
@@ -168,7 +187,7 @@ class Anony_Flash_Wp_Public {
 					setTimeout(function(){
 						var loader = document.getElementById('anony-preloader');
 						if(loader !== null) loader.style.display = 'none';
-					}, <?php echo $preloader_timeout; ?>);
+					}, <?php echo esc_html( $preloader_timeout ); ?>);
 				};
 			</script>
 			<?php
@@ -227,10 +246,18 @@ class Anony_Flash_Wp_Public {
 		return $src;
 	}
 
-	public function remove_unused_scripts( $tag, $handle, $src ) {
+	/**
+	 * Remove unused scripts
+	 *
+	 * @param string $tag Tag.
+	 * @return string
+	 */
+	public function remove_unused_scripts( $tag ) {
+		//phpcs:disable
 		if ( ! is_singular() || ! empty( $_GET['list_scripts'] ) ) {
 			return $tag;
 		}
+		//phpcs:enable
 
 		global $post;
 		$optimize_per_post = get_post_meta( $post->ID, 'optimize_per_post', true );
@@ -244,7 +271,14 @@ class Anony_Flash_Wp_Public {
 		}
 		return $tag;
 	}
-
+	/**
+	 * Load scripts on interaction
+	 *
+	 * @param string $tag Tag.
+	 * @param string $handle Handle.
+	 * @param string $src Src.
+	 * @return string
+	 */
 	public function load_scripts_on_interaction( $tag, $handle, $src ) {
 		$anofl_options = ANONY_Options_Model::get_instance( 'Anofl_Options' );
 		$delay         = false;
@@ -355,7 +389,12 @@ class Anony_Flash_Wp_Public {
 		}
 		return str_replace( ' src', ' defer src', $tag );
 	}
-
+	/**
+	 * Disable gravatar
+	 *
+	 * @param string $avatar Avatar.
+	 * @return string
+	 */
 	public function disable_gravatar( $avatar ) {
 		$anofl_options = ANONY_Options_Model::get_instance( 'Anofl_Options' );
 
@@ -367,7 +406,11 @@ class Anony_Flash_Wp_Public {
 
 		return $avatar;
 	}
-
+	/**
+	 * Remove embeds.
+	 *
+	 * @return void
+	 */
 	public function disable_wp_embeds() {
 		$anofl_options = ANONY_Options_Model::get_instance( 'Anofl_Options' );
 
@@ -423,7 +466,11 @@ class Anony_Flash_Wp_Public {
 		// Remove filter of the oEmbed result before any HTTP requests are made..
 		remove_filter( 'pre_oembed_result', 'wp_filter_pre_oembed_result', 10 );
 	}
-
+	/**
+	 * Disable emojis
+	 *
+	 * @return void
+	 */
 	public function disable_wp_emojis() {
 		$anofl_options = ANONY_Options_Model::get_instance( 'Anofl_Options' );
 
@@ -488,7 +535,11 @@ class Anony_Flash_Wp_Public {
 			2
 		);
 	}
-
+	/**
+	 * Disable gutenburg scripts.
+	 *
+	 * @return void
+	 */
 	public function disable_gutenburg_scripts() {
 		$anofl_options = ANONY_Options_Model::get_instance( 'Anofl_Options' );
 
@@ -505,7 +556,9 @@ class Anony_Flash_Wp_Public {
 	}
 
 	/**
-	 * This will prevent the jQuery Migrate script from being loaded on the front end while keeping the jQuery script itself intact. It's still being loaded in the admin to not break anything there.
+	 * Disable jquery migrate
+	 *
+	 * @param object $scripts Scribts object.
 	 */
 	public function disable_jquery_migrate( $scripts ) {
 
@@ -522,7 +575,11 @@ class Anony_Flash_Wp_Public {
 			);
 		}
 	}
-
+	/**
+	 * Preload fonts
+	 *
+	 * @return void
+	 */
 	public function preload_fonts() {
 
 		if ( ! class_exists( 'ANONY_STRING_HELP' ) ) {
@@ -540,12 +597,16 @@ class Anony_Flash_Wp_Public {
 
 			foreach ( $arr as $line ) {
 				?>
-					<link rel="preload" href="<?php echo $line; ?>" as="font" type="font/woff2" crossorigin>
+					<link rel="preload" href="<?php echo esc_url( $line ); ?>" as="font" type="font/woff2" crossorigin>
 				<?php
 			}
 		}
 	}
-
+	/**
+	 * Preload images
+	 *
+	 * @return void
+	 */
 	public function preload_images() {
 
 		if ( ! class_exists( 'ANONY_STRING_HELP' ) ) {
@@ -581,13 +642,17 @@ class Anony_Flash_Wp_Public {
 		foreach ( $arr as $line ) {
 			?>
 					 
-					<link rel="preload" as="image" href="<?php echo $line; ?>"/>
+					<link rel="preload" as="image" href="<?php echo esc_url( $line ); ?>"/>
 
 			<?php
 		}
 	}
 
-
+	/**
+	 * DNS Prefetch.
+	 *
+	 * @return void
+	 */
 	public function dns_prefetch() {
 
 		if ( ! class_exists( 'ANONY_STRING_HELP' ) ) {
@@ -626,15 +691,13 @@ class Anony_Flash_Wp_Public {
 		</script>
 		<?php
 	}
+	/**
+	 * Set media attribute to all
+	 *
+	 * @return void
+	 */
 	public function stylesheets_media_to_all() {
 		$anofl_options = ANONY_Options_Model::get_instance( 'Anofl_Options' );
-
-		// var_dump($this->is_above_the_fold_styles_enabled());
-		/*
-		if( !$this->is_above_the_fold_styles_enabled() ){
-			return;
-		}
-		*/
 		?>
 		<script type="text/javascript">
 			jQuery(document).ready(function($){
@@ -661,11 +724,18 @@ class Anony_Flash_Wp_Public {
 		</script>
 		<?php
 	}
-
+	/**
+	 * Delay GTAG script
+	 *
+	 * @param string $tag_id Tag ID.
+	 * @param string $defer_js_id Defer JS ID.
+	 * @param string $console Console string.
+	 * @return void
+	 */
 	public function google_tag_script( $tag_id, $defer_js_id, $console = '' ) {
 		$anofl_options = ANONY_Options_Model::get_instance( 'Anofl_Options' );
 		?>
-		Defer.js('https://www.googletagmanager.com/gtag/js?id=<?php echo esc_html( $tag_id ); ?>', '<?php echo $defer_js_id; ?>', 1500, 
+		Defer.js('https://www.googletagmanager.com/gtag/js?id=<?php echo esc_html( $tag_id ); ?>', '<?php echo esc_html( $defer_js_id ); ?>', 1500, 
 		function() {
 			window.dataLayer = window.dataLayer || [];
 			dataLayer.push(['js', new Date()]);
@@ -701,17 +771,26 @@ class Anony_Flash_Wp_Public {
 			$this->gtag_events();
 		}
 	}
+	/**
+	 * Gtag events
+	 *
+	 * @return void
+	 */
 	public function gtag_events() {
 		$anofl_options = ANONY_Options_Model::get_instance( 'Anofl_Options' );
 		$gtm_events    = $anofl_options->gtm_events;
 		if ( ! empty( $gtm_events ) ) {
 			?>
 			<script type="anony-gtag-events-scripts">
-			<?php echo $gtm_events; ?>
+			<?php
+			//phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped
+			echo $gtm_events;
+			//phpcs:enable
+			?>
 			</script>
 
 			<script data-use="defer.js">
-				Defer.all('script[type="anony-gtag-events-scripts"]', 1800);
+				Defer.all('script[type="anony-gtag-events-scripts"]', 2800);
 			</script>
 			<?php
 		}
@@ -753,13 +832,20 @@ class Anony_Flash_Wp_Public {
 			<?php
 		}
 	}
-
-	public function uri_strpos( $string ) {
-		if ( ( ! empty( $_SERVER['REQUEST_URI'] ) && ! empty( $string ) && false !== strpos( $_SERVER['REQUEST_URI'], $string ) ) ||
-			( ! empty( $_SERVER['QUERY_STRING'] ) && ! empty( $string ) && false !== strpos( $_SERVER['QUERY_STRING'], $string ) )
+	/**
+	 * If url contains string
+	 *
+	 * @param bool $_string Search string.
+	 * @return bool
+	 */
+	public function uri_strpos( $_string ) {
+		//phpcs:disable
+		if ( ( ! empty( $_SERVER['REQUEST_URI'] ) && ! empty( $_string ) && false !== strpos( $_SERVER['REQUEST_URI'], $_string ) ) ||
+			( ! empty( $_SERVER['QUERY_STRING'] ) && ! empty( $_string ) && false !== strpos( $_SERVER['QUERY_STRING'], $_string ) )
 		) {
 			return true;
 		}
+		//phpcs:enable
 
 		return false;
 	}
@@ -772,7 +858,11 @@ class Anony_Flash_Wp_Public {
 		if ( ! empty( $anofl_options->external_scripts ) ) {
 			?>
 			<script type="anony-external-scripts">
-			<?php echo $anofl_options->external_scripts; ?>
+			<?php
+			//phpcs:disable
+			echo $anofl_options->external_scripts;
+			//phpcs:enable
+			?>
 			</script>
 
 			<script data-use="defer.js">
@@ -834,7 +924,7 @@ class Anony_Flash_Wp_Public {
 	/**
 	 * Disable All WooCommerce Scripts
 	 */
-	function dequeue_wc_scripts() {
+	public function dequeue_wc_scripts() {
 		$woo_scripts = array(
 			'wc_price_slider',
 			'wc-single-product',
@@ -870,7 +960,7 @@ class Anony_Flash_Wp_Public {
 		}
 		$anofl_options = ANONY_Options_Model::get_instance( 'Anofl_Options' );
 
-		if ( $anofl_options->wc_shop_only_scripts != 1 ) {
+		if ( '1' !== $anofl_options->wc_shop_only_scripts ) {
 			return;
 		}
 		if ( function_exists( 'is_woocommerce' ) ) {
@@ -881,7 +971,11 @@ class Anony_Flash_Wp_Public {
 		}
 	}
 
-
+	/**
+	 * Load styles on contact form 7 only
+	 *
+	 * @return void
+	 */
 	public function load_styles_on_cf7_pages_only() {
 
 		global $post;
@@ -892,7 +986,7 @@ class Anony_Flash_Wp_Public {
 
 		$anofl_options = ANONY_Options_Model::get_instance( 'Anofl_Options' );
 
-		if ( is_array( $anofl_options->cf7_scripts ) && ! in_array( $post->ID, $anofl_options->cf7_scripts ) ) {
+		if ( is_array( $anofl_options->cf7_scripts ) && ! in_array( $post->ID, $anofl_options->cf7_scripts, true ) ) {
 			wp_dequeue_style( 'contact-form-7' );
 			wp_deregister_style( 'contact-form-7' );
 
@@ -901,6 +995,11 @@ class Anony_Flash_Wp_Public {
 		}
 	}
 
+	/**
+	 * Load scripts on contact form 7 only
+	 *
+	 * @return void
+	 */
 	public function load_scripts_on_cf7_pages_only() {
 
 		global $post;
@@ -911,7 +1010,7 @@ class Anony_Flash_Wp_Public {
 
 		$anofl_options = ANONY_Options_Model::get_instance( 'Anofl_Options' );
 
-		if ( is_array( $anofl_options->cf7_scripts ) && ! in_array( $post->ID, $anofl_options->cf7_scripts ) ) {
+		if ( is_array( $anofl_options->cf7_scripts ) && ! in_array( $post->ID, $anofl_options->cf7_scripts, true ) ) {
 			wp_dequeue_script( 'contact-form-7' );
 			wp_deregister_script( 'contact-form-7' );
 
@@ -938,30 +1037,6 @@ class Anony_Flash_Wp_Public {
 		}
 
 		return $image_meta;
-	}
-
-	/**
-	 * Callback for woocommerce_get_image_size_thumbnail hook. Sets product thumbnail size on mobile.
-	 *
-	 * @param  array $size An array of image dimentions.
-	 * @return array An array of image dimentions.
-	 */
-	public function product_custom_mobile_thumb_size( $size ) {
-		if ( ! wp_is_mobile() ) {
-			return $size;
-		}
-
-		$anofl_options = ANONY_Options_Model::get_instance( 'Anofl_Options' );
-
-		if ( empty( $anofl_options->wc_mobile_thumb_width ) || empty( $anofl_options->wc_mobile_thumb_height ) ) {
-			return $size;
-		}
-
-		$size['width'] = $anofl_options->wc_mobile_thumb_width;
-
-		$size['height'] = $anofl_options->wc_mobile_thumb_height;
-
-		return $size;
 	}
 	/**
 	 * Filter content to add lazyload class if elemntor
@@ -1510,11 +1585,10 @@ class Anony_Flash_Wp_Public {
 					foreach ( $exclusions as $exclusion ) {
 						if ( strpos( $_match[0], $exclusion ) !== false ) {
 							return str_replace( '<script', '<script delay-exclude', $_match[0] );
-						} else {
-							return $_match[0];
 						}
 					}
 				}
+				return $_match[0];
 			},
 			$html
 		);
