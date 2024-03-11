@@ -164,6 +164,11 @@ class Anony_Flash_Wp {
 	private function define_public_hooks() {
 
 		$anofl_options = ANONY_Options_Model::get_instance( 'Anofl_Options' );
+		//phpcs:disable
+		if ( '1' === $anofl_options->debug_mode && empty( $_GET['debug_mode'] ) ) {
+			return;
+		}
+		//phpcs:enable
 
 		$excluded_roles = $anofl_options->excluded_roles;
 

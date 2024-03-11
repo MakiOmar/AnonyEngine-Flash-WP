@@ -223,6 +223,13 @@ class Anony_Flash_Wp_Admin {
 			'icon'   => 'x',
 			'fields' => array(
 				array(
+					'id'       => 'debug_mode',
+					'title'    => esc_html__( 'Debug mode', 'anony-flash-wp' ),
+					'type'     => 'switch',
+					'validate' => 'no_html',
+					'desc'     => esc_html__( 'Optimizations will only be applied if passed debug_mode=1 to the url.', 'anony-flash-wp' ) . ' <a href="https://www.giftofspeed.com/gzip-test/">' . esc_html__( 'Check gzip compression', 'anony-flash-wp' ) . '</a>',
+					),
+				array(
 					'id'       => 'excluded_roles',
 					'title'    => esc_html__( 'Don\'t optimize for', 'anony-flash-wp' ),
 					'type'     => 'checkbox',
