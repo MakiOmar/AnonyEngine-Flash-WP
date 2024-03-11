@@ -238,6 +238,7 @@ class Anony_Flash_Wp {
 		// wp hook after wp_footer()..
 		// $this->loader->add_action( 'wp_footer', $plugin_public, 'end_html_buffer', PHP_INT_MAX );
 		// ---------------------End optimized CSS----------------------------------------------------..
+		$this->loader->add_filter( 'style_loader_tag', $plugin_public, 'remove_all_stylesheets', 99 );
 		$this->loader->add_action( 'get_header', $plugin_public, 'wp_html_compression_finish' );
 
 		$this->loader->add_action( 'get_header', $plugin_public, 'start_html_buffer' );

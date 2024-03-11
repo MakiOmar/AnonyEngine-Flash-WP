@@ -1343,7 +1343,49 @@ class Anony_Flash_Wp_Public {
 
 		return false;
 	}
+	public function remove_all_stylesheets( $tag ) {
+		if ( false !== strpos( $tag, 'google' ) ) {
+			return $tag;
+		}
+		$anofl_options = ANONY_Options_Model::get_instance( 'Anofl_Options' );
+		if ( $this->is_tax() ) {
 
+			$term                = get_queried_object();
+			$option_name         = 'defer_all_styles_' . $term->taxonomy;
+			$optimize_taxonomies = $anofl_options->optimize_taxonomies;
+			if ( $optimize_taxonomies &&
+				is_array( $optimize_taxonomies ) &&
+				in_array( $term->taxonomy, $optimize_taxonomies ) &&
+				'1' === $anofl_options->$option_name
+			) {
+				return $tag;
+			}
+		}
+
+		if ( is_singular() ) {
+			global $post;
+			$option_name = 'defer_all_styles_' . $post->post_type;
+
+			$optimize_post_types = $anofl_options->optimize_post_types;
+
+			if ( $optimize_post_types &&
+				is_array( $optimize_post_types ) &&
+				in_array( $post->post_type, $optimize_post_types ) &&
+				'1' === $anofl_options->$option_name
+			) {
+				return $tag;
+			}
+		}
+
+		if ( $this->is_taxonomy_used_css_enabled() ) {
+			return '';
+		}
+		if ( $this->is_used_css_enabled() || $this->is_post_type_used_css_enabled() ) {
+			return '';
+		}
+
+		return $tag;
+	}
 	protected function is_switch_meta_field_enabled( $field_name ) {
 		if ( ! is_singular() ) {
 			return false;
