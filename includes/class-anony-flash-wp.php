@@ -162,7 +162,6 @@ class Anony_Flash_Wp {
 	 * @access   private
 	 */
 	private function define_public_hooks() {
-
 		$anofl_options = ANONY_Options_Model::get_instance( 'Anofl_Options' );
 		//phpcs:disable
 		if ( '1' === $anofl_options->debug_mode && empty( $_GET['debug_mode'] ) ) {
@@ -209,7 +208,6 @@ class Anony_Flash_Wp {
 		if ( '1' === $anofl_options->lazyload_images ) {
 			add_filter( 'wp_lazy_loading_enabled', '__return_false' );
 		}
-
 		$this->loader->add_filter( 'the_content', $plugin_public, 'add_missing_image_dimensions', 99 );
 		$this->loader->add_filter( 'post_thumbnail_html', $plugin_public, 'add_missing_image_dimensions', 99 );
 		$this->loader->add_filter( 'woocommerce_product_get_image', $plugin_public, 'add_missing_image_dimensions', 99 );
@@ -234,16 +232,12 @@ class Anony_Flash_Wp {
 			$this->loader->add_action( 'wp_footer', $plugin_public, 'stylesheets_media_to_all', 99 );
 			$this->loader->add_filter( 'style_loader_tag', $plugin_public, 'stylesheet_media_to_print', 99 );
 		}
-
 		// ---------------------Optimized CSS----------------------------------------------------..
 		$this->loader->add_action( 'wp_head', $plugin_public, 'load_optimized_css' );
 
 		// wp hook after wp_footer()..
 		// $this->loader->add_action( 'wp_footer', $plugin_public, 'end_html_buffer', PHP_INT_MAX );
 		// ---------------------End optimized CSS----------------------------------------------------..
-
-		$this->loader->add_filter( 'style_loader_tag', $plugin_public, 'remove_all_stylesheets', 99 );
-
 		$this->loader->add_action( 'get_header', $plugin_public, 'wp_html_compression_finish' );
 
 		$this->loader->add_action( 'get_header', $plugin_public, 'start_html_buffer' );

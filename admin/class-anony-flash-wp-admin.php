@@ -227,7 +227,7 @@ class Anony_Flash_Wp_Admin {
 					'title'    => esc_html__( 'Debug mode', 'anony-flash-wp' ),
 					'type'     => 'switch',
 					'validate' => 'no_html',
-					'desc'     => esc_html__( 'Optimizations will only be applied if passed debug_mode=1 to the url.', 'anony-flash-wp' ) . ' <a href="https://www.giftofspeed.com/gzip-test/">' . esc_html__( 'Check gzip compression', 'anony-flash-wp' ) . '</a>',
+					'desc'     => esc_html__( 'Optimizations will only be applied if passed debug_mode=1 to the url.', 'anony-flash-wp' ),
 					),
 				array(
 					'id'       => 'excluded_roles',
@@ -964,14 +964,6 @@ anony-lazyload-bg',
 				'columns'    => '60',
 				'direction'  => 'ltr',
 				'desc'       => esc_html__( 'Please add your above the fold css for mobile', 'anony-flash-wp' ),
-			),
-			array(
-				'id'       => 'defer_all_styles' . $suffix,
-				'title'    => esc_html__( 'Defer all styles', 'anony-flash-wp' ),
-				'type'     => 'switch',
-				'validate' => 'no_html',
-				'desc'     => esc_html__( 'Help to improve eliminate render-blocking resources.', 'anony-flash-wp' ),
-				'note'     => esc_html__( 'Recommended to be enabled with above the fold styles.', 'anony-flash-wp' ),
 			),
 			array(
 				'type' => 'group_close',
