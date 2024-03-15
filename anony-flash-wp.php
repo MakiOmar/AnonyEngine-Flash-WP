@@ -37,7 +37,7 @@ if ( ! defined( 'WPINC' ) ) {
  *
  * @const
  */
-define( 'ANOFL_PLUGIN_SLUG', plugin_basename(__FILE__) );
+define( 'ANOFL_PLUGIN_SLUG', plugin_basename( __FILE__ ) );
 
 
 /**
@@ -50,25 +50,23 @@ define( 'ANOFL_DIR', wp_normalize_path( plugin_dir_path( __FILE__ ) ) );
 
 require ANOFL_DIR . '/plugin-update-checker/plugin-update-checker.php';
 
-$myUpdateChecker = Puc_v4_Factory::buildUpdateChecker(
-    'https://github.com/MakiOmar/AnonyEngine-Flash-WP/',
-    __FILE__,
-    ANOFL_PLUGIN_SLUG
+$my_update_checker = Puc_v4_Factory::buildUpdateChecker(
+	'https://github.com/MakiOmar/AnonyEngine-Flash-WP/',
+	__FILE__,
+	ANOFL_PLUGIN_SLUG
 );
 
-//Set the branch that contains the stable release.
-$myUpdateChecker->setBranch('master');
+// Set the branch that contains the stable release.
+$my_update_checker->setBranch( 'master' );
 
 /**
  * Activation hook
- */ 
-function anony_flash_wp_active()
-{
-    if (!defined("ANOENGINE")) 
-    {
-        deactivate_plugins( plugin_basename( __FILE__ ) );
-        wp_die( 'Flash wp plugin requires AnonyEngine plugin to be installed/activated. Please install/activate AnonyEngine plugin first.' );
-    }
+ */
+function anony_flash_wp_active() {
+	if ( ! defined( 'ANOENGINE' ) ) {
+		deactivate_plugins( plugin_basename( __FILE__ ) );
+		wp_die( 'Flash wp plugin requires AnonyEngine plugin to be installed/activated. Please install/activate AnonyEngine plugin first.' );
+	}
 }
 
 register_activation_hook( __FILE__, 'anony_flash_wp_active' );
@@ -77,14 +75,18 @@ register_activation_hook( __FILE__, 'anony_flash_wp_active' );
 /**
  * Display a notification if one of required plugins is not activated/installed
  */
-add_action( 'admin_notices', function() {
-    if (!defined('ANOENGINE')) {
-        ?>
-        <div class="notice notice-error is-dismissible">
-            <p><?php esc_html_e( 'Flash wp plugin requires AnonyEngine plugin to be installed/activated. Please install/activate AnonyEngine plugin first.' ); ?></p>
-        </div>
-    <?php }
-});
+add_action(
+	'admin_notices',
+	function () {
+		if ( ! defined( 'ANOENGINE' ) ) {
+			?>
+		<div class="notice notice-error is-dismissible">
+			<p><?php esc_html_e( 'Flash wp plugin requires AnonyEngine plugin to be installed/activated. Please install/activate AnonyEngine plugin first.' ); ?></p>
+		</div>
+			<?php
+		}
+	}
+);
 
 /**
  * Currently plugin version.
@@ -136,11 +138,13 @@ function run_anony_flash_wp() {
 
 	$plugin = new Anony_Flash_Wp();
 	$plugin->run();
-
 }
 
-add_action( 'plugins_loaded', function(){
-	if( defined('ANOENGINE') || class_exists('ANONY_Theme_Settings') ){
-		run_anony_flash_wp();
-	}	
-} );
+add_action(
+	'plugins_loaded',
+	function () {
+		if ( defined( 'ANOENGINE' ) || class_exists( 'ANONY_Theme_Settings' ) ) {
+			run_anony_flash_wp();
+		}
+	}
+);
