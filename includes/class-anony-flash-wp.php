@@ -167,7 +167,34 @@ class Anony_Flash_Wp {
 		if ( '1' === $anofl_options->debug_mode && empty( $_GET['debug_mode'] ) ) {
 			return;
 		}
-		//phpcs:enable
+		// Fix largest content paint is lazy loaded.
+		if ( is_tax( 'product_cat' ) ) {
+			//phpcs:enable
+			add_action(
+				'woocommerce_before_shop_loop',
+				function () {
+					$GLOBALS['thumbs_indexer'] = 0;
+				}
+			);
+
+			add_action(
+				'woocommerce_before_shop_loop_item',
+				function () {
+					global $thumbs_indexer;
+					++$thumbs_indexer;
+				}
+			);
+			add_filter(
+				'wp_get_attachment_image_attributes',
+				function ( $attr ) {
+					global $thumbs_indexer;
+					if ( $thumbs_indexer && $thumbs_indexer < 3 ) {
+						$attr['class'] = $attr['class'] . ' no-lazyload';
+					}
+					return $attr;
+				}
+			);
+		}
 
 		$excluded_roles = $anofl_options->excluded_roles;
 
