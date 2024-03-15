@@ -306,7 +306,7 @@ class Anony_Flash_Wp_Public {
 		$exclusions = ANONY_STRING_HELP::line_by_line_textarea( $anofl_options->delay_scripts_exclusions );
 		if ( is_array( $exclusions ) ) {
 			foreach ( $exclusions as $exclusion ) {
-				if ( $this->uri_strpos( $exclusion ) || false !== strpos( $tag, $exclusion ) ) {
+				if ( false !== strpos( $tag, $exclusion ) ) {
 					$tag = str_replace( '<script', '<script delay-exclude', $tag );
 					return $tag;
 				}
@@ -1067,6 +1067,12 @@ class Anony_Flash_Wp_Public {
 
 		return $content;
 	}
+	/**
+	 * Load bg on interaction
+	 *
+	 * @param string $content Content.
+	 * @return string
+	 */
 	public function load_bg_on_interaction( $content ) {
 		$anofl_options = ANONY_Options_Model::get_instance( 'Anofl_Options' );
 		$opt_targets   = ANONY_STRING_HELP::line_by_line_textarea( $anofl_options->interact_lazyload_this_classes );
@@ -1110,7 +1116,11 @@ class Anony_Flash_Wp_Public {
 		<?php
 		echo ob_get_clean();
 	}
-
+	/**
+	 * Load bg on interaction styles
+	 *
+	 * @return void
+	 */
 	public function load_bg_on_interaction_styles() {
 		$anofl_options = ANONY_Options_Model::get_instance( 'Anofl_Options' );
 		$opt_targets   = ANONY_STRING_HELP::line_by_line_textarea( $anofl_options->interact_lazyload_this_classes );
@@ -1132,7 +1142,9 @@ class Anony_Flash_Wp_Public {
 			}';
 			$styles .= '</style>';
 		}
+		//phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped
 		echo $styles;
+		//phpcs:enable.
 	}
 
 
@@ -1262,7 +1274,11 @@ class Anony_Flash_Wp_Public {
 			}
 		}
 	}
-
+	/**
+	 * Dequeue scripts
+	 *
+	 * @return void
+	 */
 	public function dequeue_scripts() {
 		if ( is_admin() ) {
 			return;
@@ -1276,8 +1292,12 @@ class Anony_Flash_Wp_Public {
 			wp_deregister_script( $script );
 		}
 	}
-
-	function is_post_type_used_css_enabled() {
+	/**
+	 * Check if used css is enabled for a post type.
+	 *
+	 * @return boolean
+	 */
+	public function is_post_type_used_css_enabled() {
 		global $post;
 
 		if ( ! is_singular() || is_admin() || $this->uri_strpos( 'elementor' ) || ! $post || is_null( $post ) ) {
@@ -1290,14 +1310,18 @@ class Anony_Flash_Wp_Public {
 
 		$optimize_post_types = $anofl_options->optimize_post_types;
 
-		if ( $optimize_post_types && is_array( $optimize_post_types ) && in_array( $post->post_type, $optimize_post_types ) && '1' === $anofl_options->$option_name ) {
+		if ( $optimize_post_types && is_array( $optimize_post_types ) && in_array( $post->post_type, $optimize_post_types, true ) && '1' === $anofl_options->$option_name ) {
 			return true;
 		}
 
 		return false;
 	}
-
-	function is_taxonomy_used_css_enabled() {
+	/**
+	 * Check if used css is enabled for a taxonomy
+	 *
+	 * @return boolean
+	 */
+	public function is_taxonomy_used_css_enabled() {
 
 		if ( is_admin() ||
 			$this->uri_strpos( 'elementor' ) ||
@@ -1316,7 +1340,7 @@ class Anony_Flash_Wp_Public {
 		$optimize_taxonomies = $anofl_options->optimize_taxonomies;
 		if ( $optimize_taxonomies &&
 			is_array( $optimize_taxonomies ) &&
-			in_array( $term->taxonomy, $optimize_taxonomies ) &&
+			in_array( $term->taxonomy, $optimize_taxonomies, true ) &&
 			'1' === $anofl_options->$option_name
 		) {
 			return true;
@@ -1324,6 +1348,11 @@ class Anony_Flash_Wp_Public {
 
 		return false;
 	}
+	/**
+	 * Check if is used css enabled
+	 *
+	 * @return boolean
+	 */
 	public function is_used_css_enabled() {
 
 		global $post;
@@ -1335,14 +1364,18 @@ class Anony_Flash_Wp_Public {
 
 		$is_used_css_enabled = ! empty( $optimize_per_post ) && ! empty( $optimize_per_post['enable_used_css'] ) && '1' === $optimize_per_post['enable_used_css'] ? true : false;
 
-		// $defer_all_styles = ! empty( $optimize_per_post ) && ! empty( $optimize_per_post['defer_all_styles'] ) && '1' === $optimize_per_post['defer_all_styles'] ? true : false;
-
-		if ( $is_used_css_enabled/* && !$defer_all_styles*/ ) {
+		if ( $is_used_css_enabled ) {
 			return true;
 		}
 
 		return false;
 	}
+	/**
+	 * Remove all stylesheets
+	 *
+	 * @param string $tag Tag.
+	 * @return string
+	 */
 	public function remove_all_stylesheets( $tag ) {
 		if ( false !== strpos( $tag, 'google' ) ) {
 			return $tag;
@@ -1355,13 +1388,12 @@ class Anony_Flash_Wp_Public {
 			$optimize_taxonomies = $anofl_options->optimize_taxonomies;
 			if ( $optimize_taxonomies &&
 				is_array( $optimize_taxonomies ) &&
-				in_array( $term->taxonomy, $optimize_taxonomies ) &&
+				in_array( $term->taxonomy, $optimize_taxonomies, true ) &&
 				'1' === $anofl_options->$option_name
 			) {
 				return $tag;
 			}
 		}
-
 		if ( is_singular() ) {
 			global $post;
 			$option_name = 'defer_all_styles_' . $post->post_type;
@@ -1376,14 +1408,12 @@ class Anony_Flash_Wp_Public {
 				return $tag;
 			}
 		}
-
 		if ( $this->is_taxonomy_used_css_enabled() ) {
 			return '';
 		}
 		if ( $this->is_used_css_enabled() || $this->is_post_type_used_css_enabled() ) {
 			return '';
 		}
-
 		return $tag;
 	}
 	protected function is_switch_meta_field_enabled( $field_name ) {
@@ -1496,7 +1526,13 @@ class Anony_Flash_Wp_Public {
 
 		return $style;
 	}
-
+	/**
+	 * Used css for post type
+	 *
+	 * @param object $post Post object.
+	 * @param array  $optimize_per_post Ppgae options.
+	 * @return string
+	 */
 	public function used_css( $post, $optimize_per_post ) {
 		$style = '';
 
@@ -1518,7 +1554,13 @@ class Anony_Flash_Wp_Public {
 		return $style;
 	}
 
-
+	/**
+	 * Used css for post type
+	 *
+	 * @param object $post Post object.
+	 * @param object $options Options object.
+	 * @return string
+	 */
 	public function post_type_global_used_css( $post, $options ) {
 		$style                    = '';
 		$desktop_used_css         = 'desktop_used_css_' . $post->post_type;
@@ -1543,7 +1585,13 @@ class Anony_Flash_Wp_Public {
 		return $style;
 	}
 
-
+	/**
+	 * Used css for term
+	 *
+	 * @param object $term Term object.
+	 * @param object $options Options object.
+	 * @return string
+	 */
 	public function taxonomy_global_used_css( $term, $options ) {
 		$style                    = '';
 		$desktop_used_css         = 'desktop_used_css_' . $term->taxonomy;
@@ -1583,7 +1631,7 @@ class Anony_Flash_Wp_Public {
 				$exclusions    = ANONY_STRING_HELP::line_by_line_textarea( $anofl_options->delay_scripts_exclusions );
 				if ( is_array( $exclusions ) ) {
 					foreach ( $exclusions as $exclusion ) {
-						if ( strpos( $_match[0], $exclusion ) !== false ) {
+						if ( ! empty( $_match[0] ) && strpos( $_match[0], $exclusion ) !== false ) {
 							return str_replace( '<script', '<script delay-exclude', $_match[0] );
 						}
 					}
@@ -1612,7 +1660,7 @@ class Anony_Flash_Wp_Public {
 		$pattern     = '/<script(?![^>]*delay-exclude)([^>]*)type=("|\')text\/javascript("|\')([^>]*)>/i';
 		$replacement = function ( $matches ) {
 			// Don't delay wp-includes.
-			if ( false === strpos( $matches[0], 'wp-includes' )  || false === strpos( $matches[0], 'defer.js' ) ) {
+			if ( false === strpos( $matches[0], 'wp-includes' ) || false === strpos( $matches[0], 'defer.js' ) ) {
 				return '<script' . $matches[1] . 'type="anony-delay-scripts"' . $matches[4] . '>';
 			}
 			return $matches[0];
@@ -1639,7 +1687,6 @@ class Anony_Flash_Wp_Public {
 	 * @return string
 	 */
 	public function start_html_buffer_cb( $html ) {
-		
 		// Delay js.
 		$html = $this->add_delay_type_attribute( $html );
 
@@ -1657,7 +1704,6 @@ class Anony_Flash_Wp_Public {
 	 * @return string
 	 */
 	protected function add_delay_type_attribute( $html ) {
-		
 		// Delay JS.
 		$delay = false;
 
