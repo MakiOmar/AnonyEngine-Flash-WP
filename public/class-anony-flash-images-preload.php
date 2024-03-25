@@ -44,6 +44,33 @@ class Anony_Flash_Images_Preload {
 
 		return $arr;
 	}
+
+	/**
+	 * Get preload images by post type.
+	 *
+	 * @return array
+	 */
+	public function get_preload_images_by_post_type() {
+		global $post;
+		$anofl_options = ANONY_Options_Model::get_instance( 'Anofl_Options' );
+
+		$arr = array();
+		if ( $post && ! is_null( $post ) ) {
+			if ( ! in_array( $post->post_type, $anofl_options->optimize_post_types, true ) ) {
+				return $arr;
+			}
+			if ( ! wp_is_mobile() ) {
+				$key = 'preload_desktop_images_' . $post->post_type;
+			} else {
+				$key = 'preload_mobile_images_' . $post->post_type;
+			}
+			if ( ! empty( $anofl_options->$key ) ) {
+				$arr = array_merge( $arr, ANONY_STRING_HELP::line_by_line_textarea( $anofl_options->$key ) );
+			}
+		}
+
+		return $arr;
+	}
 	/**
 	 * Preload images sitewide
 	 *
@@ -68,9 +95,10 @@ class Anony_Flash_Images_Preload {
 			return;
 		}
 
-		$sitewide_preload_images     = $this->sitewide_preload_images();
-		$preload_images_by_post_meta = $this->get_preload_images_by_post_meta();
-		$arr                         = array_merge( $sitewide_preload_images, $preload_images_by_post_meta );
+		$sitewide_preload_images         = $this->sitewide_preload_images();
+		$preload_images_by_post_meta     = $this->get_preload_images_by_post_meta();
+		$get_preload_images_by_post_type = $this->get_preload_images_by_post_type();
+		$arr                             = array_merge( $sitewide_preload_images, $preload_images_by_post_meta, $get_preload_images_by_post_type );
 		if ( ! is_array( $arr ) || empty( $arr ) ) {
 			return;
 		}
