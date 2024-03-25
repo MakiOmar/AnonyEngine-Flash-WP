@@ -71,6 +71,34 @@ class Anony_Flash_Images_Preload {
 
 		return $arr;
 	}
+
+	/**
+	 * Get preload images by taxonomy.
+	 *
+	 * @return array
+	 */
+	public function get_preload_images_by_taxonomy() {
+		$arr           = array();
+		$anofl_options = ANONY_Options_Model::get_instance( 'Anofl_Options' );
+		if ( is_tax() || is_category() || is_tag() ) {
+			$term                = get_queried_object();
+			$optimize_taxonomies = $anofl_options->optimize_taxonomies;
+			// anony_print_r( $optimize_taxonomies );
+			if ( $optimize_taxonomies && is_array( $optimize_taxonomies ) && in_array( $term->taxonomy, $optimize_taxonomies, true ) ) {
+				if ( ! wp_is_mobile() ) {
+					$key = 'preload_desktop_images_' . $term->taxonomy;
+				} else {
+					$key = 'preload_mobile_images_' . $term->taxonomy;
+				}
+
+				if ( ! empty( $anofl_options->$key ) ) {
+					$arr = array_merge( $arr, ANONY_STRING_HELP::line_by_line_textarea( $anofl_options->$key ) );
+				}
+			}
+		}
+		return $arr;
+	}
+
 	/**
 	 * Preload images sitewide
 	 *
@@ -98,7 +126,14 @@ class Anony_Flash_Images_Preload {
 		$sitewide_preload_images         = $this->sitewide_preload_images();
 		$preload_images_by_post_meta     = $this->get_preload_images_by_post_meta();
 		$get_preload_images_by_post_type = $this->get_preload_images_by_post_type();
-		$arr                             = array_merge( $sitewide_preload_images, $preload_images_by_post_meta, $get_preload_images_by_post_type );
+		$get_preload_images_by_taxonomy  = $this->get_preload_images_by_taxonomy();
+
+		$arr = array_merge(
+			$sitewide_preload_images,
+			$preload_images_by_post_meta,
+			$get_preload_images_by_post_type,
+			$get_preload_images_by_taxonomy
+		);
 		if ( ! is_array( $arr ) || empty( $arr ) ) {
 			return;
 		}
