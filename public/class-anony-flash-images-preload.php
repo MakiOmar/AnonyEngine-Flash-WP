@@ -83,7 +83,6 @@ class Anony_Flash_Images_Preload {
 		if ( is_tax() || is_category() || is_tag() ) {
 			$term                = get_queried_object();
 			$optimize_taxonomies = $anofl_options->optimize_taxonomies;
-			// anony_print_r( $optimize_taxonomies );
 			if ( $optimize_taxonomies && is_array( $optimize_taxonomies ) && in_array( $term->taxonomy, $optimize_taxonomies, true ) ) {
 				if ( ! wp_is_mobile() ) {
 					$key = 'preload_desktop_images_' . $term->taxonomy;
