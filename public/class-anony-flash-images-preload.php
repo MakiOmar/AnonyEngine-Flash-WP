@@ -56,7 +56,7 @@ class Anony_Flash_Images_Preload {
 
 		$arr = array();
 		if ( $post && ! is_null( $post ) ) {
-			if ( ! in_array( $post->post_type, $anofl_options->optimize_post_types, true ) ) {
+			if ( is_array( $anofl_options->optimize_post_types ) && ! in_array( $post->post_type, $anofl_options->optimize_post_types, true ) ) {
 				return $arr;
 			}
 			if ( ! wp_is_mobile() ) {
