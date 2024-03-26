@@ -1685,6 +1685,9 @@ class Anony_Flash_Wp_Public {
 		// Load backgrounds in interaction.
 		$html = $this->load_bg_on_interaction( $html );
 
+		// Add missing images dimesions and lazyload.
+		$html = $this->add_missing_image_dimensions( $html );
+
 		// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped
 		return $html;
 		// phpcs:enable.

@@ -167,37 +167,36 @@ class Anony_Flash_Wp {
 		if ( '1' === $anofl_options->debug_mode && empty( $_GET['debug_mode'] ) ) {
 			return;
 		}
+				
+		// Fix largest content paint is lazy loaded.
+		//phpcs:enable
 		add_action(
-			'init',
+			'woocommerce_before_shop_loop',
 			function () {
-				// Fix largest content paint is lazy loaded.
 				if ( is_tax( 'product_cat' ) ) {
-					//phpcs:enable
-					add_action(
-						'woocommerce_before_shop_loop',
-						function () {
-							$GLOBALS['thumbs_indexer'] = 0;
-						}
-					);
-
-					add_action(
-						'woocommerce_before_shop_loop_item',
-						function () {
-							global $thumbs_indexer;
-							++$thumbs_indexer;
-						}
-					);
-					add_filter(
-						'wp_get_attachment_image_attributes',
-						function ( $attr ) {
-							global $thumbs_indexer;
-							if ( $thumbs_indexer && $thumbs_indexer < 3 ) {
-								$attr['class'] = $attr['class'] . ' no-lazyload';
-							}
-							return $attr;
-						}
-					);
+					$GLOBALS['thumbs_indexer'] = 1;
 				}
+			}
+		);
+
+		add_action(
+			'woocommerce_before_shop_loop_item',
+			function () {
+				global $thumbs_indexer;
+				if ( $thumbs_indexer && ! is_null( $thumbs_indexer ) ) {
+					++$thumbs_indexer;
+				}
+			}
+		);
+		add_filter(
+			'wp_get_attachment_image_attributes',
+			function ( $attr ) {
+				global $thumbs_indexer;
+				if ( $thumbs_indexer && $thumbs_indexer <= 3 ) {
+					$attr['class'] = $attr['class'] . ' no-lazyload';
+					unset( $attr['decoding'] );
+				}
+				return $attr;
 			}
 		);
 
@@ -240,13 +239,6 @@ class Anony_Flash_Wp {
 		if ( '1' === $anofl_options->lazyload_images ) {
 			add_filter( 'wp_lazy_loading_enabled', '__return_false' );
 		}
-		$this->loader->add_filter( 'the_content', $plugin_public, 'add_missing_image_dimensions', 99 );
-		$this->loader->add_filter( 'post_thumbnail_html', $plugin_public, 'add_missing_image_dimensions', 99 );
-		$this->loader->add_filter( 'woocommerce_product_get_image', $plugin_public, 'add_missing_image_dimensions', 99 );
-		$this->loader->add_filter( 'wp_get_attachment_image', $plugin_public, 'add_missing_image_dimensions', 99 );
-		$this->loader->add_filter( 'elementor/frontend/the_content', $plugin_public, 'add_missing_image_dimensions', 99 );
-		$this->loader->add_filter( 'fl_builder_render_content', $plugin_public, 'add_missing_image_dimensions', 99 );
-		$this->loader->add_filter( 'et_pb_render', $plugin_public, 'add_missing_image_dimensions', 99 );
 
 		// Disable google fonts.
 		$this->loader->add_filter( 'elementor/frontend/print_google_fonts', $plugin_public, 'elementor_google_fonts', 99 );
