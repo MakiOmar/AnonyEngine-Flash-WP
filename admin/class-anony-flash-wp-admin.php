@@ -228,7 +228,7 @@ class Anony_Flash_Wp_Admin {
 					'type'     => 'switch',
 					'validate' => 'no_html',
 					'desc'     => esc_html__( 'Optimizations will only be applied if passed debug_mode=1 to the url.', 'anony-flash-wp' ),
-					),
+				),
 				array(
 					'id'       => 'excluded_roles',
 					'title'    => esc_html__( 'Don\'t optimize for', 'anony-flash-wp' ),
@@ -619,7 +619,14 @@ class Anony_Flash_Wp_Admin {
 					'title'    => esc_html__( 'Lazyload images', 'anony-flash-wp' ),
 					'type'     => 'switch',
 					'validate' => 'no_html',
-					'desc'     => esc_html__( 'Please enable optimize images first.', 'anony-flash-wp' ),
+					'desc'     => esc_html__( 'Please enable optimize images first. This will lazyload of screen images only.', 'anony-flash-wp' ),
+				),
+				array(
+					'id'       => 'full_lazyload_images',
+					'title'    => esc_html__( 'Fully Lazyload images', 'anony-flash-wp' ),
+					'type'     => 'switch',
+					'validate' => 'no_html',
+					'desc'     => esc_html__( 'Please enable optimize images first and Lazyload images. This will force lazyload all images only.', 'anony-flash-wp' ),
 				),
 			),
 		);

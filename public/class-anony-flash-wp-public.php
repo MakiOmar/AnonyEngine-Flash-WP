@@ -1920,6 +1920,24 @@ class Anony_Flash_Wp_Public {
 		<?php
 	}
 	/**
+	 * Add interaction calback to head
+	 *
+	 * @return void
+	 */
+	public function interaction_events_callback() {
+		?>
+		<script data-use="defer.js">
+			function interactionEventsCallback( callBack ) {
+				document.body.addEventListener('mousemove', callBack);
+				document.body.addEventListener('scroll', callBack);
+				document.body.addEventListener('keydown', callBack);
+				document.body.addEventListener('click', callBack);
+				document.body.addEventListener('touchstart', callBack);
+			}
+		</script>
+		<?php
+	}
+	/**
 	 * Lazyload images
 	 *
 	 * @return void
@@ -1929,8 +1947,34 @@ class Anony_Flash_Wp_Public {
 		if ( '1' === $anofl_options->lazyload_images ) {
 			?>
 			<script data-use="defer.js">
-				Defer.dom('img', 500);
-				Defer.lazy = true;
+				<?php if ( '1' === $anofl_options->full_lazyload_images ) { ?>
+				document.addEventListener('DOMContentLoaded', function() {
+					vanillaLazyload = function (){
+						const lazyImages = document.querySelectorAll('img[loading="lazy"]');
+						// Loop through each lazy image
+						lazyImages.forEach((img) => {
+							// Get the data-src and data-srcest attributes.
+							var dataSrc = img.getAttribute('data-src');
+							var dataSrcest = img.getAttribute('data-srcest');
+							//console.log(dataSrc);
+							// Set the src and srcest attributes.
+							if ( null !== dataSrc ) {
+								img.src = dataSrc;
+							}
+							
+							if ( null !== dataSrcest ) {
+								img.srcset = dataSrcest;
+							}
+						});
+					};
+					if ( typeof interactionEventsCallback !== 'undefined' ) {
+						interactionEventsCallback( vanillaLazyload );
+					}
+				});
+				<?php } else { ?>
+					Defer.dom('img', 500);
+					Defer.lazy = true;
+				<?php } ?>
 			</script>
 			<?php
 		}

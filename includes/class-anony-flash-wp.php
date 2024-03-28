@@ -167,38 +167,6 @@ class Anony_Flash_Wp {
 		if ( '1' === $anofl_options->debug_mode && empty( $_GET['debug_mode'] ) ) {
 			return;
 		}
-				
-		// Fix largest content paint is lazy loaded.
-		//phpcs:enable
-		add_action(
-			'woocommerce_before_shop_loop',
-			function () {
-				if ( is_tax( 'product_cat' ) ) {
-					$GLOBALS['thumbs_indexer'] = 1;
-				}
-			}
-		);
-
-		add_action(
-			'woocommerce_before_shop_loop_item',
-			function () {
-				global $thumbs_indexer;
-				if ( $thumbs_indexer && ! is_null( $thumbs_indexer ) ) {
-					++$thumbs_indexer;
-				}
-			}
-		);
-		add_filter(
-			'wp_get_attachment_image_attributes',
-			function ( $attr ) {
-				global $thumbs_indexer;
-				if ( $thumbs_indexer && $thumbs_indexer <= 3 ) {
-					$attr['class'] = $attr['class'] . ' no-lazyload';
-					unset( $attr['decoding'] );
-				}
-				return $attr;
-			}
-		);
 
 		$excluded_roles = $anofl_options->excluded_roles;
 
@@ -221,6 +189,7 @@ class Anony_Flash_Wp {
 
 		$this->loader->add_filter( 'the_content', $plugin_public, 'elementor_add_lazyload_class' );
 
+		$this->loader->add_action( 'wp_head', $plugin_public, 'interaction_events_callback' );
 		$this->loader->add_action( 'wp_head', $plugin_public, 'load_bg_on_interaction_styles' );
 		$this->loader->add_filter( 'the_content', $plugin_public, 'load_bg_on_interaction' );
 		$this->loader->add_action( 'wp_print_footer_scripts', $plugin_public, 'load_bg_on_interaction_sctipt', 999 );
