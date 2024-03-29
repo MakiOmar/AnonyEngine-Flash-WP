@@ -626,7 +626,7 @@ class Anony_Flash_Wp_Admin {
 					'title'    => esc_html__( 'Fully Lazyload images', 'anony-flash-wp' ),
 					'type'     => 'switch',
 					'validate' => 'no_html',
-					'desc'     => esc_html__( 'Please enable optimize images first and Lazyload images. This will force lazyload all images only.', 'anony-flash-wp' ),
+					'desc'     => esc_html__( 'Please enable optimize images first and Lazyload images. This will force lazyload all images.', 'anony-flash-wp' ),
 				),
 			),
 		);

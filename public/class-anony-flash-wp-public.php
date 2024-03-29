@@ -365,9 +365,6 @@ class Anony_Flash_Wp_Public {
 		if ( false !== strpos( $tag, 'defer' ) ) {
 			return $tag;
 		}
-		if ( strpos( $tag, 'wp-includes' ) !== false ) {
-			return $tag; // Exclude all from w-includes.
-		}
 
 		// Try not defer all.
 		$not_deferred = array(
@@ -394,7 +391,7 @@ class Anony_Flash_Wp_Public {
 		$not_deferred = apply_filters( 'anony_not_to_be_defered_scripts', $not_deferred );
 		foreach ( $not_deferred as $search ) {
 			if ( false !== strpos( $tag, $search ) ) {
-				return $tag;
+				return str_replace( ' src', ' async src', $tag );
 			}
 		}
 		return str_replace( ' src', ' defer src', $tag );
