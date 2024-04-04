@@ -53,6 +53,9 @@ class Anony_Flash_Wp_Public {
 		$this->plugin_name = $plugin_name;
 		$this->version     = $version;
 		require_once plugin_dir_path( __DIR__ ) . 'public/class-anony-flash-images-preload.php';
+		require_once plugin_dir_path( __DIR__ ) . 'public/class-anony-flash-delay-js.php';
+		require_once plugin_dir_path( __DIR__ ) . 'public/class-anony-flash-defer-js.php';
+		require_once plugin_dir_path( __DIR__ ) . 'public/class-anony-flash-media.php';
 	}
 
 	/**
@@ -290,59 +293,8 @@ class Anony_Flash_Wp_Public {
 	 * @return string
 	 */
 	public function load_scripts_on_interaction( $tag, $handle, $src ) {
-		$anofl_options = ANONY_Options_Model::get_instance( 'Anofl_Options' );
-		$delay         = false;
-		if ( is_admin() || '1' !== $anofl_options->load_scripts_on_interaction || $this->uri_strpos( 'elementor' ) ) {
-			$delay = false; // don't break WP Admin.
-		}
-
-		if ( '1' === $anofl_options->load_scripts_on_interaction ) {
-			$delay = true;
-		}
-
-		if ( '1' !== $anofl_options->load_scripts_on_interaction && ( is_page() || is_front_page() ) ) {
-			global $post;
-			$optimize_per_post = get_post_meta( $post->ID, 'optimize_per_post', true );
-
-			if ( $optimize_per_post && ! empty( $optimize_per_post ) && isset( $optimize_per_post['delay_js'] ) && '1' === $optimize_per_post['delay_js'] ) {
-				$delay = true;
-			}
-		}
-
-		if ( ! $delay ) {
-			return $tag;
-		}
-
-		$exclusions = ANONY_STRING_HELP::line_by_line_textarea( $anofl_options->delay_scripts_exclusions );
-		if ( is_array( $exclusions ) ) {
-			foreach ( $exclusions as $exclusion ) {
-				if ( false !== strpos( $tag, $exclusion ) ) {
-					$tag = str_replace( '<script', '<script delay-exclude', $tag );
-					return $tag;
-				}
-			}
-		}
-
-		if ( false === strpos( $src, '.js' ) ) {
-			return $tag;
-		}
-
-		if ( false !== strpos( $tag, 'anony-delay-scripts' ) ) {
-			return $tag;
-		}
-
-		$exclusion_list = apply_filters( 'load_scripts_on_interaction_exclude', array( 'jquery-core-js', 'wp-includes' ) );
-
-		foreach ( $exclusion_list as $target ) {
-			if ( false !== strpos( $tag, $target ) ) {
-				$tag = str_replace( '<script', '<script delay-exclude', $tag );
-				return $tag;
-			}
-		}
-
-		$tag = str_replace( 'text/javascript', 'anony-delay-scripts', $tag );
-
-		return $tag;
+		$delay_js = new Anony_Flash_Delay_Js();
+		return $delay_js->load_scripts_on_interaction( $tag, $handle, $src );
 	}
 	/**
 	 * Defer scripts
@@ -353,48 +305,8 @@ class Anony_Flash_Wp_Public {
 	 * @return string
 	 */
 	public function defer_scripts( $tag, $handle, $src ) {
-		$anofl_options = ANONY_Options_Model::get_instance( 'Anofl_Options' );
-		if ( is_admin() || '1' !== $anofl_options->defer_scripts ) {
-			return $tag; // don't break WP Admin.
-		}
-
-		if ( false === strpos( $src, '.js' ) ) {
-			return $tag;
-		}
-
-		if ( false !== strpos( $tag, 'defer' ) ) {
-			return $tag;
-		}
-
-		// Try not defer all.
-		$not_deferred = array(
-			'syntaxhighlighter-core',
-			'jquery-core',
-			'wp-polyfill',
-			'wp-hooks',
-			'wp-i18n',
-			'wp-tinymce-root',
-			'wc_price_slider',
-			'firebase',
-			'firebase-auth',
-
-		);
-
-		if ( ! empty( $anofl_options->not_to_be_defered_scripts ) ) {
-			$not_to_be_defered_scripts = array_filter( ANONY_STRING_HELP::line_by_line_textarea( $anofl_options->not_to_be_defered_scripts ) );
-
-			if ( ! empty( $not_to_be_defered_scripts ) ) {
-				$not_deferred = array_merge( $not_deferred, $not_to_be_defered_scripts );
-			}
-		}
-
-		$not_deferred = apply_filters( 'anony_not_to_be_defered_scripts', $not_deferred );
-		foreach ( $not_deferred as $search ) {
-			if ( false !== strpos( $tag, $search ) ) {
-				return str_replace( ' src', ' async src', $tag );
-			}
-		}
-		return str_replace( ' src', ' defer src', $tag );
+		$defer_js = new Anony_Flash_Defer_Js();
+		return $defer_js->defer_scripts( $tag, $handle, $src );
 	}
 	/**
 	 * Disable gravatar
@@ -643,14 +555,8 @@ class Anony_Flash_Wp_Public {
 	 * A JavaScript micro-library that helps you lazy load (almost) anything. Defer.js is zero-dependency, super-efficient, and Web Vitals friendly.
 	 */
 	public function inline_defer_js() {
-		?>
-		<script data-use="defer.js">
-			/*!@shinsenter/defer.js@3.4.0*/
-			!(function(n){function t(e){n.addEventListener(e,B)}function o(e){n.removeEventListener(e,B)}function u(e,n,t){L?C(e,n):(t||u.lazy&&void 0===t?q:S).push(e,n)}function c(e){k.head.appendChild(e)}function i(e,n){z.call(e.attributes)[y](n)}function r(e,n,t,o){return o=(n?k.getElementById(n):o)||k.createElement(e),n&&(o.id=n),t&&(o.onload=t),o}function s(e,n,t){(t=e.src)&&((n=r(m)).rel="preload",n.as=h,n.href=t,(t=e[g](w))&&n[b](w,t),(t=e[g](x))&&n[b](x,t),c(n))}function a(e,n){return z.call((n||k).querySelectorAll(e))}function f(e,n){e.parentNode.replaceChild(n,e)}function l(t,e){a("source,img",t)[y](l),i(t,function(e,n){(n=/^data-(.+)/.exec(e.name))&&t[b](n[1],e.value)}),"string"==typeof e&&e&&(t.className+=" "+e),p in t&&t[p]()}function e(e,n,t){u(function(t){(t=a(e||N))[y](s),(function o(e,n){(e=t[E]())&&((n=r(e.nodeName)).text=e.text,i(e,function(e){"type"!=e.name&&n[b](e.name,e.value)}),n.src&&!n[g]("async")?(n.onload=n.onerror=o,f(e,n)):(f(e,n),o()))})()},n,t)}var d="Defer",m="link",h="script",p="load",v="pageshow",y="forEach",g="getAttribute",b="setAttribute",E="shift",w="crossorigin",x="integrity",A=["mousemove","keydown","touchstart","wheel"],I="on"+v in n?v:p,N=h+"[type=deferjs]",j=n.IntersectionObserver,k=n.document||n,C=n.setTimeout,L=/p/.test(k.readyState),S=[],q=[],z=S.slice,B=function(e,n){for(n=I==e.type?(o(I),L=u,A[y](t),S):(A[y](o),q);n[0];)C(n[E](),n[E]())};e(),u.all=e,u.dom=function(e,n,i,c,r){u(function(t){function o(e){c&&!1===c(e)||l(e,i)}t=!!j&&new j(function(e){e[y](function(e,n){e.isIntersecting&&(t.unobserve(n=e.target),o(n))})},r),a(e||"[data-src]")[y](function(e){e[d]!=u&&(e[d]=u,t?t.observe(e):o(e))})},n,!1)},u.css=function(n,t,e,o,i){u(function(e){(e=r(m,t,o)).rel="stylesheet",e.href=n,c(e)},e,i)},u.js=function(n,t,e,o,i){u(function(e){(e=r(h,t,o)).src=n,c(e)},e,i)},u.reveal=l,n[d]=u,L||t(I)})(this);
-			 
-			 
-		</script>
-		<?php
+		$defer_js = new Anony_Flash_Defer_Js();
+		$defer_js->inline_defer_js();
 	}
 	/**
 	 * Set media attribute to all
@@ -694,104 +600,30 @@ class Anony_Flash_Wp_Public {
 	 * @return void
 	 */
 	public function google_tag_script( $tag_id, $defer_js_id, $console = '' ) {
-		$anofl_options = ANONY_Options_Model::get_instance( 'Anofl_Options' );
-		?>
-		Defer.js('https://www.googletagmanager.com/gtag/js?id=<?php echo esc_html( $tag_id ); ?>', '<?php echo esc_html( $defer_js_id ); ?>', 1500, 
-		function() {
-			window.dataLayer = window.dataLayer || [];
-			dataLayer.push(['js', new Date()]);
-			dataLayer.push(['config', '<?php echo esc_html( $tag_id ); ?>']);
-			console.info('<?php echo esc_html( $console ); ?>'); // debug.
-		}, false);
-
-		<?php
+		$gtag = new Anony_Flash_Delay_Js();
+		$gtag->google_tag_script( $tag_id, $defer_js_id, $console = '' );
 	}
 	/**
 	 * Load Google tag manager deferred depending on defer.js
 	 */
 	public function defer_gtgm() {
-		$anofl_options = ANONY_Options_Model::get_instance( 'Anofl_Options' );
-		$gads_id       = $anofl_options->gads_id;
-		$ganalytics_id = $anofl_options->ganalytics_id;
-		if ( ! empty( $anofl_options->gtgm_id ) ) {
-			?>
-			<script>
-				<?php
-				$this->google_tag_script( $anofl_options->gtgm_id, 'google-tag-main', 'Google tag manager is loaded' );
-
-				if ( ! empty( $gads_id ) ) {
-					$this->google_tag_script( $gads_id, 'google-tag-ads', 'Google ADs tag is loaded' );
-				}
-
-				if ( ! empty( $ganalytics_id ) ) {
-					$this->google_tag_script( $ganalytics_id, 'google-tag-analytics', 'Google analytics tag is loaded' );
-				}
-				?>
-		</script>
-			<?php
-			$this->gtag_events();
-		}
+		$defer_gtgm = new Anony_Flash_Delay_Js();
+		$defer_gtgm->defer_gtgm();
 	}
-	/**
-	 * Gtag events
-	 *
-	 * @return void
-	 */
-	public function gtag_events() {
-		$anofl_options = ANONY_Options_Model::get_instance( 'Anofl_Options' );
-		$gtm_events    = $anofl_options->gtm_events;
-		if ( ! empty( $gtm_events ) ) {
-			?>
-			<script type="anony-gtag-events-scripts">
-			<?php
-			//phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped
-			echo $gtm_events;
-			//phpcs:enable
-			?>
-			</script>
 
-			<script data-use="defer.js">
-				Defer.all('script[type="anony-gtag-events-scripts"]', 2800);
-			</script>
-			<?php
-		}
-	}
 	/**
 	 * Load Facebook pixel deferred depending on defer.js
 	 */
 	public function defer_facebook_pixel() {
-		$anofl_options = ANONY_Options_Model::get_instance( 'Anofl_Options' );
-
-		if ( ! empty( $anofl_options->facebook_pixel_id ) ) {
-			?>
-			<!-- Meta Pixel Code -->
-			<script type="anony-facebook-pixel">
-
-				!function(f,b,e,v,n,t,s)
-				{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-				n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-				if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-				n.queue=[];t=b.createElement(e);t.async=!0;
-				t.src=v;s=b.getElementsByTagName(e)[0];
-				s.parentNode.insertBefore(t,s)}(window, document,'script',
-				'https://connect.facebook.net/en_US/fbevents.js');
-				fbq('init', '<?php echo esc_html( $anofl_options->facebook_pixel_id ); ?>');
-				fbq('track', 'PageView');
-
-			</script>
-
-			<noscript>
-				<img height="1" width="1" style="display:none"
-				src="https://www.facebook.com/tr?id=<?php echo esc_html( $anofl_options->facebook_pixel_id ); ?>&ev=PageView&noscript=1"
-				/>
-			</noscript>
-			<!-- End Meta Pixel Code -->
-
-			<script data-use="defer.js">
-				Defer.all('script[type="anony-facebook-pixel"]', 1500);
-			</script>
-			<?php
-		}
+		$defer_facebook_pixel = new Anony_Flash_Delay_Js();
+		$defer_facebook_pixel->defer_facebook_pixel();
+	}
+	/**
+	 * Load external inline scripts deferred depending on defer.js
+	 */
+	public function defer_inline_external_scripts() {
+		$defer_inline_external_scripts = new Anony_Flash_Delay_Js();
+		$defer_inline_external_scripts->defer_inline_external_scripts();
 	}
 	/**
 	 * If url contains string
@@ -809,50 +641,6 @@ class Anony_Flash_Wp_Public {
 		//phpcs:enable
 
 		return false;
-	}
-
-	/**
-	 * Load external inline scripts deferred depending on defer.js
-	 */
-	public function defer_inline_external_scripts() {
-		$anofl_options = ANONY_Options_Model::get_instance( 'Anofl_Options' );
-		if ( ! empty( $anofl_options->external_scripts ) ) {
-			?>
-			<script type="anony-external-scripts">
-			<?php
-			//phpcs:disable
-			echo $anofl_options->external_scripts;
-			//phpcs:enable
-			?>
-			</script>
-
-			<script data-use="defer.js">
-				Defer.all('script[type="anony-external-scripts"]', 1500);
-			</script>
-			<?php
-		}
-
-		if ( '1' === $anofl_options->load_scripts_on_interaction ) {
-
-			?>
-			<script data-use="defer.js">
-				Defer.all('script[type="anony-delay-scripts"]', 0, true);
-			</script>
-			<?php
-		}
-
-		if ( '1' !== $anofl_options->load_scripts_on_interaction && ( is_page() || is_front_page() ) ) {
-			global $post;
-			$optimize_per_post = get_post_meta( $post->ID, 'optimize_per_post', true );
-
-			if ( $optimize_per_post && ! empty( $optimize_per_post ) && isset( $optimize_per_post['delay_js'] ) && '1' === $optimize_per_post['delay_js'] ) {
-				?>
-				<script data-use="defer.js">
-					Defer.all('script[type="anony-delay-scripts"]', 0, true);
-				</script>
-				<?php
-			}
-		}
 	}
 
 	/**
@@ -987,17 +775,8 @@ class Anony_Flash_Wp_Public {
 	 * @return mixed False if srcset need to be disabled otherwise an array of srcsets.
 	 */
 	public function disable_product_mobile_srcset( $image_meta ) {
-		if ( class_exists( 'woocommerce' ) && ! is_single() && wp_is_mobile() ) {
-			$anofl_options = ANONY_Options_Model::get_instance( 'Anofl_Options' );
-
-			if ( '1' === $anofl_options->wc_disable_srcset ) {
-				return false;
-			}
-
-			return $image_meta;
-		}
-
-		return $image_meta;
+		$media = new Anony_Flash_Media();
+		return $media->disable_product_mobile_srcset( $image_meta );
 	}
 	/**
 	 * Filter content to add lazyload class if elemntor
@@ -1008,25 +787,8 @@ class Anony_Flash_Wp_Public {
 	 * @return string Filtered content with lazyload class added.
 	 */
 	public function elementor_add_lazyload_class( $content ) {
-
-		$anofl_options = ANONY_Options_Model::get_instance( 'Anofl_Options' );
-
-		if ( '1' !== $anofl_options->lazyload_elementor_backgrounds ) {
-			return $content;
-		}
-
-		if ( class_exists( 'ANONY_STRING_HELP' ) ) {
-
-			$lazyloaded_backgrounds = array_filter( ANONY_STRING_HELP::line_by_line_textarea( $anofl_options->lazyload_this_classes ) );
-
-			if ( ! empty( $lazyloaded_backgrounds ) ) {
-				foreach ( $lazyloaded_backgrounds as $selector ) {
-					$content = str_replace( $selector . ' ', $selector . ' lazyelementorbackgroundimages ', $content );
-				}
-			}
-		}
-
-		return $content;
+		$media = new Anony_Flash_Media();
+		return $media->elementor_add_lazyload_class( $content );
 	}
 	/**
 	 * Load bg on interaction
@@ -1035,18 +797,8 @@ class Anony_Flash_Wp_Public {
 	 * @return string
 	 */
 	public function load_bg_on_interaction( $content ) {
-		$anofl_options = ANONY_Options_Model::get_instance( 'Anofl_Options' );
-		$opt_targets   = ANONY_STRING_HELP::line_by_line_textarea( $anofl_options->interact_lazyload_this_classes );
-		$targets       = apply_filters( 'load_bg_on_interaction', array() );
-		if ( ! empty( $opt_targets ) && is_array( $opt_targets ) ) {
-			$targets = array_merge( $targets, $opt_targets );
-		}
-		if ( ! empty( $targets ) ) {
-			foreach ( $targets as $target ) {
-				$content = str_replace( $target, $target . ' interact-hidden', $content );
-			}
-		}
-		return $content;
+		$media = new Anony_Flash_Media();
+		return $media->load_bg_on_interaction( $content );
 	}
 	/**
 	 * Add css to hide bg image on images with lazyelementorbackgroundimages class.
@@ -1054,30 +806,8 @@ class Anony_Flash_Wp_Public {
 	 * @since 1.0.0
 	 */
 	public function lazy_elementor_background_images_css() {
-		if ( is_admin() ) {
-			return;
-		}
-
-		$anofl_options = ANONY_Options_Model::get_instance( 'Anofl_Options' );
-
-		if ( '1' !== $anofl_options->lazyload_elementor_backgrounds ) {
-			return;
-		}
-		global $lazy_elementor_background_images_js_added;
-		if ( ! ( $lazy_elementor_background_images_js_added ) ) {
-			return; // don't add css if scripts weren't added.
-		}
-		ob_start();
-		?>
-		<style>
-			.lazyelementorbackgroundimages:not(.elementor-motion-effects-element-type-background) {
-				background-image: none !important; /* lazyload fix for elementor */
-			}
-		</style>
-		<?php
-		// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped
-		echo ob_get_clean();
-		// phpcs:enable
+		$media = new Anony_Flash_Media();
+		$media->lazy_elementor_background_images_css();
 	}
 	/**
 	 * Load bg on interaction styles
@@ -1085,31 +815,9 @@ class Anony_Flash_Wp_Public {
 	 * @return void
 	 */
 	public function load_bg_on_interaction_styles() {
-		$anofl_options = ANONY_Options_Model::get_instance( 'Anofl_Options' );
-		$opt_targets   = ANONY_STRING_HELP::line_by_line_textarea( $anofl_options->interact_lazyload_this_classes );
-		$targets       = apply_filters( 'load_bg_on_interaction', array() );
-		if ( ! empty( $opt_targets ) && is_array( $opt_targets ) ) {
-			$targets = array_merge( $targets, $opt_targets );
-		}
-		$styles = '';
-		if ( ! empty( $targets ) ) {
-
-			$styles .= '<style>';
-
-			foreach ( $targets as $target ) {
-				$styles .= '.' . $target . '.interact-hidden,';
-			}
-			$styles  = trim( $styles, ',' );
-			$styles .= '{
-				background-image: none !important;
-			}';
-			$styles .= '</style>';
-		}
-		//phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped
-		echo $styles;
-		//phpcs:enable.
+		$media = new Anony_Flash_Media();
+		$media->load_bg_on_interaction_styles();
 	}
-
 
 	/**
 	 * Add js to remove the lazyelementorbackgroundimages class as the item approaches the viewport. (jQuery and Waypoint are dependencies)
@@ -1117,71 +825,8 @@ class Anony_Flash_Wp_Public {
 	 * @since 1.0.0
 	 */
 	public function lazy_elementor_background_images_js() {
-
-		if ( is_admin() ) {
-			return;
-		}
-
-		$anofl_options = ANONY_Options_Model::get_instance( 'Anofl_Options' );
-
-		if ( '1' !== $anofl_options->lazyload_elementor_backgrounds ) {
-			return;
-		}
-		global $lazy_elementor_background_images_js_added;
-
-		if ( 'with_jquery' === $anofl_options->lazyloading_elementor_bg_method ) {
-			$dependancy = 'jquery';
-			ob_start();
-			?>
-
-			jQuery( function ( $ ) {
-				 
-				if ( ! ( window.Waypoint ) ) {
-					// if Waypoint is not available, then we MUST remove our class from all elements because otherwise BGs will never show.
-					$('.elementor-section.lazyelementorbackgroundimages,.elementor-column-wrap.lazyelementorbackgroundimages, .elementor-widget-wrap.lazyelementorbackgroundimages').removeClass('lazyelementorbackgroundimages');
-					if ( window.console && console.warn ) {
-						console.warn( 'Waypoint library is not loaded so backgrounds lazy loading is turned OFF' );
-					}
-					return;
-				} 
-				$('.lazyelementorbackgroundimages').each( function () {
-					 
-					var $section = $( this );
-					new Waypoint({
-						element: $section.get( 0 ),
-						handler: function( direction ) {
-							//console.log( [ 'waypoint hit', $section.get( 0 ), $(window).scrollTop(), $section.offset() ] );
-							$section.removeClass('lazyelementorbackgroundimages');
-						},
-						offset: $(window).height()*1.5 // when item is within 1.5x the viewport size, start loading it.
-					});
-				} );
-			});
-
-			<?php
-			$skrip = ob_get_clean();
-
-			if ( ! wp_script_is( 'jquery', 'enqueued' ) ) {
-				wp_enqueue_script( 'jquery' );
-			}
-		} else {
-			$dependancy = 'backbone';
-
-			ob_start();
-			?>
-			 
-			window.onload = function() {
-				var elems = document.querySelectorAll(".lazyelementorbackgroundimages");
-
-				[].forEach.call(elems, function(el) {
-					el.classList.remove("lazyelementorbackgroundimages");
-				});
-			};
-			<?php
-			$skrip = ob_get_clean();
-		}
-
-		$lazy_elementor_background_images_js_added = wp_add_inline_script( $dependancy, $skrip );
+		$media = new Anony_Flash_Media();
+		$media->lazy_elementor_background_images_js();
 	}
 	/**
 	 * Add missing dimensions
@@ -1190,24 +835,8 @@ class Anony_Flash_Wp_Public {
 	 * @return string
 	 */
 	public function add_missing_image_dimensions( $content ) {
-		//phpcs:disable
-		if ( wp_doing_ajax() || ( isset( $_SERVER['HTTP_X_REQUESTED_WITH'] ) && strtolower( $_SERVER['HTTP_X_REQUESTED_WITH'] ) === 'xmlhttprequest' ) ) {
-			return $content;
-		}
-		//phpcs:enable
-
-		$anofl_options = ANONY_Options_Model::get_instance( 'Anofl_Options' );
-
-		if ( '1' === $anofl_options->add_missing_image_dimensions ) {
-			if ( '1' === $anofl_options->lazyload_images ) {
-				$lazyload = true;
-			} else {
-				$lazyload = false;
-			}
-
-			return ANONY_IMAGES_HELP::add_missing_dimensions( $content, $lazyload );
-		}
-		return $content;
+		$media = new Anony_Flash_Media();
+		return $media->add_missing_image_dimensions( $content );
 	}
 	/**
 	 * Dequeue unwanted styles
