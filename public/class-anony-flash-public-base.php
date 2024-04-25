@@ -120,7 +120,7 @@ class Anony_Flash_Public_Base {
 		$anofl_options  = ANONY_Options_Model::get_instance( 'Anofl_Options' );
 		$queried_object = get_queried_object();
 
-		if ( is_a( $queried_object, 'WP_Taxonomy' ) ) {
+		if ( is_a( $queried_object, 'WP_Taxonomy' ) || isset( $queried_object->taxonomy ) ) {
 			$object_name = $queried_object->taxonomy;
 			$optimze     = 'optimize_taxonomies';
 		} elseif ( is_a( $queried_object, 'WP_Post_Type' ) || is_a( $queried_object, 'WP_Post' ) ) {
@@ -130,7 +130,7 @@ class Anony_Flash_Public_Base {
 		if ( isset( $object_name ) ) {
 			$option_name      = $option_name . '_' . $object_name;
 			$optimize_objects = $anofl_options->$optimze;
-			if ( $optimize_objects && is_array( $optimize_objects ) && in_array( $object_name, $optimize_objects, true ) && $this->is_switched_on( $object_name, $anofl_options ) ) {
+			if ( $optimize_objects && is_array( $optimize_objects ) && in_array( $object_name, $optimize_objects, true ) && $this->is_switched_on( $option_name, $anofl_options ) ) {
 				$enabled = true;
 			}
 		}
