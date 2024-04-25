@@ -118,8 +118,17 @@ class Anony_Flash_Wp {
 		 * The class responsible for defining all actions that occur in the public-facing
 		 * side of the site.
 		 */
+		require_once plugin_dir_path( __DIR__ ) . 'public/class-anony-flash-public-base.php';
 		require_once plugin_dir_path( __DIR__ ) . 'public/class-anony-flash-wp-public.php';
-
+		require_once plugin_dir_path( __DIR__ ) . 'public/class-anony-flash-defer-js.php';
+		require_once plugin_dir_path( __DIR__ ) . 'public/class-anony-flash-delay-js.php';
+		require_once plugin_dir_path( __DIR__ ) . 'public/class-anony-flash-media.php';
+		require_once plugin_dir_path( __DIR__ ) . 'public/class-anony-flash-preload.php';
+		require_once plugin_dir_path( __DIR__ ) . 'public/class-anony-flash-css.php';
+		require_once plugin_dir_path( __DIR__ ) . 'public/class-anony-flash-general.php';
+		require_once plugin_dir_path( __DIR__ ) . 'public/class-anony-flash-scripts.php';
+		require_once plugin_dir_path( __DIR__ ) . 'public/class-anony-flash-styles.php';
+		require_once plugin_dir_path( __DIR__ ) . 'public/class-anony-flash-woocommerce.php';
 		$this->loader = new Anony_Flash_Wp_Loader();
 	}
 
@@ -164,7 +173,7 @@ class Anony_Flash_Wp {
 	private function define_public_hooks() {
 		$anofl_options = ANONY_Options_Model::get_instance( 'Anofl_Options' );
 		//phpcs:disable
-		if ( '1' === $anofl_options->debug_mode && empty( $_GET['debug_mode'] ) ) {
+		if ( ( '1' === $anofl_options->debug_mode && empty( $_GET['debug_mode'] ) ) ||  defined( 'DOING_CRON' ) ) {
 			return;
 		}
 
@@ -183,102 +192,109 @@ class Anony_Flash_Wp {
 			}
 		}
 
-		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'lazy_elementor_background_images_js', 999 );
+		/* ---------------------------Media------------------------------------------------------------*/
+		$media = new Anony_Flash_Media();
+		$this->loader->add_action( 'wp_enqueue_scripts', $media, 'lazy_elementor_background_images_js', 999 );
+		$this->loader->add_action( 'wp_head', $media, 'lazy_elementor_background_images_css' );
+		$this->loader->add_filter( 'the_content', $media, 'elementor_add_lazyload_class' );
+		$this->loader->add_action( 'wp_head', $media, 'load_bg_on_interaction_styles' );
+		$this->loader->add_filter( 'the_content', $media, 'load_bg_on_interaction' );
+		$this->loader->add_action( 'wp_print_footer_scripts', $media, 'lazyload_images', 999 );
+		$this->loader->add_action( 'wp_print_footer_scripts', $media, 'load_bg_on_interaction_sctipt', 999 );
+		$this->loader->add_filter( 'single_product_archive_thumbnail_size', $media, 'product_custom_mobile_thumb_size_slug' );
+		$this->loader->add_filter( 'wp_calculate_image_srcset_meta', $media, 'disable_product_mobile_srcset' );
+		if ( '1' === $anofl_options->lazyload_images ) {
+			add_filter( 'wp_lazy_loading_enabled', '__return_false' );
+		}
+		/* ---------------------------End Media------------------------------------------------------------*/
 
-		$this->loader->add_action( 'wp_head', $plugin_public, 'lazy_elementor_background_images_css' );
+		/* ---------------------------CSS------------------------------------------------------------*/
+		$css = new Anony_Flash_Css();
+		$this->loader->add_action( 'wp_head', $css, 'load_optimized_css' );
+		$this->loader->add_filter( 'style_loader_tag', $css, 'remove_all_stylesheets', 99 );
+		if ( 'inject' === $anofl_options->defer_stylesheets_method ) {
+			// phpcs:disable
+			$this->loader->add_action( 'wp_print_footer_scripts', $css, 'inject_styles', 999 );
+			
+			// phpcs:enable
 
-		$this->loader->add_filter( 'the_content', $plugin_public, 'elementor_add_lazyload_class' );
+			$this->loader->add_filter( 'style_loader_tag', $css, 'to_be_injected_styles', 99 );
+		}
+		if ( 'media-attribute' === $anofl_options->defer_stylesheets_method ) {
+			$this->loader->add_action( 'wp_footer', $css, 'stylesheets_media_to_all', 99 );
+			$this->loader->add_filter( 'style_loader_tag', $css, 'stylesheet_media_to_print', 99 );
+		}
+		/* ---------------------------End CSS------------------------------------------------------------*/
 
-		$this->loader->add_action( 'wp_head', $plugin_public, 'interaction_events_callback' );
-		$this->loader->add_action( 'wp_head', $plugin_public, 'load_bg_on_interaction_styles' );
-		$this->loader->add_filter( 'the_content', $plugin_public, 'load_bg_on_interaction' );
-		$this->loader->add_action( 'wp_print_footer_scripts', $plugin_public, 'load_bg_on_interaction_sctipt', 999 );
-		$this->loader->add_action( 'wp_print_footer_scripts', $plugin_public, 'lazyload_images', 999 );
+		/* ---------------------------General------------------------------------------------------------*/
+		$general = new Anony_Flash_General();
+		// Disable google fonts.
+		$this->loader->add_filter( 'elementor/frontend/print_google_fonts', $general, 'elementor_google_fonts', 99 );
+		// controls add query strings to scripts.
+		$this->loader->add_filter( 'script_loader_src', $general, 'anony_control_query_strings', 15, 2 );
+
+		// controls add query strings to styles.
+		$this->loader->add_filter( 'style_loader_src', $general, 'anony_control_query_strings', 15, 2 );
+		// Use custom avatar instead of Gravatar.com.
+		$this->loader->add_filter( 'get_avatar', $general, 'disable_gravatar', 200 );
+		$this->loader->add_action( 'template_redirect', $general, 'disable_wp_embeds', 9999 );
+		$this->loader->add_action( 'template_redirect', $general, 'disable_wp_emojis', 9999 );
+		$this->loader->add_action( 'wp_print_styles', $general, 'disable_gutenburg_scripts', 99 );
+		$this->loader->add_action( 'wp_body_open', $general, 'output_preloader' );
+		/* ---------------------------End General------------------------------------------------------------*/
+
+		/* ---------------------------Delay------------------------------------------------------------*/
+		$delay_js = new Anony_Flash_Delay_Js();
+		// Delay js execution.
+		$this->loader->add_filter( 'script_loader_tag', $delay_js, 'load_scripts_on_interaction', 99, 3 );
+		$this->loader->add_action( 'wp_head', $delay_js, 'inline_defer_js', 10 );
+		$this->loader->add_action( 'wp_head', $delay_js, 'defer_gtgm', 30 );
+		$this->loader->add_action( 'wp_head', $delay_js, 'defer_facebook_pixel', 30 );
+		$this->loader->add_action( 'wp_head', $delay_js, 'defer_inline_external_scripts', 30 );
+		/* ---------------------------End Delay------------------------------------------------------------*/
+
+		/* ---------------------------Defer------------------------------------------------------------*/
+		$defer_js = new Anony_Flash_Defer_Js();
+		// Scripts defer.
+		$this->loader->add_filter( 'script_loader_tag', $defer_js, 'defer_scripts', 99, 3 );
+		/* ---------------------------End defer------------------------------------------------------------*/
+
+		/* ---------------------------Preload images------------------------------------------------------------*/
+		$preload = new Anony_Flash_Preload();
+		$this->loader->add_action( 'wp_head', $preload, 'preload_images' );
+		$this->loader->add_action( 'wp_head', $preload, 'preload_fonts' );
+		$this->loader->add_action( 'wp_head', $preload, 'dns_prefetch' );
+		/* ---------------------------End Preload images------------------------------------------------------------*/
+
+		/* --------------------------Scripts------------------------------------------------------------*/
+		$scripts = new Anony_Flash_Scripts();
+		// Scripts remove.
+		$this->loader->add_filter( 'script_loader_tag', $scripts, 'remove_unused_scripts', 99 );
+		$this->loader->add_action( 'wp_print_scripts', $scripts, 'dequeue_scripts', 999 );
+		$this->loader->add_action( 'wp_default_scripts', $scripts, 'disable_jquery_migrate' );
+		$this->loader->add_action( 'wp_head', $scripts, 'anony_add_head_scripts' );
+		$this->loader->add_action( 'wp_head', $scripts, 'anony_add_footer_scripts' );
+		$this->loader->add_action( 'wp_head', $scripts, 'interaction_events_callback' );
+		/* --------------------------End Scripts------------------------------------------------------------*/
+
+		/* --------------------------Styles------------------------------------------------------------*/
+		$scripts = new Anony_Flash_Styles();
+		$this->loader->add_action( 'wp_print_styles', $scripts, 'dequeued_styles', 999 );
+		/* --------------------------End Styles------------------------------------------------------------*/
+
+		/* --------------------------WooCommerce------------------------------------------------------------*/
+		$woo = new Anony_Flash_Woocommerce();
+		$this->loader->add_action( 'wp_print_styles', $woo, 'load_scripts_on_wc_templates_only' );
+		/* --------------------------End WooCommerce------------------------------------------------------------*/
 
 		// Actions..
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles' );
 
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
 
-		$this->loader->add_action( 'wp_print_styles', $plugin_public, 'dequeued_styles', 999 );
-
-		$this->loader->add_action( 'wp_print_scripts', $plugin_public, 'dequeue_scripts', 999 );
-
-		// Add missing image dimensions.
-		if ( '1' === $anofl_options->lazyload_images ) {
-			add_filter( 'wp_lazy_loading_enabled', '__return_false' );
-		}
-
-		// Disable google fonts.
-		$this->loader->add_filter( 'elementor/frontend/print_google_fonts', $plugin_public, 'elementor_google_fonts', 99 );
-
-		if ( 'inject' === $anofl_options->defer_stylesheets_method ) {
-			// phpcs:disable
-			$this->loader->add_action( 'wp_print_footer_scripts', $plugin_public, 'inject_styles', 999 );
-			
-			// phpcs:enable
-
-			$this->loader->add_filter( 'style_loader_tag', $plugin_public, 'to_be_injected_styles', 99 );
-		}
-
-		if ( 'media-attribute' === $anofl_options->defer_stylesheets_method ) {
-			$this->loader->add_action( 'wp_footer', $plugin_public, 'stylesheets_media_to_all', 99 );
-			$this->loader->add_filter( 'style_loader_tag', $plugin_public, 'stylesheet_media_to_print', 99 );
-		}
-		// ---------------------Optimized CSS----------------------------------------------------..
-		$this->loader->add_action( 'wp_head', $plugin_public, 'load_optimized_css' );
-
-		// wp hook after wp_footer()..
-		// $this->loader->add_action( 'wp_footer', $plugin_public, 'end_html_buffer', PHP_INT_MAX );
-		// ---------------------End optimized CSS----------------------------------------------------.
-		$this->loader->add_filter( 'style_loader_tag', $plugin_public, 'remove_all_stylesheets', 99 );
 		$this->loader->add_action( 'get_header', $plugin_public, 'wp_html_compression_finish' );
 
 		$this->loader->add_action( 'get_header', $plugin_public, 'start_html_buffer' );
-
-		// controls add query strings to scripts.
-		$this->loader->add_filter( 'script_loader_src', $plugin_public, 'anony_control_query_strings', 15, 2 );
-
-		// controls add query strings to styles.
-		$this->loader->add_filter( 'style_loader_src', $plugin_public, 'anony_control_query_strings', 15, 2 );
-
-		// Scripts defer.
-		$this->loader->add_filter( 'script_loader_tag', $plugin_public, 'defer_scripts', 99, 3 );
-
-		// Delay js execution.
-		$this->loader->add_filter( 'script_loader_tag', $plugin_public, 'load_scripts_on_interaction', 99, 3 );
-
-		// Scripts remove.
-		$this->loader->add_filter( 'script_loader_tag', $plugin_public, 'remove_unused_scripts', 99 );
-
-		// Use custom avatar instead of Gravatar.com.
-		$this->loader->add_filter( 'get_avatar', $plugin_public, 'disable_gravatar', 200 );
-
-		$this->loader->add_action( 'template_redirect', $plugin_public, 'disable_wp_embeds', 9999 );
-		$this->loader->add_action( 'template_redirect', $plugin_public, 'disable_wp_emojis', 9999 );
-		$this->loader->add_action( 'wp_print_styles', $plugin_public, 'disable_gutenburg_scripts', 99 );
-
-		$this->loader->add_action( 'wp_default_scripts', $plugin_public, 'disable_jquery_migrate' );
-		$this->loader->add_action( 'wp_head', $plugin_public, 'preload_fonts' );
-		$this->loader->add_action( 'wp_head', $plugin_public, 'preload_images' );
-		$this->loader->add_action( 'wp_head', $plugin_public, 'dns_prefetch' );
-		$this->loader->add_action( 'wp_head', $plugin_public, 'inline_defer_js', 10 );
-		$this->loader->add_action( 'wp_head', $plugin_public, 'defer_gtgm', 30 );
-		$this->loader->add_action( 'wp_head', $plugin_public, 'defer_facebook_pixel', 30 );
-		$this->loader->add_action( 'wp_head', $plugin_public, 'defer_inline_external_scripts', 30 );
-		$this->loader->add_action( 'wp_head', $plugin_public, 'anony_add_head_scripts' );
-		$this->loader->add_action( 'wp_head', $plugin_public, 'anony_add_footer_scripts' );
-		$this->loader->add_action( 'wp_body_open', $plugin_public, 'output_preloader' );
-
-		$this->loader->add_action( 'wp_print_styles', $plugin_public, 'load_scripts_on_wc_templates_only' );
-
-		$this->loader->add_filter( 'single_product_archive_thumbnail_size', $plugin_public, 'product_custom_mobile_thumb_size_slug' );
-
-		$this->loader->add_filter( 'wp_calculate_image_srcset_meta', $plugin_public, 'disable_product_mobile_srcset' );
-
-		$this->loader->add_action( 'wp_print_styles', $plugin_public, 'load_styles_on_cf7_pages_only', 99 );
-
-		$this->loader->add_action( 'wp_print_scripts', $plugin_public, 'load_scripts_on_cf7_pages_only', 99 );
 	}
 
 	/**

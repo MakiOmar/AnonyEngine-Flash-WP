@@ -21,6 +21,21 @@ defined( 'ABSPATH' ) || die();
  */
 class Anony_Flash_Media {
 	/**
+	 * Filter product thumbnail size
+	 *
+	 * @param string $size Product thumbnail size.
+	 * @return string
+	 */
+	public function product_custom_mobile_thumb_size_slug( $size ) {
+		if ( wp_is_mobile() ) {
+			$anofl_options = ANONY_Options_Model::get_instance( 'Anofl_Options' );
+			if ( ! empty( $anofl_options->wc_mobile_thumb_size ) ) {
+				$size = $anofl_options->wc_mobile_thumb_size;
+			}
+		}
+		return $size;
+	}
+	/**
 	 * Callback for wp_calculate_image_srcset_meta hook. Disables srcset meta for product thumbnail.
 	 *
 	 * @param  array $image_meta An array of srcsets.
@@ -133,11 +148,13 @@ class Anony_Flash_Media {
 		}
 		$styles = '';
 		if ( ! empty( $targets ) ) {
-
+			$targets = array_filter( $targets );
 			$styles .= '<style>';
 
 			foreach ( $targets as $target ) {
-				$styles .= '.' . $target . '.interact-hidden,';
+				if ( ! empty( $target ) ) {
+					$styles .= '.' . $target . '.interact-hidden,';
+				}
 			}
 			$styles  = trim( $styles, ',' );
 			$styles .= '{
@@ -248,5 +265,90 @@ class Anony_Flash_Media {
 			return ANONY_IMAGES_HELP::add_missing_dimensions( $content, $lazyload );
 		}
 		return $content;
+	}
+	/**
+	 * Load backgrounds on interaction sctipt
+	 *
+	 * @return void
+	 */
+	public function load_bg_on_interaction_sctipt() {
+		$anofl_options = ANONY_Options_Model::get_instance( 'Anofl_Options' );
+		$opt_targets   = array_filter( ANONY_STRING_HELP::line_by_line_textarea( $anofl_options->interact_lazyload_this_classes ) );
+		$targets       = apply_filters( 'load_bg_on_interaction', array() );
+		if ( ! empty( $opt_targets ) && is_array( $opt_targets ) ) {
+			$targets = array_merge( $targets, $opt_targets );
+		}
+		if ( empty( $targets ) ) {
+			return;
+		}
+		//phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped
+		// Convert PHP array to JSON.
+		$json_array = wp_json_encode( $targets );
+		?>
+
+		<script>
+			document.addEventListener('DOMContentLoaded', function() {
+				var loadBgOnInteract = function() {
+					// Decode JSON array in JavaScript
+					var jsArray = <?php echo $json_array; ?>;
+					// Loop through JavaScript array
+					for (var i = 0; i < jsArray.length; i++) {
+						if( jsArray[i] !== '' ){
+							var lazyBgElements = document.querySelectorAll('.' + jsArray[i]);
+							lazyBgElements.forEach(function(element) {
+								element.classList.remove('interact-hidden');
+							});
+						}
+
+					}
+					
+				};
+				interactionEventsCallback( loadBgOnInteract );
+			});
+
+		</script>
+		<?php
+	}
+	/**
+	 * Lazyload images
+	 *
+	 * @return void
+	 */
+	public function lazyload_images() {
+		$anofl_options = ANONY_Options_Model::get_instance( 'Anofl_Options' );
+		if ( '1' === $anofl_options->lazyload_images ) {
+			?>
+			<script data-use="defer.js">
+				<?php if ( '1' === $anofl_options->full_lazyload_images ) { ?>
+				document.addEventListener('DOMContentLoaded', function() {
+					vanillaLazyload = function (){
+						const lazyImages = document.querySelectorAll('img[loading="lazy"]');
+						// Loop through each lazy image
+						lazyImages.forEach((img) => {
+							// Get the data-src and data-srcest attributes.
+							var dataSrc = img.getAttribute('data-src');
+							var dataSrcest = img.getAttribute('data-srcest');
+							//console.log(dataSrc);
+							// Set the src and srcest attributes.
+							if ( null !== dataSrc ) {
+								img.src = dataSrc;
+							}
+							
+							if ( null !== dataSrcest ) {
+								img.srcset = dataSrcest;
+							}
+						});
+					};
+					if ( typeof interactionEventsCallback !== 'undefined' ) {
+						interactionEventsCallback( vanillaLazyload );
+					}
+				});
+				<?php } else { ?>
+					Defer.dom('img', 500);
+					Defer.lazy = true;
+				<?php } ?>
+			</script>
+			<?php
+		}
 	}
 }
