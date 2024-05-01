@@ -54,8 +54,14 @@ class Anony_Flash_Delay_Js extends Anony_Flash_Public_Base {
 		$delay         = false;
 
 		// Pages delay.
-		$delay = $this->is_option_enabled_for_page( 'delay_js' );
-		$delay = $this->is_option_enabled_for_object( 'delay_js' );
+		if ( is_front_page() || is_singular( 'page' ) ) {
+			$delay = $this->is_option_enabled_for_page( 'delay_js' );
+		}
+
+		if ( ! is_front_page() && ! is_singular( 'page' ) ) {
+			$delay = $this->is_option_enabled_for_object( 'delay_js' );
+		}
+
 		if ( '1' === $anofl_options->load_scripts_on_interaction ) {
 			$delay = true;
 		}
