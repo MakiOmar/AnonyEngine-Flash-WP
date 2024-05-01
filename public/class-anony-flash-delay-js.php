@@ -56,13 +56,12 @@ class Anony_Flash_Delay_Js extends Anony_Flash_Public_Base {
 			$delay = false; // don't break WP Admin.
 		}
 
+		// Pages delay.
+		$delay = $this->is_option_enabled_for_page( 'delay_js' );
+		$delay = $this->is_option_enabled_for_object( 'delay_js' );
 		if ( '1' === $anofl_options->load_scripts_on_interaction ) {
 			$delay = true;
 		}
-		// Pages delay.
-		$delay = $this->is_option_enabled_for_page( 'delay_js' );
-
-		$delay = $this->is_option_enabled_for_object( 'delay_js' );
 
 		if ( ! $delay ) {
 			return $tag;
@@ -72,6 +71,7 @@ class Anony_Flash_Delay_Js extends Anony_Flash_Public_Base {
 		if ( is_array( $exclusions ) ) {
 			$exclusion_list = array_merge( $exclusion_list, $exclusions );
 		}
+		$exclusion_list = array_filter( $exclusion_list );
 		foreach ( $exclusion_list as $target ) {
 			if ( false !== strpos( $tag, $target ) ) {
 				$tag = str_replace( '<script', '<script delay-exclude', $tag );
