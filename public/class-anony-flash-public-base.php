@@ -151,6 +151,7 @@ class Anony_Flash_Public_Base {
 				$anofl_options = ANONY_Options_Model::get_instance( 'Anofl_Options' );
 				$exclusions    = ANONY_STRING_HELP::line_by_line_textarea( $anofl_options->delay_scripts_exclusions );
 				if ( is_array( $exclusions ) ) {
+					$exclusions = array_filter( $exclusions );
 					foreach ( $exclusions as $exclusion ) {
 						if ( ! empty( $_match[0] ) && strpos( $_match[0], $exclusion ) !== false ) {
 							return str_replace( '<script', '<script delay-exclude', $_match[0] );

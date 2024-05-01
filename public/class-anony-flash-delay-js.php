@@ -43,7 +43,7 @@ class Anony_Flash_Delay_Js extends Anony_Flash_Public_Base {
 	 * @return string
 	 */
 	public function load_scripts_on_interaction( $tag, $handle, $src ) {
-		if ( false === strpos( $src, '.js' ) ) {
+		if ( is_admin() || false === strpos( $src, '.js' ) || $this->uri_strpos( 'elementor' ) ) {
 			return $tag;
 		}
 
@@ -52,9 +52,6 @@ class Anony_Flash_Delay_Js extends Anony_Flash_Public_Base {
 		}
 		$anofl_options = ANONY_Options_Model::get_instance( 'Anofl_Options' );
 		$delay         = false;
-		if ( is_admin() || '1' !== $anofl_options->load_scripts_on_interaction || $this->uri_strpos( 'elementor' ) ) {
-			$delay = false; // don't break WP Admin.
-		}
 
 		// Pages delay.
 		$delay = $this->is_option_enabled_for_page( 'delay_js' );
