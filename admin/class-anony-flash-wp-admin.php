@@ -902,6 +902,18 @@ anony-lazyload-bg',
 				'desc'       => esc_html__( 'Stop loading unneccessary styles', 'anony-flash-wp' ),
 				'note'       => esc_html__( 'Please add one handle per line', 'anony-flash-wp' ),
 			),
+
+			array(
+				'id'         => 'unloaded_css' . $suffix,
+				'title'      => esc_html__( 'Unload css files', 'anony-flash-wp' ),
+				'type'       => 'checkbox',
+				'validate'   => 'no_html',
+				'text-align' => 'left',
+				'direction'  => 'ltr',
+				'desc'       => esc_html__( 'Select files you need to unload on frontend of this page', 'anony-flash-wp' ),
+				'options'    => ANONY_Wp_Misc_Help::list_post_stylesheets(),
+			),
+
 			array(
 				'type' => 'group_close',
 				'id'   => 'group_close_styles-files',

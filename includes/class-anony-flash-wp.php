@@ -278,8 +278,9 @@ class Anony_Flash_Wp {
 		/* --------------------------End Scripts------------------------------------------------------------*/
 
 		/* --------------------------Styles------------------------------------------------------------*/
-		$scripts = new Anony_Flash_Styles();
-		$this->loader->add_action( 'wp_print_styles', $scripts, 'dequeued_styles', 999 );
+		$styles = new Anony_Flash_Styles();
+		$this->loader->add_action( 'wp_print_styles', $styles, 'dequeued_styles', 999 );
+		$this->loader->add_filter( 'style_loader_tag', $styles, 'remove_unused_stylesheets', 99 );
 		/* --------------------------End Styles------------------------------------------------------------*/
 
 		/* --------------------------WooCommerce------------------------------------------------------------*/

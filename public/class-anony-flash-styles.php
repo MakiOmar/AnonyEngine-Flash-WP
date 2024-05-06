@@ -49,4 +49,29 @@ class Anony_Flash_Styles extends Anony_Flash_Public_Base {
 			}
 		}
 	}
+	/**
+	 * Remove unused stylesheets
+	 *
+	 * @param string $tag Tag.
+	 * @return string
+	 */
+	public function remove_unused_stylesheets( $tag ) {
+		//phpcs:disable
+		if ( ! is_singular() || ! empty( $_GET['list_stylesheets'] ) ) {
+			return $tag;
+		}
+		//phpcs:enable
+
+		global $post;
+		$optimize_per_post = get_post_meta( $post->ID, 'optimize_per_post', true );
+
+		if ( ! empty( $optimize_per_post ) && ! empty( $optimize_per_post['unloaded_css'] ) ) {
+			foreach ( $optimize_per_post['unloaded_css'] as $stylesheet ) {
+				if ( ! empty( $stylesheet ) && false !== strpos( $tag, $stylesheet ) ) {
+					return '';
+				}
+			}
+		}
+		return $tag;
+	}
 }
