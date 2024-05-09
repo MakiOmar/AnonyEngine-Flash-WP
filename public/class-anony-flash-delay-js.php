@@ -43,6 +43,9 @@ class Anony_Flash_Delay_Js extends Anony_Flash_Public_Base {
 	 * @return string
 	 */
 	public function load_scripts_on_interaction( $tag, $handle, $src ) {
+		if ( function_exists( 'is_checkout' ) && is_checkout() ) {
+			return;
+		}
 		if ( is_admin() || false === strpos( $src, '.js' ) || $this->uri_strpos( 'elementor' ) ) {
 			return $tag;
 		}
