@@ -171,12 +171,15 @@ class Anony_Flash_Wp {
 	 * @access   private
 	 */
 	private function define_public_hooks() {
-		$anofl_options = ANONY_Options_Model::get_instance( 'Anofl_Options' );
 		//phpcs:disable
+		if ( isset( $_SERVER['REQUEST_URI'] ) && false !== strpos( $_SERVER['REQUEST_URI'], 'checkout' ) ) {
+			return;
+		}
+		$anofl_options = ANONY_Options_Model::get_instance( 'Anofl_Options' );
 		if ( ( '1' === $anofl_options->debug_mode && empty( $_GET['debug_mode'] ) ) ||  defined( 'DOING_CRON' ) ) {
 			return;
 		}
-
+		//phpcs:enable
 		$excluded_roles = $anofl_options->excluded_roles;
 
 		$plugin_public = new Anony_Flash_Wp_Public( $this->get_plugin_name(), $this->get_version() );
