@@ -80,7 +80,7 @@ class Anony_Flash_Styles extends Anony_Flash_Public_Base {
 	 * @return void
 	 */
 	public function disable_dashicons() {
-		if ( ! current_user_can( 'administrator' ) ) {
+		if ( ! current_user_can( 'manage_options' ) ) {
 			wp_dequeue_style( 'dashicons' );
 		}
 	}
