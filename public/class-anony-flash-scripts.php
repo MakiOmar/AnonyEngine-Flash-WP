@@ -32,7 +32,7 @@ class Anony_Flash_Scripts {
 				document.body.addEventListener('mousemove', callBack);
 				document.body.addEventListener('scroll', callBack);
 				document.body.addEventListener('keydown', callBack);
-				document.body.addEventListener('click', callBack);
+				//document.body.addEventListener('click', callBack);
 				document.body.addEventListener('touchstart', callBack);
 			}
 		</script>
