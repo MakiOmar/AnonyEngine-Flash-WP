@@ -98,7 +98,9 @@ class Anony_Flash_Media {
 		}
 		if ( ! empty( $targets ) ) {
 			foreach ( $targets as $target ) {
-				$content = str_replace( $target, $target . ' interact-hidden', $content );
+				if ( false === strpos( $content, $target . ' interact-hidden' ) ) {
+					$content = str_replace( $target, $target . ' interact-hidden', $content );
+				}
 			}
 		}
 		return $content;
