@@ -96,11 +96,18 @@ class Anony_Flash_Media {
 		if ( ! empty( $opt_targets ) && is_array( $opt_targets ) ) {
 			$targets = array_merge( $targets, $opt_targets );
 		}
+		$targets = array_map(
+			function ( $value ) {
+				return str_replace( ' interact-hidden', '', $value );
+			},
+			$targets
+		);
+
 		if ( ! empty( $targets ) ) {
 			foreach ( $targets as $target ) {
-				if ( false === strpos( $content, $target . ' interact-hidden' ) ) {
-					$content = str_replace( $target, $target . ' interact-hidden', $content );
-				}
+
+				$pattern = '/(?<=class="|\s)' . $target . '(?=\s|")/';
+				$content = preg_replace( $pattern, '$1' . $target . ' interact-hidden$2', $content );
 			}
 		}
 		return $content;
@@ -283,12 +290,18 @@ class Anony_Flash_Media {
 		if ( empty( $targets ) ) {
 			return;
 		}
+		$targets = array_map(
+			function ( $value ) {
+				return str_replace( ' interact-hidden', '', $value );
+			},
+			$targets
+		);
 		//phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped
 		// Convert PHP array to JSON.
 		$json_array = wp_json_encode( $targets );
 		?>
 
-		<script>
+		<script delay-exclude>
 			document.addEventListener('DOMContentLoaded', function() {
 				var loadBgOnInteract = function() {
 					// Decode JSON array in JavaScript
