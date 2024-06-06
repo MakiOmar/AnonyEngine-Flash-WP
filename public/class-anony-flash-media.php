@@ -96,6 +96,11 @@ class Anony_Flash_Media {
 		if ( ! empty( $opt_targets ) && is_array( $opt_targets ) ) {
 			$targets = array_merge( $targets, $opt_targets );
 		}
+		$targets = array_filter( $targets );
+
+		if ( empty( $targets ) ) {
+			return $content;
+		}
 		$targets = array_map(
 			function ( $value ) {
 				return str_replace( ' interact-hidden', '', $value );
