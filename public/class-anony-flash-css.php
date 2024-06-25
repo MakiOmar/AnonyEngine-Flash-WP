@@ -57,8 +57,10 @@ class Anony_Flash_Css extends Anony_Flash_Public_Base {
 				return $tag;
 			}
 		}
-		if ( $this->is_option_enabled_for_object( 'enable_used_css' ) || $this->is_option_enabled_for_page( 'enable_used_css' ) ) {
-			return '';
+		if ( ( $this->is_option_enabled_for_object( 'enable_used_css' ) || $this->is_option_enabled_for_page( 'enable_used_css' ) ) ) {
+			if ( ! strpos( $tag, 'anony-flash-' ) ) {
+				return '';
+			}
 		}
 		return $tag;
 	}
@@ -114,6 +116,106 @@ class Anony_Flash_Css extends Anony_Flash_Public_Base {
 		}
 
 		return $style;
+	}
+	/**
+	 * Initialize wp_filesystem
+	 *
+	 * @return void
+	 */
+	public function init_wp_filesystem() {
+		global $wp_filesystem;
+		if ( empty( $wp_filesystem ) ) {
+			require_once ABSPATH . 'wp-admin/includes/file.php';
+			WP_Filesystem();
+		}
+	}
+	/**
+	 * Enqueue generated css
+	 *
+	 * @return void
+	 */
+	public function enqueue_generated_css() {
+		global $post;
+		if ( ! $post || is_null( $post ) ) {
+			return;
+		}
+		$optimize_per_post = get_post_meta( $post->ID, 'optimize_per_post', true );
+		if ( ! $this->is_switched_on( 'external_used_css', $optimize_per_post ) ) {
+			return;
+		}
+		// Define the path where the CSS file will be stored.
+		$upload_dir  = wp_upload_dir();
+		$css_dir     = $upload_dir['basedir'] . '/anony-flash-css';
+		$css_url     = $upload_dir['baseurl'] . '/anony-flash-css';
+		$desktop_url = $css_url . '/post-' . $post->ID . '.css';
+		$mobile_url  = $css_url . '/post-' . $post->ID . '-mobile.css';
+		if ( wp_is_mobile() ) {
+			wp_enqueue_style( 'anony-flash-post-css-' . $post->ID, $mobile_url, array(), time() );
+		} else {
+			wp_enqueue_style( 'anony-flash-post-css-' . $post->ID, $desktop_url, array(), time() );
+		}
+	}
+	/**
+	 * Generate dynamic css
+	 *
+	 * @param int $post_id Post ID.
+	 * @return mixed
+	 */
+	public function generate_dynamic_css( $post_id ) {
+		$this->init_wp_filesystem();
+		global $wp_filesystem;
+		$optimize_per_post = get_post_meta( $post_id, 'optimize_per_post', true );
+		if ( ! $this->is_switched_on( 'enable_used_css', $optimize_per_post ) && ! $this->is_switched_on( 'external_used_css', $optimize_per_post ) ) {
+			return;
+		}
+		$css_comment_regex = '/\/\*.*?\*\//s';
+		$newline_regex     = '/\R/';
+		// Retrieve the CSS from the metafield.
+		$desktop_custom_css = preg_replace( array( $css_comment_regex, $newline_regex ), '', $optimize_per_post['desktop_used_css'] );
+		if ( '1' === $optimize_per_post['separate_mobile_used_css'] ) {
+			$mobile_custom_css = $optimize_per_post['mobile_used_css'];
+		} else {
+			$mobile_custom_css = $desktop_custom_css;
+		}
+		$mobile_custom_css = preg_replace( array( $css_comment_regex, $newline_regex ), '', $mobile_custom_css );
+		if ( empty( $desktop_custom_css ) ) {
+			return;
+		}
+
+		// Define the path where the CSS file will be stored.
+		$upload_dir = wp_upload_dir();
+		$css_dir    = $upload_dir['basedir'] . '/anony-flash-css';
+		$css_url    = $upload_dir['baseurl'] . '/anony-flash-css';
+
+		// Ensure the directory exists.
+		if ( ! $wp_filesystem->is_dir( $css_dir ) ) {
+			$wp_filesystem->mkdir( $css_dir );
+		}
+
+		// Create a unique filename for the CSS file based on the post ID.
+		$desktop_css_file = $css_dir . '/post-' . $post_id . '.css';
+		$mobile_css_file  = $css_dir . '/post-' . $post_id . '-mobile.css';
+		$stylesheets      = array();
+		// Write the CSS content to the file using WP_Filesystem.
+		if ( $wp_filesystem->put_contents( $desktop_css_file, $desktop_custom_css, FS_CHMOD_FILE ) ) {
+			$stylesheets['descktop'] = $css_url . '/post-' . $post_id . '.css';
+		}
+		if ( $wp_filesystem->put_contents( $mobile_css_file, $mobile_custom_css, FS_CHMOD_FILE ) ) {
+			$stylesheets['mobile'] = $css_url . '/post-' . $post_id . '-mobile.css';
+		}
+		return $stylesheets;
+	}
+	/**
+	 * Strat generate dynamic css
+	 *
+	 * @param int $post_id Post ID.
+	 * @return void
+	 */
+	public function start_generate_dynamic_css( $post_id ) {
+		if ( ! is_admin() ) {
+			return;
+		}
+		$this->generate_dynamic_css( $post_id );
 	}
 
 	/**
@@ -202,7 +304,9 @@ class Anony_Flash_Css extends Anony_Flash_Public_Base {
 		}
 
 		$optimize_per_post = get_post_meta( $post->ID, 'optimize_per_post', true );
-
+		if ( $this->is_switched_on( 'enable_used_css', $optimize_per_post ) && $this->is_switched_on( 'external_used_css', $optimize_per_post ) ) {
+			return;
+		}
 		$style = '';
 
 		if ( $this->is_option_enabled_for_page( 'enable_used_css' ) && ! $this->is_option_enabled_for_page( 'above_the_fold_styles' ) ) {

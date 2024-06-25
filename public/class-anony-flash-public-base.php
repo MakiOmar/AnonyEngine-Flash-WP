@@ -98,7 +98,6 @@ class Anony_Flash_Public_Base {
 		if ( ! $post || is_null( $post ) ) {
 			return false;
 		}
-		$anofl_options     = ANONY_Options_Model::get_instance( 'Anofl_Options' );
 		$optimize_per_post = get_post_meta( $post->ID, 'optimize_per_post', true );
 		if ( is_page() || is_front_page() ) {
 			return $this->is_switched_on( $option_name, $optimize_per_post );

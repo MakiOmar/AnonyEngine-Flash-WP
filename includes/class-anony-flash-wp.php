@@ -212,8 +212,11 @@ class Anony_Flash_Wp {
 		/* ---------------------------End Media------------------------------------------------------------*/
 
 		/* ---------------------------CSS------------------------------------------------------------*/
+
 		$css = new Anony_Flash_Css();
 		$this->loader->add_action( 'wp_head', $css, 'load_optimized_css' );
+		$this->loader->add_action( 'save_post', $css, 'start_generate_dynamic_css' );
+		$this->loader->add_action( 'wp_enqueue_scripts', $css, 'enqueue_generated_css' );
 		$this->loader->add_filter( 'style_loader_tag', $css, 'remove_all_stylesheets', 99 );
 		if ( 'inject' === $anofl_options->defer_stylesheets_method ) {
 			// phpcs:disable
