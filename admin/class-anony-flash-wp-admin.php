@@ -800,6 +800,14 @@ anony-lazyload-bg',
 				'desc'     => esc_html__( 'Enabling this will disable all stylesheets of this page/post and will replace them with used css that you will add below', 'anony-flash-wp' ),
 
 			),
+			array(
+				'id'       => 'external_used_css' . $suffix,
+				'title'    => esc_html__( 'load used css externaly', 'anony-flash-wp' ),
+				'type'     => 'switch',
+				'validate' => 'no_html',
+				'desc'     => esc_html__( 'Enabling this will generate a stylesheet for this specific page', 'anony-flash-wp' ),
+
+			),
 
 			array(
 				'id'         => 'desktop_used_css' . $suffix,
