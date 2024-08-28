@@ -238,7 +238,6 @@ class Anony_Flash_Wp {
 		$this->loader->add_filter( 'elementor/frontend/print_google_fonts', $general, 'elementor_google_fonts', 99 );
 		// controls add query strings to scripts.
 		$this->loader->add_filter( 'script_loader_src', $general, 'anony_control_query_strings', 15, 2 );
-
 		// controls add query strings to styles.
 		$this->loader->add_filter( 'style_loader_src', $general, 'anony_control_query_strings', 15, 2 );
 		// Use custom avatar instead of Gravatar.com.
