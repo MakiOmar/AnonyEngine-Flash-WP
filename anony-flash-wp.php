@@ -29,15 +29,19 @@ if ( ! defined( 'WPINC' ) ) {
 	die;
 }
 
-
-
-
 /**
  * Holds plugin's slug
  *
  * @const
  */
 define( 'ANOFL_PLUGIN_SLUG', plugin_basename( __FILE__ ) );
+
+/**
+ * Holds plugin's full path
+ *
+ * @const
+ */
+define( 'ANOFL_PATH', __FILE__ );
 
 
 /**
