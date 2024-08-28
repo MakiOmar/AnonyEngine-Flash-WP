@@ -227,6 +227,10 @@ class Anony_Flash_Delay_Js extends Anony_Flash_Public_Base {
 			$anony_defer_js_trigger = true;
 		}
 
+		if ( $this->is_option_enabled_for_object( 'delay_js' ) ) {
+			$anony_defer_js_trigger = true;
+		}
+
 		if ( '1' !== $anofl_options->load_scripts_on_interaction && ( is_page() || is_front_page() ) ) {
 			global $post;
 			$optimize_per_post = get_post_meta( $post->ID, 'optimize_per_post', true );
