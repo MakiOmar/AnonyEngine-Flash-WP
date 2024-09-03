@@ -42,7 +42,8 @@ class Anony_Flash_Media {
 	 * @return mixed False if srcset need to be disabled otherwise an array of srcsets.
 	 */
 	public function disable_product_mobile_srcset( $image_meta ) {
-		if ( class_exists( 'woocommerce' ) && ! is_single() && wp_is_mobile() ) {
+		$is_true = apply_filters( 'disable_product_mobile_srcset', true );
+		if ( class_exists( 'woocommerce' ) && wp_is_mobile() && $is_true ) {
 			$anofl_options = ANONY_Options_Model::get_instance( 'Anofl_Options' );
 
 			if ( '1' === $anofl_options->wc_disable_srcset ) {
