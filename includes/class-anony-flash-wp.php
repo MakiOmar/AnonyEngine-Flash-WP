@@ -204,7 +204,7 @@ class Anony_Flash_Wp {
 		$this->loader->add_filter( 'the_content', $media, 'load_bg_on_interaction' );
 		$this->loader->add_action( 'wp_print_footer_scripts', $media, 'lazyload_images', 999 );
 		$this->loader->add_action( 'wp_print_footer_scripts', $media, 'load_bg_on_interaction_sctipt', 999 );
-		$this->loader->add_filter( 'single_product_archive_thumbnail_size', $media, 'product_custom_mobile_thumb_size_slug' );
+		$this->loader->add_filter( 'single_product_archive_thumbnail_size', $media, 'product_custom_mobile_thumb_size_slug', 9999 );
 		$this->loader->add_filter( 'wp_calculate_image_srcset_meta', $media, 'disable_product_mobile_srcset' );
 		if ( '1' === $anofl_options->lazyload_images ) {
 			add_filter( 'wp_lazy_loading_enabled', '__return_false' );
