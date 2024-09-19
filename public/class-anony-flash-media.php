@@ -19,7 +19,7 @@ defined( 'ABSPATH' ) || die();
  * @subpackage Anony_Flash_Wp/Media
  * @author     Makiomar <maki3omar@gmail.com>
  */
-class Anony_Flash_Media {
+class Anony_Flash_Media extends Anony_Flash_Public_Base {
 	/**
 	 * Filter product thumbnail size
 	 *
@@ -338,9 +338,10 @@ class Anony_Flash_Media {
 	public function lazyload_images() {
 		$anofl_options = ANONY_Options_Model::get_instance( 'Anofl_Options' );
 		if ( '1' === $anofl_options->lazyload_images ) {
+			$page_full_lazyload_images = $this->is_option_enabled_for_page( 'full_lazyload_images' );
 			?>
 			<script data-use="defer.js">
-				<?php if ( '1' === $anofl_options->full_lazyload_images ) { ?>
+				<?php if ( '1' === $anofl_options->full_lazyload_images || $page_full_lazyload_images ) { ?>
 				document.addEventListener('DOMContentLoaded', function() {
 					vanillaLazyload = function (){
 						const lazyImages = document.querySelectorAll('img[loading="lazy"]');
