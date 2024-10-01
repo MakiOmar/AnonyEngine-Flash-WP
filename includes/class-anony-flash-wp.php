@@ -172,7 +172,7 @@ class Anony_Flash_Wp {
 	 */
 	private function define_public_hooks() {
 		//phpcs:disable
-		if ( isset( $_SERVER['REQUEST_URI'] ) && false !== strpos( $_SERVER['REQUEST_URI'], 'checkout' ) ) {
+		if ( ( isset( $_SERVER['REQUEST_URI'] ) && false !== strpos( $_SERVER['REQUEST_URI'], 'checkout' ) ) || isset( $_GET['login'] )) {
 			return;
 		}
 		$anofl_options = ANONY_Options_Model::get_instance( 'Anofl_Options' );
