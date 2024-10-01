@@ -849,9 +849,15 @@ anony-lazyload-bg',
 			),
 			array(
 				'id'          => 'images-preload',
-				'title'       => 'Images preload',
+				'title'       => 'Images optimizations',
 				'collapsible' => true,
 				'type'        => 'group_start',
+			),
+			array(
+				'id'       => 'full_lazyload_images' . $suffix,
+				'title'    => esc_html__( 'Full Lazy load images', 'anony-flash-wp' ),
+				'type'     => 'switch',
+				'validate' => 'no_html',
 			),
 			array(
 				'id'         => 'preload_desktop_images' . $suffix,
@@ -863,12 +869,6 @@ anony-lazyload-bg',
 				'columns'    => '60',
 				'direction'  => 'ltr',
 				'desc'       => esc_html__( 'Help to improve largest content paint.Please add a URL perline.', 'anony-flash-wp' ),
-			),
-			array(
-				'id'       => 'full_lazyload_images' . $suffix,
-				'title'    => esc_html__( 'Full Lazy load images', 'anony-flash-wp' ),
-				'type'     => 'switch',
-				'validate' => 'no_html',
 			),
 
 			array(
