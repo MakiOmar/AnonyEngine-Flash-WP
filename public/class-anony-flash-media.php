@@ -342,37 +342,75 @@ class Anony_Flash_Media extends Anony_Flash_Public_Base {
 			?>
 			<script data-use="defer.js">
 				<?php if ( '1' === $anofl_options->full_lazyload_images || $page_full_lazyload_images ) { ?>
-				document.addEventListener('DOMContentLoaded', function() {
-					vanillaLazyload = function (){
-						const lazyImages = document.querySelectorAll('img[loading="lazy"]');
-						let delay = 200; // Delay between each image load in milliseconds.
-						
-						// Function to load each image with a delay.
-						const loadImage = (img, index) => {
-							setTimeout(() => {
-								var dataSrc = img.getAttribute('data-src');
-								var dataSrcest = img.getAttribute('data-srcest');
-								
-								if (null !== dataSrc) {
-									img.src = dataSrc;
-								}
-								
-								if (null !== dataSrcest) {
-									img.srcset = dataSrcest;
-								}
-							}, delay * index); // Increasing delay for each image.
-						};
+					(function(global) {
+						let userInteracted = false; // Track if user has interacted
 
-						// Loop through each lazy image with a delay.
-						lazyImages.forEach((img, index) => {
-							loadImage(img, index);
-						});
-					};
+						function loadElement(element) {
+							// Copy data-* attributes to actual attributes (like data-src to src)
+							Array.from(element.attributes).forEach((attr) => {
+								const match = /^data-(.+)/.exec(attr.name);
+								if (match) {
+									element.setAttribute(match[1], attr.value); // Set the actual src/srcset
+								}
+							});
 
-					if (typeof interactionEventsCallback !== 'undefined') {
-						interactionEventsCallback(vanillaLazyload);
-					}
-				});
+							// Set the src to trigger the image to load
+							const src = element.getAttribute('src');
+							if (src) {
+								element.src = src; // This loads the image
+							}
+						}
+
+						// Lazy load logic using IntersectionObserver
+						function setupLazyLoading() {
+							const elements = document.querySelectorAll('[data-src]');
+
+							if ('IntersectionObserver' in window) {
+								const observer = new IntersectionObserver(function(entries) {
+									entries.forEach((entry) => {
+										if (entry.isIntersecting) {
+											const element = entry.target;
+											observer.unobserve(element); // Stop observing once it's in view
+											loadElement(element); // Load the element (image)
+										}
+									});
+								});
+
+								elements.forEach((element) => {
+									observer.observe(element); // Start observing each element with data-src
+								});
+							} else {
+								// Fallback: If IntersectionObserver is not supported, load everything immediately
+								elements.forEach((element) => {
+									loadElement(element);
+								});
+							}
+						}
+
+						// Event listener for more deliberate user interactions (tap or swipe)
+						function onUserInteraction() {
+							if (!userInteracted) {
+								userInteracted = true;
+								setupLazyLoading(); // Setup lazy loading after first interaction
+								// Remove the event listeners after interaction
+								global.removeEventListener('touchend', onUserInteraction);
+								global.removeEventListener('keydown', onUserInteraction);
+								global.removeEventListener('click', onUserInteraction);
+								<?php if ( ! wp_is_mobile() ) { ?>
+									global.removeEventListener('scroll', onUserInteraction);
+								<?php } ?>
+							}
+						}
+
+						// Add event listeners for more deliberate user interactions
+						global.addEventListener('touchend', onUserInteraction);  // Detects tapping
+						global.addEventListener('keydown', onUserInteraction);   // Detects keyboard interaction
+						global.addEventListener('click', onUserInteraction);     // Detects mouse clicks or touch
+						<?php if ( ! wp_is_mobile() ) { ?>
+							global.addEventListener('scroll', onUserInteraction);     // Detects mouse scroll
+						<?php } ?>
+
+					})(this);
 				<?php } else { ?>
 					Defer.dom('img', 500);
 					Defer.lazy = true;
