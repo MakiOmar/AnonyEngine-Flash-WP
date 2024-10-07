@@ -345,24 +345,32 @@ class Anony_Flash_Media extends Anony_Flash_Public_Base {
 				document.addEventListener('DOMContentLoaded', function() {
 					vanillaLazyload = function (){
 						const lazyImages = document.querySelectorAll('img[loading="lazy"]');
-						// Loop through each lazy image
-						lazyImages.forEach((img) => {
-							// Get the data-src and data-srcest attributes.
-							var dataSrc = img.getAttribute('data-src');
-							var dataSrcest = img.getAttribute('data-srcest');
-							//console.log(dataSrc);
-							// Set the src and srcest attributes.
-							if ( null !== dataSrc ) {
-								img.src = dataSrc;
-							}
-							
-							if ( null !== dataSrcest ) {
-								img.srcset = dataSrcest;
-							}
+						let delay = 200; // Delay between each image load in milliseconds.
+						
+						// Function to load each image with a delay.
+						const loadImage = (img, index) => {
+							setTimeout(() => {
+								var dataSrc = img.getAttribute('data-src');
+								var dataSrcest = img.getAttribute('data-srcest');
+								
+								if (null !== dataSrc) {
+									img.src = dataSrc;
+								}
+								
+								if (null !== dataSrcest) {
+									img.srcset = dataSrcest;
+								}
+							}, delay * index); // Increasing delay for each image.
+						};
+
+						// Loop through each lazy image with a delay.
+						lazyImages.forEach((img, index) => {
+							loadImage(img, index);
 						});
 					};
-					if ( typeof interactionEventsCallback !== 'undefined' ) {
-						interactionEventsCallback( vanillaLazyload );
+
+					if (typeof interactionEventsCallback !== 'undefined') {
+						interactionEventsCallback(vanillaLazyload);
 					}
 				});
 				<?php } else { ?>
@@ -370,6 +378,7 @@ class Anony_Flash_Media extends Anony_Flash_Public_Base {
 					Defer.lazy = true;
 				<?php } ?>
 			</script>
+
 			<?php
 		}
 	}
