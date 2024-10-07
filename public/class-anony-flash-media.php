@@ -397,6 +397,7 @@ class Anony_Flash_Media extends Anony_Flash_Public_Base {
 								global.removeEventListener('keydown', onUserInteraction);
 								global.removeEventListener('click', onUserInteraction);
 								<?php if ( ! wp_is_mobile() ) { ?>
+									global.removeEventListener('mousemove', onUserInteraction);
 									global.removeEventListener('scroll', onUserInteraction);
 								<?php } ?>
 							}
@@ -407,6 +408,7 @@ class Anony_Flash_Media extends Anony_Flash_Public_Base {
 						global.addEventListener('keydown', onUserInteraction);   // Detects keyboard interaction
 						global.addEventListener('click', onUserInteraction);     // Detects mouse clicks or touch
 						<?php if ( ! wp_is_mobile() ) { ?>
+							global.addEventListener('mousemove', onUserInteraction);
 							global.addEventListener('scroll', onUserInteraction);     // Detects mouse scroll
 						<?php } ?>
 
