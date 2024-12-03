@@ -122,7 +122,7 @@ class Anony_Flash_Public_Base {
 		if ( is_a( $queried_object, 'WP_Taxonomy' ) || isset( $queried_object->taxonomy ) ) {
 			$object_name = $queried_object->taxonomy;
 			$optimze     = 'optimize_taxonomies';
-		} elseif ( is_a( $queried_object, 'WP_Post_Type' ) || is_a( $queried_object, 'WP_Post' ) ) {
+		} elseif ( ( is_a( $queried_object, 'WP_Post_Type' ) || is_a( $queried_object, 'WP_Post' ) ) && isset( $queried_object->post_type ) ) {
 			$object_name = $queried_object->post_type;
 			$optimze     = 'optimize_post_types';
 		}
